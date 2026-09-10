@@ -1,0 +1,2 @@
+# Force HTTPS Redirects for Netlify / Cloudflare Pages
+http://* https://:splat 301!

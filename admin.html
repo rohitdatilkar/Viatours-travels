@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <!-- Force HTTPS & Upgrade Insecure Requests -->
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <script>
+        // Force HTTPS in production (preserves localhost and private development IPs)
+        if (window.location.protocol === 'http:' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1' && !window.location.hostname.startsWith('192.168.') && !window.location.hostname.startsWith('10.')) {
+            window.location.replace('https://' + window.location.hostname + window.location.pathname + window.location.search + window.location.hash);
+        }
+    </script>
+    <meta name="robots" content="noindex, nofollow, noarchive">
+    <meta name="description" content="Secure internal management dashboard for Via Tours &amp; Travels staff.">
+    <meta property="og:image" content="https://viatoursandtravels.com/assets/social-preview.jpg">
+    <meta name="twitter:image" content="https://viatoursandtravels.com/assets/social-preview.jpg">
+    <!-- Favicons (Official Agency Logo) -->
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+    <title>Via Tours &amp; Travels — Executive Staff &amp; Admin Portal</title>
+    
+    <!-- Critical Resource Hints & DNS Pre-warming -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+    
+    <!-- Non-Blocking Google Fonts with display=swap -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    </noscript>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Custom Luxury Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body { background: #061029; }
+        .admin-back-link:hover { color: var(--gold-400) !important; text-decoration: underline !important; }
+    </style>
+</head>
+<body class="dark-mode">
+
+<div id="confirmModal" style="display:none; position:fixed; inset:0; background:rgba(5,8,20,0.75); z-index:100000; align-items:center; justify-content:center; backdrop-filter:blur(8px);">
+    <div style="background:var(--surface-card); max-width:440px; margin:auto; padding:32px; border-radius:var(--radius-lg); text-align:center; border:1px solid var(--border-gold); box-shadow:var(--shadow-xl);">
+        <i class="fas fa-exclamation-triangle" style="font-size:2.4rem; color:var(--gold-400); margin-bottom:16px;"></i>
+        <h3 style="margin-bottom:8px;">Are you sure?</h3>
+        <p id="confirmMessage" style="color:var(--text-muted); font-size:0.95rem; margin-bottom:24px;"></p>
+        <div style="display:flex; gap:12px; justify-content:center;">
+            <button class="btn btn-danger" id="confirmYes">Confirm</button>
+            <button class="btn btn-outline" id="confirmNo">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<!-- ==========================================
+     ADMIN PORTAL MAIN LAYOUT
+     ========================================== -->
+
+<div id="admin-wrapper" style="display:block;">
+    <div class="admin-layout">
+        <div class="admin-side" id="adminSide">
+            <div style="display:flex; align-items:center; justify-content:space-between; padding:0 20px 20px; border-bottom:1px solid rgba(255,255,255,0.1);">
+                <div style="display:flex; flex-direction:column; gap:4px;"><h3 style="margin:0; font-size:1.15rem; color:var(--gold-400);">Via Admin</h3><a href="index.html#/home" class="admin-back-link" style="color:#94a3b8; font-size:0.75rem; text-decoration:none;"><i class="fas fa-arrow-left"></i> View Live Site</a></div>
+                <button onclick="toggleSidebar()" style="background:none; border:none; color:white; font-size:18px; cursor:pointer;" aria-label="Toggle sidebar"><i class="fas fa-bars"></i></button>
+            </div>
+            <ul class="admin-menu">
+                <li class="active" onclick="showAdminTab('dashboard', event)"><i class="fas fa-tachometer-alt"></i><span class="nav-text"> Dashboard</span></li>
+                <li onclick="showAdminTab('packages', event)"><i class="fas fa-box"></i><span class="nav-text"> Packages</span></li>
+                <li onclick="showAdminTab('destinations', event)"><i class="fas fa-map-marked-alt"></i><span class="nav-text"> Destinations</span></li>
+                <li onclick="showAdminTab('enquiries', event)"><i class="fas fa-envelope"></i><span class="nav-text"> Enquiries</span></li>
+                <li onclick="showAdminTab('customers', event)"><i class="fas fa-users"></i><span class="nav-text"> Customers</span></li>
+                <li onclick="showAdminTab('bookings', event)"><i class="fas fa-calendar-check"></i><span class="nav-text"> Bookings</span></li>
+                <li onclick="showAdminTab('blog', event)"><i class="fas fa-blog"></i><span class="nav-text"> Blog Posts</span></li>
+                <li onclick="showAdminTab('testimonials', event)"><i class="fas fa-comment-dots"></i><span class="nav-text"> Testimonials</span></li>
+                <li onclick="showAdminTab('faqs', event)"><i class="fas fa-question-circle"></i><span class="nav-text"> FAQs</span></li>
+                <li onclick="showAdminTab('settings', event)"><i class="fas fa-cog"></i><span class="nav-text"> Settings</span></li>
+                <li onclick="toggleDarkMode()" style="margin-top:15px;"><i class="fas fa-moon"></i><span class="nav-text"> Theme Toggle</span></li>
+                <li onclick="window.location.href='index.html#/home'" style="margin-top:10px;"><i class="fas fa-globe"></i><span class="nav-text"> Return to Site</span></li>
+                <li onclick="logout()" style="margin-top:15px; color:#ef4444;"><i class="fas fa-sign-out-alt"></i><span class="nav-text"> Logout</span></li>
+            </ul>
+        </div>
+        
+        <div class="admin-main" id="adminMain">
+            <!-- Admin Login Box -->
+            <div id="admin-login" style="max-width:440px; margin:60px auto; background:#112050; padding:36px; border-radius:var(--radius-xl); border:1px solid var(--border-gold); box-shadow:0 20px 50px rgba(0,0,0,0.5);">
+                <div style="text-align:center; margin-bottom:24px;">
+                    <i class="fas fa-lock" style="font-size:2.2rem; color:var(--gold-400); margin-bottom:10px;"></i>
+                    <h2 style="color:#ffffff;">Staff Portal</h2>
+                    <p style="color:#94a3b8; font-size:0.9rem;">Sign in with your admin credentials to manage Via Tours.</p>
+                </div>
+                
+                <form onsubmit="adminLogin(); return false;">
+                    <div class="form-sec">
+                        <label style="color:#cbd5e1;">Email Address</label>
+                        <input type="email" id="loginEmail" required style="background:#081535; border-color:#243260; color:#fff;">
+                    </div>
+                    <div class="form-sec">
+                        <label style="color:#cbd5e1;">Password</label>
+                        <input type="password" id="loginPass" required style="background:#081535; border-color:#243260; color:#fff;">
+                    </div>
+                    <button type="submit" class="btn btn-gold" id="loginBtn" style="width:100%; margin-top:10px;"><i class="fas fa-sign-in-alt"></i> Secure Login</button>
+                </form>
+                <a href="#" onclick="forgotPassword(); return false;" style="display:block; text-align:center; margin-top:16px; font-size:0.85rem; color:var(--gold-400);">Forgot password?</a>
+            </div>
+
+            <!-- Admin Tabs Container -->
+            <div id="admin-dashboard" style="display:none;">
+                <!-- Admin Header Bar with Sidebar Toggle -->
+                <div class="admin-topbar" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:28px; padding-bottom:18px; border-bottom:1px solid rgba(255,255,255,0.08); flex-wrap:wrap; gap:12px;">
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <button onclick="toggleSidebar()" style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); color:white; width:40px; height:40px; border-radius:8px; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; font-size:1.1rem;" title="Toggle Sidebar" aria-label="Toggle navigation sidebar">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                        <div>
+                            <span style="display:block; font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; color:var(--gold-400); font-weight:700;">Executive Control Center</span>
+                            <span style="font-size:1.15rem; font-weight:700; color:#fff;" id="adminCurrentTabTitle">Dashboard Overview</span>
+                        </div>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <a href="index.html#/home" class="btn btn-outline btn-sm" style="color:#cbd5e1;"><i class="fas fa-external-link-alt"></i> Live Site</a>
+                        <button class="btn btn-gold btn-sm" onclick="loadAdminStats(); showToast('Data refreshed successfully', 'info');"><i class="fas fa-sync-alt"></i> Sync Data</button>
+                    </div>
+                </div>
+
+                <!-- Dashboard Tab -->
+                <div id="tab-dashboard" class="admin-tab">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
+                        <h2>Executive Overview</h2>
+                        <span class="luxury-badge"><i class="fas fa-sync"></i> Live Data Feed</span>
+                    </div>
+                    
+                    <div class="grid-4" id="stats_grid">
+                        <div class="stat-card"><h2 id="stat_enq">0</h2><p>Total Enquiries</p></div>
+                        <div class="stat-card"><h2 id="stat_new_enq" style="color:var(--emerald-400);">0</h2><p>New Enquiries</p></div>
+                        <div class="stat-card"><h2 id="stat_pkg">0</h2><p>Active Packages</p></div>
+                        <div class="stat-card"><h2 id="stat_cust">0</h2><p>Total Customers</p></div>
+                        <div class="stat-card"><h2 id="stat_revenue" style="color:var(--gold-400);">₹0</h2><p>Revenue Collected</p></div>
+                        <div class="stat-card"><h2 id="stat_balance" style="color:#f87171;">₹0</h2><p>Outstanding Balance</p></div>
+                    </div>
+
+                    <div class="grid-3" style="margin-top:40px;">
+                        <div style="grid-column:1 / span 2;">
+                            <h3 style="margin-bottom:15px; color:#fff;">Recent Enquiries</h3>
+                            <div class="admin-table">
+                                <table>
+                                    <thead><tr><th>Name</th><th>Destination</th><th>Status</th></tr></thead>
+                                    <tbody id="table_recent_enq"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 style="margin-bottom:15px; color:#fff;">Upcoming Bookings</h3>
+                            <div class="admin-table">
+                                <table>
+                                    <thead><tr><th>Customer</th><th>Date</th></tr></thead>
+                                    <tbody id="table_upcoming_book"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Packages Tab -->
+                <div id="tab-packages" class="admin-tab" style="display:none;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                        <h2>Manage Travel Packages</h2>
+                        <button class="btn btn-gold" onclick="openPkgModal()"><i class="fas fa-plus"></i> Add New Package</button>
+                    </div>
+                    <div class="admin-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox" id="select-all-packages" onchange="toggleAllCheckboxes('package', this)"></th>
+                                    <th>Image</th>
+                                    <th>Title</th>
+                                    <th>Price</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table_packages"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Destinations Tab -->
+                <div id="tab-destinations" class="admin-tab" style="display:none;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                        <h2>Manage Destinations</h2>
+                        <button class="btn btn-gold" onclick="openDestModal()"><i class="fas fa-plus"></i> Add Destination</button>
+                    </div>
+                    <div class="admin-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox" id="select-all-destinations" onchange="toggleAllCheckboxes('destination', this)"></th>
+                                    <th>Name</th>
+                                    <th>Country</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table_destinations"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Enquiries Tab -->
+                <div id="tab-enquiries" class="admin-tab" style="display:none;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                        <h2>Guest Enquiries</h2>
+                        <button class="btn btn-green" onclick="exportEnquiries()"><i class="fas fa-file-csv"></i> Export Clean CSV</button>
+                    </div>
+                    <div class="admin-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Customer Info</th>
+                                    <th>Trip Details</th>
+                                    <th>Status & Internal Notes</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table_enquiries"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Customers Tab -->
+                <div id="tab-customers" class="admin-tab" style="display:none;">
+                    <h2 style="margin-bottom:20px;">Client Database</h2>
+                    <div class="admin-table">
+                        <table>
+                            <thead>
+                                <tr><th>Name</th><th>Contact</th><th>VIP Notes</th></tr>
+                            </thead>
+                            <tbody id="table_customers"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Bookings Tab -->
+                <div id="tab-bookings" class="admin-tab" style="display:none;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                        <h2>Confirmed Bookings</h2>
+                        <button class="btn btn-gold" onclick="openBookModal()"><i class="fas fa-plus"></i> Create Booking</button>
+                    </div>
+                    <div class="admin-table">
+                        <table>
+                            <thead>
+                                <tr><th>Customer</th><th>Package</th><th>Travel Date</th><th>Amount</th><th>Status</th></tr>
+                            </thead>
+                            <tbody id="table_bookings"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Blog Tab -->
+                <div id="tab-blog" class="admin-tab" style="display:none;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                        <h2>Manage Travel Journal Articles</h2>
+                        <button class="btn btn-gold" onclick="openBlogModal()"><i class="fas fa-plus"></i> Write Article</button>
+                    </div>
+                    <div class="admin-table">
+                        <table>
+                            <thead>
+                                <tr><th>Title</th><th>Status</th><th>Actions</th></tr>
+                            </thead>
+                            <tbody id="table_blog"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Testimonials Tab -->
+                <div id="tab-testimonials" class="admin-tab" style="display:none;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                        <h2>Manage Guest Reviews</h2>
+                        <button class="btn btn-gold" onclick="openTestModal()"><i class="fas fa-plus"></i> Add Testimonial</button>
+                    </div>
+                    <div class="admin-table">
+                        <table>
+                            <thead>
+                                <tr><th>Guest</th><th>Review Snippet</th><th>Actions</th></tr>
+                            </thead>
+                            <tbody id="table_testimonials"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- FAQs Tab -->
+                <div id="tab-faqs" class="admin-tab" style="display:none;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                        <h2>Manage FAQs</h2>
+                        <button class="btn btn-gold" onclick="openFaqModal()"><i class="fas fa-plus"></i> Add FAQ</button>
+                    </div>
+                    <div class="admin-table">
+                        <table>
+                            <thead>
+                                <tr><th>Question</th><th>Status</th><th>Actions</th></tr>
+                            </thead>
+                            <tbody id="table_faqs"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Settings Tab -->
+                <div id="tab-settings" class="admin-tab" style="display:none;">
+                    <h2 style="margin-bottom:20px;">Website & Agency Settings</h2>
+                    <div style="background:#112050; padding:32px; border-radius:var(--radius-lg); max-width:680px; border:1px solid rgba(255,255,255,0.1); margin-bottom:24px;">
+                        <h3 style="color:var(--gold-400); margin-bottom:16px; font-size:1.1rem;"><i class="fas fa-building"></i> Agency Contact Information</h3>
+                        <div class="form-sec"><label style="color:#cbd5e1;">Business Legal Name</label><input type="text" id="set_name"></div>
+                        <div class="form-sec"><label style="color:#cbd5e1;">Primary Email</label><input type="email" id="set_email"></div>
+                        <div class="form-sec"><label style="color:#cbd5e1;">Phone Number</label><input type="text" id="set_phone"></div>
+                        <div class="form-sec"><label style="color:#cbd5e1;">WhatsApp Concierge Number</label><input type="text" id="set_whatsapp"></div>
+                        <div class="form-sec"><label style="color:#cbd5e1;">Head Office Address</label><input type="text" id="set_address"></div>
+                        <button class="btn btn-gold" onclick="saveSettings()" style="margin-top:10px;"><i class="fas fa-save"></i> Save Settings</button>
+                    </div>
+
+                    <!-- Catalog Management & Cloud Synchronization Card -->
+                    <div style="background:#112050; padding:32px; border-radius:var(--radius-lg); max-width:680px; border:1px solid var(--border-gold);">
+                        <h3 style="color:var(--gold-400); margin-bottom:12px; font-size:1.1rem;"><i class="fas fa-cloud-upload-alt"></i> Unified Catalog & Cloud Sync</h3>
+                        <p style="color:#94a3b8; font-size:0.88rem; line-height:1.5; margin-bottom:18px;">
+                            All website packages, destinations, stories, testimonials, and FAQs are loaded into this admin control panel. You can edit, delete, or create any item. Use the tools below to push catalog items into your Supabase database or reset custom changes.
+                        </p>
+                        <div style="display:flex; flex-wrap:wrap; gap:12px;">
+                            <button id="btn_push_supabase" class="btn btn-gold" onclick="triggerPushCatalogToSupabase()"><i class="fas fa-bolt"></i> Push All Catalog Data to Supabase</button>
+                            <button class="btn btn-outline" onclick="triggerResetCatalog()" style="border-color:#ef4444; color:#fca5a5;"><i class="fas fa-undo"></i> Reset to Factory Defaults</button>
+                        </div>
+                        <div id="push_supabase_log" style="display:none; margin-top:16px; background:#081535; border:1px solid #1c3060; border-radius:8px; padding:16px; max-height:220px; overflow-y:auto; font-family:monospace; font-size:12px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==========================================
+     ADMIN MODALS (PACKAGE, DESTINATION, ETC.)
+     ========================================== -->
+<!-- Package Modal -->
+<div id="pkgFormModal" style="display:none; position:fixed; inset:0; background:rgba(5,8,20,0.75); z-index:99999; padding:20px; overflow-y:auto; backdrop-filter:blur(8px);">
+    <div style="background:#112050; color:#fff; max-width:700px; margin:30px auto; padding:36px; border-radius:var(--radius-xl); border:1px solid var(--border-gold); position:relative; box-shadow:var(--shadow-xl);">
+        <button onclick="document.getElementById('pkgFormModal').style.display='none'" style="position:absolute; top:20px; right:20px; background:none; border:none; font-size:24px; color:#fff; cursor:pointer;">&times;</button>
+        <h3 style="margin-bottom:20px; color:var(--gold-400);" id="pkg_modal_title">Add Package</h3>
+        <input type="hidden" id="m_pkg_id">
+        <div class="form-sec"><label style="color:#cbd5e1;">Package Title *</label><input type="text" id="m_pkg_title" required></div>
+        <div class="form-grid-2">
+            <div class="form-sec"><label style="color:#cbd5e1;">Price (INR ₹ Base)</label><input type="number" id="m_pkg_price"></div>
+            <div class="form-sec"><label style="color:#cbd5e1;">Category</label><input type="text" id="m_pkg_cat" placeholder="Luxury, Honeymoon, Adventure..."></div>
+        </div>
+        <div class="form-grid-2">
+            <div class="form-sec"><label style="color:#cbd5e1;">Duration</label><input type="text" id="m_pkg_duration" placeholder="e.g. 7 Days / 6 Nights"></div>
+            <div class="form-sec"><label style="color:#cbd5e1;">Destination</label><select id="m_pkg_dest" style="background:#081535; color:#fff;"></select></div>
+        </div>
+        <div class="form-sec"><label style="color:#cbd5e1;">Short Deck (1-2 sentences)</label><input type="text" id="m_pkg_short_desc"></div>
+        <div class="form-sec"><label style="color:#cbd5e1;">Full Overview Description</label><textarea id="m_pkg_desc" rows="4"></textarea></div>
+        <div class="form-sec"><label style="color:#cbd5e1;">Featured Image Upload</label><input type="file" id="m_pkg_img" accept="image/*"></div>
+        <div class="form-sec"><label style="color:#cbd5e1;">Gallery Images (Multiple)</label><input type="file" id="m_pkg_gallery" multiple accept="image/*"><div id="gallery_preview" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(80px,1fr)); gap:10px; margin-top:10px;"></div></div>
+        <div class="form-sec"><label style="color:#cbd5e1;">Day-by-Day Itinerary</label><div id="itin_editor"></div><button type="button" class="btn btn-outline" style="margin-top:10px;" onclick="addItinDay()"><i class="fas fa-plus"></i> Add Itinerary Day</button></div>
+        <div class="form-grid-2">
+            <div class="form-sec"><label style="color:#cbd5e1;">Inclusions (One per line)</label><textarea id="m_pkg_inc" rows="4"></textarea></div>
+            <div class="form-sec"><label style="color:#cbd5e1;">Exclusions (One per line)</label><textarea id="m_pkg_exc" rows="4"></textarea></div>
+        </div>
+        <div class="form-sec"><label style="color:#cbd5e1;">Important Notes (One per line)</label><textarea id="m_pkg_imp" rows="3"></textarea></div>
+        <div class="form-sec"><label style="color:#cbd5e1;">Publish Status</label><select id="m_pkg_pub" style="background:#081535; color:#fff;"><option value="true">Live (Published)</option><option value="false">Draft (Hidden)</option></select></div>
+        <button class="btn btn-gold" onclick="savePackage()" style="width:100%; margin-top:15px;"><i class="fas fa-save"></i> Save Package</button>
+    </div>
+</div>
+
+<!-- Destination Modal -->
+<div id="destFormModal" style="display:none; position:fixed; inset:0; background:rgba(5,8,20,0.75); z-index:99999; padding:20px; overflow-y:auto; backdrop-filter:blur(8px);">
+    <div style="background:#112050; color:#fff; max-width:540px; margin:40px auto; padding:36px; border-radius:var(--radius-xl); border:1px solid var(--border-gold); position:relative; box-shadow:var(--shadow-xl);">
+        <button onclick="document.getElementById('destFormModal').style.display='none'" style="position:absolute; top:20px; right:20px; background:none; border:none; font-size:24px; color:#fff; cursor:pointer;">&times;</button>
+        <h3 style="margin-bottom:20px; color:var(--gold-400);">Add Destination</h3>
+        <input type="hidden" id="m_dest_id">
+        <div class="form-sec"><label style="color:#cbd5e1;">Name</label><input type="text" id="m_dest_name"></div>
+        <div class="form-sec"><label style="color:#cbd5e1;">Country</label><input type="text" id="m_dest_country"></div>
+        <div class="form-sec"><label style="color:#cbd5e1;">Region / Continent</label><input type="text" id="m_dest_region"></div>
+        <div class="form-sec"><label style="color:#cbd5e1;">Cover Image Upload</label><input type="file" id="m_dest_img" accept="image/*"></div>
+        <div class="form-sec"><label style="color:#cbd5e1;">Description</label><textarea id="m_dest_desc" rows="3"></textarea></div>
+        <div class="form-sec"><label style="color:#cbd5e1;">Best Time to Visit</label><input type="text" id="m_dest_time" placeholder="e.g. Nov - Apr"></div>
+        <div class="form-sec"><label style="color:#cbd5e1;">Publish Status</label><select id="m_dest_pub" style="background:#081535; color:#fff;"><option value="true">Live</option><option value="false">Hidden</option></select></div>
+        <button class="btn btn-gold" onclick="saveDestination()" style="width:100%; margin-top:15px;">Save Destination</button>
+    </div>
+</div>
+
+<!-- Booking Modal -->
+<div id="bookFormModal" style="display:none; position:fixed; inset:0; background:rgba(5,8,20,0.75); z-index:99999; padding:20px; overflow-y:auto; backdrop-filter:blur(8px);">
+    <div style="background:#112050; color:#fff; max-width:540px; margin:40px auto; padding:36px; border-radius:var(--radius-xl); border:1px solid var(--border-gold); position:relative; box-shadow:var(--shadow-xl);">
+        <button onclick="document.getElementById('bookFormModal').style.display='none'" style="position:absolute; top:20px; right:20px; background:none; border:none; font-size:24px; color:#fff; cursor:pointer;">&times;</button>
+        <h3 style="margin-bottom:20px; color:var(--gold-400);">Create Booking</h3>
+        <div class="form-sec"><label style="color:#cbd5e1;">Customer Name</label><input type="text" id="m_book_customer_name"></div>
+        <div class="form-sec"><label style="color:#cbd5e1;">Package Name</label><input type="text" id="m_book_package_name"></div>
+        <div class="form-sec"><label style="color:#cbd5e1;">Travel Date</label><input type="date" id="m_book_date"></div>
+        <div class="form-sec"><label style="color:#cbd5e1;">Travelers</label><input type="number" id="m_book_travelers" value="2" min="1"></div>
+        <div class="form-sec"><label style="color:#cbd5e1;">Total Amount (INR ₹)</label><input type="number" id="m_book_total"></div>
+        <div class="form-sec"><label style="color:#cbd5e1;">Amount Paid (INR ₹)</label><input type="number" id="m_book_paid"></div>
+        <div class="form-sec"><label style="color:#cbd5e1;">Booking Status</label><select id="m_book_status" style="background:#081535; color:#fff;"><option>Pending</option><option>Confirmed</option><option>Completed</option><option>Cancelled</option></select></div>
+        <button class="btn btn-gold" onclick="saveBooking()" style="width:100%; margin-top:15px;">Save Booking Record</button>
+    </div>
+</div>
+
+<!-- FAQ Modal -->
+<div id="faqFormModal" style="display:none; position:fixed; inset:0; background:rgba(5,8,20,0.75); z-index:99999; padding:20px; overflow-y:auto; backdrop-filter:blur(8px);">
+    <div style="background:#112050; color:#fff; max-width:540px; margin:40px auto; padding:36px; border-radius:var(--radius-xl); border:1px solid var(--border-gold); position:relative; box-shadow:var(--shadow-xl);">
+        <button onclick="document.getElementById('faqFormModal').style.display='none'" style="position:absolute; top:20px; right:20px; background:none; border:none; font-size:24px; color:#fff; cursor:pointer;">&times;</button>
+        <h3 style="margin-bottom:20px; color:var(--gold-400);" id="faq_modal_title">Add FAQ</h3>
+        <input type="hidden" id="m_faq_id">
+        <div class="form-sec"><label style="color:#cbd5e1;">Question</label><input type="text" id="m_faq_question"></div>
+        <div class="form-sec"><label style="color:#cbd5e1;">Answer</label><textarea id="m_faq_answer" rows="4"></textarea></div>
+        <div class="form-sec"><label style="color:#cbd5e1;">Publish Status</label><select id="m_faq_pub" style="background:#081535; color:#fff;"><option value="true">Live</option><option value="false">Hidden</option></select></div>
+        <button class="btn btn-gold" onclick="saveFaq()" style="width:100%; margin-top:15px;">Save FAQ</button>
+    </div>
+</div>
+
+<!-- Testimonial Modal -->
+<div id="testFormModal" style="display:none; position:fixed; inset:0; background:rgba(5,8,20,0.75); z-index:99999; padding:20px; overflow-y:auto; backdrop-filter:blur(8px);">
+    <div style="background:#112050; color:#fff; max-width:540px; margin:40px auto; padding:36px; border-radius:var(--radius-xl); border:1px solid var(--border-gold); position:relative; box-shadow:var(--shadow-xl);">
+        <button onclick="document.getElementById('testFormModal').style.display='none'" style="position:absolute; top:20px; right:20px; background:none; border:none; font-size:24px; color:#fff; cursor:pointer;">&times;</button>
+        <h3 style="margin-bottom:20px; color:var(--gold-400);" id="test_modal_title">Add Testimonial</h3>
+        <input type="hidden" id="m_test_id">
+        <div class="form-sec"><label style="color:#cbd5e1;">Guest Name</label><input type="text" id="m_test_name"></div>
+        <div class="form-sec"><label style="color:#cbd5e1;">Location / Tour</label><input type="text" id="m_test_loc"></div>
+        <div class="form-sec"><label style="color:#cbd5e1;">Rating (1-5)</label><input type="number" id="m_test_rating" min="1" max="5" value="5"></div>
+        <div class="form-sec"><label style="color:#cbd5e1;">Avatar URL</label><input type="text" id="m_test_img"></div>
+        <div class="form-sec"><label style="color:#cbd5e1;">Review Message</label><textarea id="m_test_msg" rows="4"></textarea></div>
+        <button class="btn btn-gold" onclick="saveTestimonial()" style="width:100%; margin-top:15px;">Save Testimonial</button>
+    </div>
+</div>
+
+<!-- Blog Post Modal -->
+<div id="blogFormModal" style="display:none; position:fixed; inset:0; background:rgba(5,8,20,0.75); z-index:99999; padding:20px; overflow-y:auto; backdrop-filter:blur(8px);">
+    <div style="background:#112050; color:#fff; max-width:720px; margin:40px auto; padding:36px; border-radius:var(--radius-xl); border:1px solid var(--border-gold); position:relative; box-shadow:var(--shadow-xl);">
+        <button onclick="document.getElementById('blogFormModal').style.display='none'" style="position:absolute; top:20px; right:20px; background:none; border:none; font-size:24px; color:#fff; cursor:pointer;">&times;</button>
+        <h3 style="margin-bottom:20px; color:var(--gold-400);" id="blog_modal_title">Add Journal Post</h3>
+        <input type="hidden" id="m_blog_id">
+        <div class="form-sec"><label style="color:#cbd5e1;">Title</label><input type="text" id="m_blog_title"></div>
+        <div class="form-sec"><label style="color:#cbd5e1;">URL Slug</label><input type="text" id="m_blog_slug"></div>
+        <div class="form-sec"><label style="color:#cbd5e1;">Cover Image URL</label><input type="text" id="m_blog_img"></div>
+        <div class="form-sec"><label style="color:#cbd5e1;">Short Excerpt</label><textarea id="m_blog_excerpt" rows="2"></textarea></div>
+        <div class="form-sec"><label style="color:#cbd5e1;">Full Article Content (HTML allowed)</label><textarea id="m_blog_content" rows="8"></textarea></div>
+        <div class="form-sec"><label style="color:#cbd5e1;">Publish Status</label><select id="m_blog_pub" style="background:#081535; color:#fff;"><option value="true">Live</option><option value="false">Hidden</option></select></div>
+        <button class="btn btn-gold" onclick="saveBlogPost()" style="width:100%; margin-top:15px;">Save Journal Post</button>
+    </div>
+</div>
+
+
+<!-- SCRIPTS (Deferred for Non-Blocking Initial Paint) -->
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/dompurify@3.0.5/dist/purify.min.js"></script>
+<script defer src="config.js"></script>
+<script defer src="catalog-data.js"></script>
+<script defer src="admin.js"></script>
+</body>
+</html>

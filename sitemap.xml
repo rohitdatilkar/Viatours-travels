@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+
+  <!-- 1. Primary Landing & Brand Experience -->
+  <url>
+    <loc>https://viatoursandtravels.com/</loc>
+    <lastmod>2026-09-09</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://viatoursandtravels.com/assets/social-preview.jpg</image:loc>
+      <image:title>Via Tours and Travels — Bespoke Luxury Holidays</image:title>
+      <image:caption>Award-winning luxury travel agency crafting bespoke holiday itineraries, private overwater villas, and 24/7 dedicated concierge.</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://viatoursandtravels.com/assets/agency-logo.png</image:loc>
+      <image:title>Via Tours and Travels Official Logo</image:title>
+    </image:image>
+  </url>
+
+  <!-- 2. Main Exploration Sections -->
+  <url>
+    <loc>https://viatoursandtravels.com/?page=packages</loc>
+    <lastmod>2026-09-09</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=1200&amp;q=80</image:loc>
+      <image:title>Curated Luxury Tour Packages &amp; Itineraries</image:title>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://viatoursandtravels.com/?page=destinations</loc>
+    <lastmod>2026-09-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=1200&amp;q=80</image:loc>
+      <image:title>Handpicked Luxury Destinations Worldwide</image:title>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://viatoursandtravels.com/?page=plan-trip</loc>
+    <lastmod>2026-09-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=1200&amp;q=80</image:loc>
+      <image:title>Plan Your Custom Bespoke Journey</image:title>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://viatoursandtravels.com/?page=blog</loc>
+    <lastmod>2026-09-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1200&amp;q=80</image:loc>
+      <image:title>The Luxury Travel Journal &amp; Guides</image:title>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://viatoursandtravels.com/?page=about</loc>
+    <lastmod>2026-09-09</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://viatoursandtravels.com/?page=contact</loc>
+    <lastmod>2026-09-09</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- 3. Popular Destination Filter Hubs -->
+  <url>
+    <loc>https://viatoursandtravels.com/?page=packages&amp;id=dest-maldives</loc>
+    <lastmod>2026-09-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://viatoursandtravels.com/?page=packages&amp;id=dest-switzerland</loc>
+    <lastmod>2026-09-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://viatoursandtravels.com/?page=packages&amp;id=dest-bali</loc>
+    <lastmod>2026-09-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://viatoursandtravels.com/?page=packages&amp;id=dest-dubai</loc>
+    <lastmod>2026-09-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- 4. Legal & Trust Policies -->
+  <url>
+    <loc>https://viatoursandtravels.com/?page=terms</loc>
+    <lastmod>2026-09-09</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
+
+  <url>
+    <loc>https://viatoursandtravels.com/?page=privacy</loc>
+    <lastmod>2026-09-09</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
+
+</urlset>

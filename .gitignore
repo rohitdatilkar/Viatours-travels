@@ -1,0 +1,51 @@
+# ==============================================================================
+# SECRETS OFF THE FRONTEND — GIT IGNORE POLICY
+# Protects against accidental commits of secrets, keys, and private credentials
+# ==============================================================================
+
+# Private Environment Variable Files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env
+
+# Private Encryption & Cloud Credentials
+*.pem
+*.key
+*.pkcs12
+*.pfx
+*.cert
+credentials.json
+serviceAccountKey.json
+service-role*.json
+*-secret.*
+secret.*
+secrets.*
+
+# Package & Dependency Artifacts
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS System Files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# IDE & Editor Workspace Configs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Build & Temporary Caches
+dist/
+build/
+.cache/
+.temp/
+.tmp/

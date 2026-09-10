@@ -1,0 +1,30 @@
+# ==============================================================================
+# VIA TOURS & TRAVELS — FORCE HTTPS & SECURITY ENFORCEMENT
+# ==============================================================================
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # Redirect all HTTP requests to HTTPS (301 Permanent Redirect)
+    RewriteCond %{HTTPS} off [OR]
+    RewriteCond %{HTTP:X-Forwarded-Proto} =http
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule>
+
+<IfModule mod_headers.c>
+    # HTTP Strict Transport Security (HSTS) - 1 Year with Subdomains & Preload
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" env=HTTPS
+
+    # Prevent MIME Sniffing
+    Header always set X-Content-Type-Options "nosniff"
+
+    # Clickjacking Protection
+    Header always set X-Frame-Options "SAMEORIGIN"
+
+    # Strict Referrer Information
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+    # Upgrade Insecure Requests
+    Header always set Content-Security-Policy "upgrade-insecure-requests"
+</IfModule>

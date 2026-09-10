@@ -1,0 +1,23 @@
+# ==============================================================================
+# VIA TOURS & TRAVELS — ROBOTS.TXT
+# Official Domain: https://viatoursandtravels.com
+# ==============================================================================
+
+User-agent: *
+Allow: /
+Allow: /assets/
+Allow: /assets/*.png
+Allow: /assets/*.jpg
+Allow: /assets/*.svg
+Allow: /assets/*.ico
+Allow: /assets/*.webp
+
+# Protect Internal Admin Portal & Confidential Infrastructure Scripts
+Disallow: /admin.html
+Disallow: /admin.js
+Disallow: /config.js
+Disallow: /.env
+Disallow: /supabase-security-setup.sql
+
+# XML Sitemap Location
+Sitemap: https://viatoursandtravels.com/sitemap.xml
