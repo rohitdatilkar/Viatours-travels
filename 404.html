@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta name="robots" content="noindex, follow">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <title>404 — Journey Off Course | Via Tours &amp; Travels</title>
+    <meta name="description" content="The luxury holiday itinerary or destination page you requested could not be located. Explore our curated packages or contact our 24/7 dedicated travel concierge.">
+    
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="404 — Journey Off Course | Via Tours &amp; Travels">
+    <meta property="og:description" content="The luxury holiday itinerary you are seeking has moved or is uncharted. Let us guide you back to extraordinary horizons.">
+    <meta property="og:image" content="https://viatoursandtravels.com/assets/social-preview.jpg">
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+
+    <!-- Resource Preconnects -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+
+    <!-- Google Fonts -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    </noscript>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Main Luxury Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+
+    <script>
+        // Check theme preference before DOM paints
+        (function() {
+            var theme = localStorage.getItem('via_theme');
+            if (theme === 'dark' || (!theme && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark-mode');
+                document.addEventListener('DOMContentLoaded', function() {
+                    document.body.classList.add('dark-mode');
+                });
+            }
+        })();
+
+        // Fail-safe logo handler
+        function handleLogoError(img) {
+            if (!img) return;
+            img.onerror = null;
+            var remoteUrl = 'https://goqwtovltftehautxekh.supabase.co/storage/v1/object/public/package-images/Via%20tours%20&%20travels.png';
+            var localPng = 'assets/agency-logo.png';
+            if (!img.dataset.triedRemote && img.src !== remoteUrl) {
+                img.dataset.triedRemote = 'true';
+                img.src = remoteUrl;
+                return;
+            }
+            if (!img.dataset.triedLocal && img.src !== localPng) {
+                img.dataset.triedLocal = 'true';
+                img.src = localPng;
+                return;
+            }
+            img.style.display = 'none';
+        }
+    </script>
+</head>
+<body>
+    <!-- Top Utility Bar -->
+    <div class="top-vip-bar">
+        <div class="container vip-bar-in">
+            <div class="vip-left">
+                <span class="vip-pill"><i class="fas fa-certificate" style="color:var(--gold-400);"></i> ASTA &amp; IATA Accredited Partner</span>
+                <span class="vip-pill"><i class="fas fa-shield-alt" style="color:var(--emerald-400);"></i> 100% Financial Protection</span>
+            </div>
+            <div class="vip-right">
+                <div class="vip-actions-group">
+                    <a href="tel:+919876543210" class="vip-action-btn vip-btn-phone" aria-label="Call concierge">
+                        <i class="fas fa-phone-alt"></i>
+                        <span class="vip-btn-text">+91 98765 43210</span>
+                    </a>
+                    <a href="https://wa.me/919876543210?text=Hello%20Via%20Tours!%20I%20hit%20a%20missing%20page%20and%20would%20like%20assistance%20planning%20my%20luxury%20holiday." class="vip-action-btn vip-btn-wa" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
+                        <i class="fab fa-whatsapp"></i>
+                        <span class="vip-btn-text">WhatsApp 24/7</span>
+                    </a>
+                    <button class="vip-action-btn vip-btn-theme" id="themeToggleBtn" onclick="toggleTheme()" aria-label="Toggle dark mode">
+                        <i class="fas fa-moon" id="themeIcon"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Navigation Header -->
+    <header class="header">
+        <div class="container header-in">
+            <a href="index.html#/home" class="logo-wrap" aria-label="Via Tours & Travels Home">
+                <img src="assets/agency-logo.png" alt="Via Tours & Travels Official Agency Logo" width="55" height="55" onerror="handleLogoError(this)">
+                <div class="logo-txt">
+                    <strong>Via</strong>
+                    <span>Tours &amp; Travels</span>
+                </div>
+            </a>
+
+            <nav class="nav-menu" aria-label="Main Navigation">
+                <div class="nav-drawer-header">
+                    <div class="drawer-logo-wrap">
+                        <img src="assets/agency-logo.png" alt="Via Tours & Travels Official Logo" width="38" height="38" class="drawer-logo-img" onerror="handleLogoError(this)">
+                        <div class="logo-txt">
+                            <strong style="font-size:1.15rem;">Via</strong>
+                            <span style="font-size:0.6rem; letter-spacing:1px;">Tours &amp; Travels</span>
+                        </div>
+                    </div>
+                    <button class="nav-drawer-close" onclick="toggleMobileMenu()" aria-label="Close navigation drawer">&times;</button>
+                </div>
+                <div class="nav-links-wrap">
+                    <a href="index.html#/home"><i class="fas fa-home"></i> Home</a>
+                    <a href="index.html#/destinations"><i class="fas fa-globe-americas"></i> Destinations</a>
+                    <a href="index.html#/packages"><i class="fas fa-suitcase-rolling"></i> Luxury Packages</a>
+                    <a href="index.html#/blog"><i class="fas fa-newspaper"></i> Travel Journal</a>
+                    <a href="index.html#/about"><i class="fas fa-landmark"></i> About Us</a>
+                    <a href="index.html#/contact"><i class="fas fa-headset"></i> Concierge</a>
+                </div>
+                <div class="nav-drawer-cta">
+                    <a href="index.html#/plan-trip" class="btn btn-gold nav-cta"><i class="fas fa-compass"></i> Plan Custom Trip</a>
+                </div>
+            </nav>
+
+            <div style="display:flex; align-items:center; gap:12px;">
+                <a href="index.html#/plan-trip" class="btn btn-gold nav-cta" style="display:inline-flex;"><i class="fas fa-compass"></i> Plan Trip</a>
+                <button class="mobile-toggle" onclick="toggleMobileMenu()" aria-label="Open mobile menu">
+                    <i class="fas fa-bars" id="mobMenuIcon"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 404 Main Content -->
+    <main>
+        <div class="notfound-page">
+            <div class="notfound-card">
+                <div class="notfound-compass" aria-hidden="true">
+                    <i class="fas fa-compass"></i>
+                </div>
+                <div class="notfound-code">404</div>
+                <h1 class="notfound-title">Journey Off Course</h1>
+                <p class="notfound-desc">The destination or itinerary you are seeking could not be located. It may have expired, moved, or exists under a different horizon. Let us guide you back to extraordinary experiences.</p>
+
+                <!-- Search Box -->
+                <form class="notfound-search" onsubmit="handleSearch(event)">
+                    <i class="fas fa-search" aria-hidden="true"></i>
+                    <input type="text" id="query_404" placeholder="Search destinations, packages, luxury stays..." aria-label="Search destinations from 404 page">
+                    <button type="submit" class="btn btn-gold btn-sm"><i class="fas fa-arrow-right"></i> Search</button>
+                </form>
+
+                <!-- Popular Expeditions -->
+                <div class="notfound-suggestions">
+                    <span class="notfound-suggestions-label">Explore Signature Escapes:</span>
+                    <div class="notfound-pills">
+                        <a href="index.html#/packages" class="notfound-pill"><i class="fas fa-umbrella-beach"></i> Maldives Overwater</a>
+                        <a href="index.html#/packages" class="notfound-pill"><i class="fas fa-mountain"></i> Swiss Alps</a>
+                        <a href="index.html#/packages" class="notfound-pill"><i class="fas fa-heart"></i> Romantic Bali</a>
+                        <a href="index.html#/packages" class="notfound-pill"><i class="fas fa-sun"></i> Dubai Oases</a>
+                        <a href="index.html#/packages" class="notfound-pill"><i class="fas fa-water"></i> Amalfi Coast</a>
+                    </div>
+                </div>
+
+                <!-- Navigation Actions -->
+                <div class="notfound-actions">
+                    <a href="index.html#/home" class="btn btn-gold">
+                        <i class="fas fa-home"></i> Return to Homepage
+                    </a>
+                    <a href="index.html#/packages" class="btn btn-navy">
+                        <i class="fas fa-suitcase-rolling"></i> Browse All Packages
+                    </a>
+                    <a href="https://wa.me/919876543210?text=Hi%20Via%20Tours,%20I%20hit%20a%20missing%20page%20and%20need%20assistance%20planning%20my%20journey." target="_blank" rel="noopener noreferrer" class="btn btn-outline">
+                        <i class="fab fa-whatsapp"></i> Chat with 24/7 Concierge
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <!-- Col 1: Brand -->
+                <div class="footer-col">
+                    <a href="index.html#/home" style="display:flex; align-items:center; gap:12px; margin-bottom:16px; text-decoration:none; color:inherit;" aria-label="Via Tours & Travels Home">
+                        <img src="assets/agency-logo.png" alt="Via Tours & Travels Official Agency Logo" width="55" height="55" style="height:55px; width:auto; border-radius:6px;" onerror="handleLogoError(this)">
+                        <div class="logo-txt">
+                            <strong style="color:#ffffff;">Via</strong>
+                            <span>Tours &amp; Travels</span>
+                        </div>
+                    </a>
+                    <p style="font-size:0.9rem; color:#94a3b8; line-height:1.6; margin-bottom:20px;">Your trusted partner for extraordinary journeys. Creating world-class, bespoke luxury memories since 2009.</p>
+                    <div style="display:flex; gap:14px; color:#cbd5e1; font-size:1.1rem;">
+                        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram" style="color:var(--gold-400);"><i class="fab fa-instagram"></i></a>
+                        <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook" style="color:var(--gold-400);"><i class="fab fa-facebook"></i></a>
+                        <a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" style="color:var(--gold-400);"><i class="fab fa-whatsapp"></i></a>
+                        <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" style="color:var(--gold-400);"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+
+                <!-- Col 2: Quick Links -->
+                <div class="footer-col">
+                    <h4>Quick Navigation</h4>
+                    <ul>
+                        <li><a href="index.html#/home"><i class="fas fa-chevron-right" style="font-size:0.7rem; color:var(--gold-400);"></i> Home</a></li>
+                        <li><a href="index.html#/packages"><i class="fas fa-chevron-right" style="font-size:0.7rem; color:var(--gold-400);"></i> Luxury Packages</a></li>
+                        <li><a href="index.html#/destinations"><i class="fas fa-chevron-right" style="font-size:0.7rem; color:var(--gold-400);"></i> Destinations</a></li>
+                        <li><a href="index.html#/blog"><i class="fas fa-chevron-right" style="font-size:0.7rem; color:var(--gold-400);"></i> Travel Journal</a></li>
+                        <li><a href="index.html#/plan-trip"><i class="fas fa-chevron-right" style="font-size:0.7rem; color:var(--gold-400);"></i> Plan Bespoke Trip</a></li>
+                    </ul>
+                </div>
+
+                <!-- Col 3: Popular Themes -->
+                <div class="footer-col">
+                    <h4>Featured Themes</h4>
+                    <ul>
+                        <li><a href="index.html#/packages"><i class="fas fa-chevron-right" style="font-size:0.7rem; color:var(--gold-400);"></i> Overwater Villas</a></li>
+                        <li><a href="index.html#/packages"><i class="fas fa-chevron-right" style="font-size:0.7rem; color:var(--gold-400);"></i> Swiss Alpine Tours</a></li>
+                        <li><a href="index.html#/packages"><i class="fas fa-chevron-right" style="font-size:0.7rem; color:var(--gold-400);"></i> Romantic Escapes</a></li>
+                        <li><a href="index.html#/packages"><i class="fas fa-chevron-right" style="font-size:0.7rem; color:var(--gold-400);"></i> Dubai &amp; Desert Luxury</a></li>
+                        <li><a href="index.html#/about"><i class="fas fa-chevron-right" style="font-size:0.7rem; color:var(--gold-400);"></i> Our 15-Year Story</a></li>
+                    </ul>
+                </div>
+
+                <!-- Col 4: Contact -->
+                <div class="footer-col">
+                    <h4>Concierge Desk</h4>
+                    <p style="color:#94a3b8; font-size:0.88rem; line-height:1.6; margin-bottom:12px;">Available 24 hours daily for private appointments, custom routing, and VIP reservations.</p>
+                    <p style="color:#cbd5e1; font-size:0.88rem; margin-bottom:6px;"><i class="fas fa-phone-alt" style="color:var(--gold-400); margin-right:8px;"></i> +91 98765 43210</p>
+                    <p style="color:#cbd5e1; font-size:0.88rem;"><i class="fas fa-envelope" style="color:var(--gold-400); margin-right:8px;"></i> concierge@viatoursandtravels.com</p>
+                </div>
+            </div>
+
+            <!-- Bottom Row -->
+            <div class="footer-bottom">
+                <p>&copy; 2026 Via Tours &amp; Travels. All Rights Reserved. Crafted with pure luxury.</p>
+                <div class="footer-bottom-links">
+                    <a href="index.html#/terms">Terms of Service</a>
+                    <span>•</span>
+                    <a href="index.html#/privacy">Privacy Policy</a>
+                    <span>•</span>
+                    <a href="admin.html" style="color:var(--gold-400);"><i class="fas fa-lock"></i> Staff Portal</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Mobile Bottom Navigation -->
+    <div class="mobile-bottom-nav">
+        <a href="index.html#/home" class="mob-nav-item">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="index.html#/destinations" class="mob-nav-item">
+            <i class="fas fa-globe-americas"></i>
+            <span>Places</span>
+        </a>
+        <a href="index.html#/plan-trip" class="mob-nav-item mob-nav-highlight">
+            <div class="mob-nav-fab"><i class="fas fa-compass"></i></div>
+            <span>Custom</span>
+        </a>
+        <a href="index.html#/packages" class="mob-nav-item">
+            <i class="fas fa-suitcase-rolling"></i>
+            <span>Packages</span>
+        </a>
+        <a href="https://wa.me/919876543210?text=Hello%20Via%20Tours!%20I%20need%20assistance%20with%20a%20luxury%20holiday." target="_blank" rel="noopener noreferrer" class="mob-nav-item mob-nav-wa">
+            <i class="fab fa-whatsapp"></i>
+            <span>WhatsApp</span>
+        </a>
+    </div>
+
+    <!-- Page Scripts -->
+    <script>
+        function toggleTheme() {
+            var isDark = document.body.classList.toggle('dark-mode');
+            document.documentElement.classList.toggle('dark-mode', isDark);
+            localStorage.setItem('via_theme', isDark ? 'dark' : 'light');
+            var icon = document.getElementById('themeIcon');
+            if (icon) icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+        }
+
+        // Initialize Theme Icon
+        (function() {
+            var isDark = document.body.classList.contains('dark-mode') || document.documentElement.classList.contains('dark-mode');
+            var icon = document.getElementById('themeIcon');
+            if (icon) icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+        })();
+
+        function toggleMobileMenu() {
+            var nav = document.querySelector('.nav-menu');
+            if (nav) nav.classList.toggle('active');
+        }
+
+        function handleSearch(e) {
+            if (e) e.preventDefault();
+            var input = document.getElementById('query_404');
+            var q = input ? input.value.trim() : '';
+            if (q) {
+                window.location.href = 'index.html?page=packages&q=' + encodeURIComponent(q) + '#/packages';
+            } else {
+                window.location.href = 'index.html#/packages';
+            }
+        }
+    </script>
+</body>
+</html>

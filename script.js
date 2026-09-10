@@ -544,7 +544,7 @@ async function router() {
 
     // Hide all views then show the target view
     document.querySelectorAll('.page-view').forEach(p => p.style.display = 'none');
-    const view = document.getElementById('page-' + page) || document.getElementById('page-home');
+    const view = document.getElementById('page-' + page) || document.getElementById('page-404') || document.getElementById('page-home');
     if (view) view.style.display = 'block';
 
     window.scrollTo({ top: 0, behavior: 'instant' });
@@ -647,14 +647,35 @@ async function router() {
             );
             break;
 
-        default:
-            loadHomeData();
+        case '404':
             updateSEO(
-                'Via Tours & Travels — Bespoke Luxury Holidays & Curated Journeys',
-                'Award-winning luxury travel agency crafting bespoke holiday itineraries, private villas, chauffeured transfers, and 24/7 dedicated concierge service worldwide.',
+                '404 — Journey Off Course | Via Tours & Travels',
+                'The luxury holiday itinerary or destination page you requested could not be located. Explore our curated packages or contact our 24/7 travel concierge.',
                 'https://viatoursandtravels.com/assets/social-preview.jpg',
-                '#/home'
+                '#/404'
             );
+            break;
+
+        default:
+            const notFoundView = document.getElementById('page-404');
+            if (notFoundView) {
+                document.querySelectorAll('.page-view').forEach(p => p.style.display = 'none');
+                notFoundView.style.display = 'block';
+                updateSEO(
+                    '404 — Journey Off Course | Via Tours & Travels',
+                    'The luxury holiday itinerary or destination page you requested could not be located. Explore our curated packages or contact our 24/7 travel concierge.',
+                    'https://viatoursandtravels.com/assets/social-preview.jpg',
+                    '#/404'
+                );
+            } else {
+                loadHomeData();
+                updateSEO(
+                    'Via Tours & Travels — Bespoke Luxury Holidays & Curated Journeys',
+                    'Award-winning luxury travel agency crafting bespoke holiday itineraries, private villas, chauffeured transfers, and 24/7 dedicated concierge service worldwide.',
+                    'https://viatoursandtravels.com/assets/social-preview.jpg',
+                    '#/home'
+                );
+            }
             break;
     }
 }
@@ -2248,6 +2269,23 @@ async function handleQuickContact(e) {
         showToast('Your message has been sent to our concierge desk!', 'success');
         e.target.reset();
     });
+}
+
+// 404 Search Handler
+function handle404Search(e) {
+    if (e) e.preventDefault();
+    const input = document.getElementById('notfound_query');
+    const q = input ? input.value.trim() : '';
+    navTo('packages');
+    if (q) {
+        setTimeout(() => {
+            const pkgSearch = document.getElementById('pkg_search_input');
+            if (pkgSearch) {
+                pkgSearch.value = q;
+                pkgSearch.dispatchEvent(new Event('input'));
+            }
+        }, 120);
+    }
 }
 
 // Newsletter Subscription

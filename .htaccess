@@ -28,3 +28,6 @@
     # Upgrade Insecure Requests
     Header always set Content-Security-Policy "upgrade-insecure-requests"
 </IfModule>
+
+# Custom 404 Error Document
+ErrorDocument 404 /404.html

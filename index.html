@@ -1703,6 +1703,51 @@
                         </a>
                     </div>
                 </div>
+        <!-- ==========================================
+             PAGE VIEW: 404 NOT FOUND
+             ========================================== -->
+        <div id="page-404" class="page-view" style="display:none;">
+            <div class="notfound-page">
+                <div class="notfound-card">
+                    <div class="notfound-compass" aria-hidden="true">
+                        <i class="fas fa-compass"></i>
+                    </div>
+                    <div class="notfound-code">404</div>
+                    <h1 class="notfound-title">Journey Off Course</h1>
+                    <p class="notfound-desc">The destination or itinerary you are seeking could not be located. It may have expired, moved, or exists under a different horizon. Let us guide you back to extraordinary experiences.</p>
+                    
+                    <!-- Destination Search -->
+                    <form class="notfound-search" onsubmit="handle404Search(event)">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="notfound_query" placeholder="Search destinations, packages, luxury stays..." aria-label="Search destinations from 404 page">
+                        <button type="submit" class="btn btn-gold btn-sm"><i class="fas fa-arrow-right"></i> Search</button>
+                    </form>
+
+                    <!-- Popular Expeditions -->
+                    <div class="notfound-suggestions">
+                        <span class="notfound-suggestions-label">Explore Signature Escapes:</span>
+                        <div class="notfound-pills">
+                            <a href="#/packages" onclick="filterByCollection('Luxury'); return false;" class="notfound-pill"><i class="fas fa-umbrella-beach"></i> Maldives Overwater</a>
+                            <a href="#/packages" onclick="filterByCollection('Adventure'); return false;" class="notfound-pill"><i class="fas fa-mountain"></i> Swiss Alps</a>
+                            <a href="#/packages" onclick="filterByCollection('Honeymoon'); return false;" class="notfound-pill"><i class="fas fa-heart"></i> Romantic Bali</a>
+                            <a href="#/packages" onclick="filterByCollection('Family'); return false;" class="notfound-pill"><i class="fas fa-sun"></i> Dubai Oases</a>
+                            <a href="#/packages" onclick="navTo('packages'); return false;" class="notfound-pill"><i class="fas fa-water"></i> Amalfi Coast</a>
+                        </div>
+                    </div>
+
+                    <!-- Direct Navigation Actions -->
+                    <div class="notfound-actions">
+                        <a href="#/home" onclick="navTo('home'); return false;" class="btn btn-gold">
+                            <i class="fas fa-home"></i> Return to Homepage
+                        </a>
+                        <a href="#/packages" onclick="navTo('packages'); return false;" class="btn btn-navy">
+                            <i class="fas fa-suitcase-rolling"></i> Browse All Packages
+                        </a>
+                        <a href="https://wa.me/919876543210?text=Hi%20Via%20Tours,%20I%20hit%20a%20missing%20page%20on%20your%20website%20and%20need%20assistance%20planning%20my%20journey." target="_blank" rel="noopener noreferrer" class="btn btn-outline">
+                            <i class="fab fa-whatsapp"></i> Chat with 24/7 Concierge
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </main>

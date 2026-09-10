@@ -1,2 +1,5 @@
 # Force HTTPS Redirects for Netlify / Cloudflare Pages
 http://* https://:splat 301!
+
+# Custom 404 Error Page
+/* /404.html 404
