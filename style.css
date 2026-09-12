@@ -2357,6 +2357,85 @@ body.dark-mode .req-star {
     box-shadow: 0 0 0 3px rgba(232, 119, 34, 0.15);
 }
 
+/* --- FORM VALIDATION STATES & LUXURY ERROR FEEDBACK --- */
+.form-sec input.is-invalid,
+.form-sec select.is-invalid,
+.form-sec textarea.is-invalid,
+input.is-invalid,
+select.is-invalid,
+textarea.is-invalid {
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.18) !important;
+    background-color: rgba(239, 68, 68, 0.02) !important;
+}
+
+body.dark-mode .form-sec input.is-invalid,
+body.dark-mode .form-sec select.is-invalid,
+body.dark-mode .form-sec textarea.is-invalid,
+body.dark-mode input.is-invalid,
+body.dark-mode select.is-invalid,
+body.dark-mode textarea.is-invalid {
+    border-color: #f87171 !important;
+    box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.22) !important;
+    background-color: rgba(239, 68, 68, 0.06) !important;
+}
+
+.form-sec input.is-valid,
+.form-sec select.is-valid,
+.form-sec textarea.is-valid,
+input.is-valid,
+select.is-valid,
+textarea.is-valid {
+    border-color: #10b981;
+}
+
+.field-error-msg {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #dc2626;
+    line-height: 1.35;
+    animation: errorSlideDown 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+body.dark-mode .field-error-msg {
+    color: #fca5a5;
+}
+
+.field-error-msg i {
+    font-size: 0.84rem;
+    flex-shrink: 0;
+    color: #ef4444;
+}
+
+body.dark-mode .field-error-msg i {
+    color: #f87171;
+}
+
+.field-shake {
+    animation: fieldShake 0.36s ease-in-out;
+}
+
+@keyframes errorSlideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fieldShake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-5px); }
+    40%, 80% { transform: translateX(5px); }
+}
+
 /* ==========================================================================
    TRAVEL BLOG & ARTICLES (EDITORIAL MAGAZINE)
    ========================================================================== */

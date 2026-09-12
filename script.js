@@ -191,6 +191,144 @@ function announceA11y(msg) {
     }
 }
 
+// --- UNIFIED FORM VALIDATION ENGINE ---
+const ViaValidator = {
+    // RFC 5322-compliant practical email regex
+    emailRegex: /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/,
+
+    // International and domestic phone formats (+ optional, digits, spaces, dashes, parens, 7 to 15 digits)
+    phoneRegex: /^(?:\+?\d{1,4}[\s\-]?)?(?:\(?\d{2,5}\)?[\s\-]?)?\d{3,5}[\s\-]?\d{3,5}$/,
+
+    isValidEmail(email) {
+        if (!email || typeof email !== 'string') return false;
+        const trimmed = email.trim();
+        return trimmed.length <= 254 && this.emailRegex.test(trimmed);
+    },
+
+    isValidPhone(phone) {
+        if (!phone || typeof phone !== 'string') return false;
+        const trimmed = phone.trim();
+        const digitsOnly = trimmed.replace(/\D/g, '');
+        return digitsOnly.length >= 7 && digitsOnly.length <= 15 && this.phoneRegex.test(trimmed);
+    },
+
+    isValidName(name, minLength = 2) {
+        if (!name || typeof name !== 'string') return false;
+        const trimmed = name.trim();
+        return trimmed.length >= minLength && /[a-zA-Z\u00C0-\u024F\u1E00-\u1EFF]/.test(trimmed);
+    },
+
+    isValidDate(dateStr, allowPast = false) {
+        if (!dateStr || typeof dateStr !== 'string') return false;
+        const parsed = new Date(dateStr);
+        if (isNaN(parsed.getTime())) return false;
+        if (!allowPast) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const parts = dateStr.split('-');
+            if (parts.length === 3) {
+                const selected = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+                return selected >= today;
+            }
+            return parsed >= today;
+        }
+        return true;
+    },
+
+    isValidNumber(val, min = 1, max = 50) {
+        const num = Number(val);
+        return !isNaN(num) && num >= min && num <= max;
+    },
+
+    isValidText(text, minLength = 1, maxLength = 2000) {
+        if (!text || typeof text !== 'string') return false;
+        const trimmed = text.trim();
+        return trimmed.length >= minLength && trimmed.length <= maxLength;
+    },
+
+    setFieldError(inputEl, message) {
+        if (!inputEl) return;
+        inputEl.classList.add('is-invalid');
+        inputEl.classList.remove('is-valid');
+        inputEl.setAttribute('aria-invalid', 'true');
+
+        // Trigger tactile field shake animation
+        inputEl.classList.remove('field-shake');
+        void inputEl.offsetWidth; // force browser reflow
+        inputEl.classList.add('field-shake');
+
+        // Locate or create error message container
+        const fieldId = inputEl.id || ('f_' + Math.random().toString(36).substr(2, 6));
+        inputEl.id = fieldId;
+        const errorId = fieldId + '-error';
+        inputEl.setAttribute('aria-describedby', errorId);
+
+        let errorEl = document.getElementById(errorId);
+        if (!errorEl) {
+            errorEl = document.createElement('div');
+            errorEl.id = errorId;
+            errorEl.className = 'field-error-msg';
+            errorEl.setAttribute('role', 'alert');
+            if (inputEl.nextSibling) {
+                inputEl.parentNode.insertBefore(errorEl, inputEl.nextSibling);
+            } else {
+                inputEl.parentNode.appendChild(errorEl);
+            }
+        }
+        errorEl.innerHTML = `<i class="fas fa-exclamation-circle" aria-hidden="true"></i> <span>${escapeHTML(message)}</span>`;
+        errorEl.style.display = 'flex';
+
+        // Auto-clear on edit
+        const clearHandler = () => {
+            ViaValidator.clearFieldError(inputEl);
+            inputEl.removeEventListener('input', clearHandler);
+            inputEl.removeEventListener('change', clearHandler);
+        };
+        inputEl.addEventListener('input', clearHandler);
+        inputEl.addEventListener('change', clearHandler);
+    },
+
+    clearFieldError(inputEl) {
+        if (!inputEl) return;
+        inputEl.classList.remove('is-invalid', 'field-shake');
+        inputEl.removeAttribute('aria-invalid');
+        const errorId = inputEl.id ? inputEl.id + '-error' : null;
+        if (errorId) {
+            const errorEl = document.getElementById(errorId);
+            if (errorEl) {
+                errorEl.remove();
+            }
+        }
+    },
+
+    markFieldValid(inputEl) {
+        if (!inputEl) return;
+        this.clearFieldError(inputEl);
+        inputEl.classList.add('is-valid');
+    },
+
+    clearFormErrors(formEl) {
+        if (!formEl) return;
+        formEl.querySelectorAll('.is-invalid, .is-valid').forEach(el => {
+            el.classList.remove('is-invalid', 'is-valid', 'field-shake');
+            el.removeAttribute('aria-invalid');
+        });
+        formEl.querySelectorAll('.field-error-msg').forEach(el => el.remove());
+    },
+
+    focusFirstError(formEl) {
+        if (!formEl) return;
+        const firstInvalid = formEl.querySelector('.is-invalid');
+        if (firstInvalid) {
+            firstInvalid.focus();
+            if (typeof firstInvalid.scrollIntoView === 'function') {
+                firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+    }
+};
+window.ViaValidator = ViaValidator;
+
 // --- RESPONSIVE WEBP IMAGE HELPER ---
 /**
  * Generates an optimized responsive image HTML string using modern <picture>
@@ -830,13 +968,33 @@ function ensureJsPdf() {
 
 async function handleSampleItineraryDownload(e) {
     e.preventDefault();
+    const form = e.target;
     const btn = document.getElementById('btn_sample_download');
-    const name = document.getElementById('sample_name')?.value.trim();
-    const email = document.getElementById('sample_email')?.value.trim();
+    const nameInput = document.getElementById('sample_name');
+    const emailInput = document.getElementById('sample_email');
+    const name = nameInput ? nameInput.value.trim() : '';
+    const email = emailInput ? emailInput.value.trim() : '';
     const dest = document.getElementById('sample_dest')?.value || 'Signature Luxury Journeys';
 
-    if (!name || !email) {
-        showToast('Please enter your full name and email address.', 'error');
+    let valid = true;
+
+    if (!ViaValidator.isValidName(name, 2)) {
+        ViaValidator.setFieldError(nameInput, 'Please enter your full name (at least 2 letters).');
+        valid = false;
+    } else {
+        ViaValidator.markFieldValid(nameInput);
+    }
+
+    if (!ViaValidator.isValidEmail(email)) {
+        ViaValidator.setFieldError(emailInput, 'Please enter a valid email address.');
+        valid = false;
+    } else {
+        ViaValidator.markFieldValid(emailInput);
+    }
+
+    if (!valid) {
+        ViaValidator.focusFirstError(form);
+        showToast('Please enter your name and valid email address.', 'error');
         return;
     }
 
@@ -2043,18 +2201,45 @@ function selectTripStyle(styleName, el) {
 }
 
 function nextTripStep(stepNum) {
-    // Validate current step
+    // Validate current step before advancing forward
     if (stepNum > currentTripStep) {
         if (currentTripStep === 1) {
-            const dest = document.getElementById('pt_dest').value.trim();
-            if (!dest) {
-                showToast('Please enter your preferred destination.', 'error');
+            const destInput = document.getElementById('pt_dest');
+            const destVal = destInput ? destInput.value.trim() : '';
+            if (!ViaValidator.isValidName(destVal, 2)) {
+                ViaValidator.setFieldError(destInput, 'Please enter a destination of interest (at least 2 letters).');
+                destInput?.focus();
+                showToast('Please specify your desired destination.', 'error');
                 return;
+            } else {
+                ViaValidator.markFieldValid(destInput);
             }
         } else if (currentTripStep === 2) {
-            const dates = document.getElementById('pt_dates').value;
-            if (!dates) {
-                showToast('Please select an estimated travel date.', 'error');
+            let step2Valid = true;
+            const dateInput = document.getElementById('pt_dates');
+            const travelersInput = document.getElementById('pt_travelers');
+
+            if (!dateInput || !dateInput.value) {
+                ViaValidator.setFieldError(dateInput, 'Please select your estimated departure date.');
+                step2Valid = false;
+            } else if (!ViaValidator.isValidDate(dateInput.value, false)) {
+                ViaValidator.setFieldError(dateInput, 'Travel date must be today or in the future.');
+                step2Valid = false;
+            } else {
+                ViaValidator.markFieldValid(dateInput);
+            }
+
+            if (!travelersInput || !ViaValidator.isValidNumber(travelersInput.value, 1, 50)) {
+                ViaValidator.setFieldError(travelersInput, 'Please enter a group size between 1 and 50.');
+                step2Valid = false;
+            } else {
+                ViaValidator.markFieldValid(travelersInput);
+            }
+
+            if (!step2Valid) {
+                const firstErr = document.querySelector('#step-2 .is-invalid');
+                firstErr?.focus();
+                showToast('Please check travel dates and travelers count.', 'error');
                 return;
             }
         }
@@ -2117,11 +2302,44 @@ if (planTripForm) {
             return;
         }
 
+        const nameInput = document.getElementById('pt_name');
+        const emailInput = document.getElementById('pt_email');
+        const phoneInput = document.getElementById('pt_phone');
+        const name = nameInput ? nameInput.value.trim() : '';
+        const email = emailInput ? emailInput.value.trim() : '';
+        const phone = phoneInput ? phoneInput.value.trim() : '';
+
+        let formValid = true;
+
+        if (!ViaValidator.isValidName(name, 2)) {
+            ViaValidator.setFieldError(nameInput, 'Please enter your full name (at least 2 letters).');
+            formValid = false;
+        } else {
+            ViaValidator.markFieldValid(nameInput);
+        }
+
+        if (!ViaValidator.isValidEmail(email)) {
+            ViaValidator.setFieldError(emailInput, 'Please enter a valid email address (e.g. name@domain.com).');
+            formValid = false;
+        } else {
+            ViaValidator.markFieldValid(emailInput);
+        }
+
+        if (!ViaValidator.isValidPhone(phone)) {
+            ViaValidator.setFieldError(phoneInput, 'Please enter a valid contact phone or WhatsApp number (7–15 digits).');
+            formValid = false;
+        } else {
+            ViaValidator.markFieldValid(phoneInput);
+        }
+
+        if (!formValid) {
+            ViaValidator.focusFirstError(planTripForm);
+            showToast('Please correct the highlighted contact fields.', 'error');
+            return;
+        }
+
         const btn = document.getElementById('btn_submit_plan');
         await withLoading(btn, async () => {
-            const name = document.getElementById('pt_name')?.value.trim();
-            const email = document.getElementById('pt_email')?.value.trim();
-            const phone = document.getElementById('pt_phone')?.value.trim();
             const dest = document.getElementById('pt_dest')?.value.trim();
             const dates = document.getElementById('pt_dates')?.value;
             const travelers = document.getElementById('pt_travelers')?.value || '2';
@@ -2131,11 +2349,6 @@ if (planTripForm) {
             const style = document.getElementById('pt_style')?.value || 'Ultra Luxury';
             const req = document.getElementById('pt_req')?.value.trim();
             const pkgId = document.getElementById('pt_pkg_id')?.value || null;
-
-            if (!name || !email || !phone) {
-                showToast('Please fill all required contact fields.', 'error');
-                return;
-            }
 
             // Guard against non-UUID package IDs (e.g. 'pkg-maldives-sanctuary') triggering PostgreSQL 22P02 error
             const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -2178,6 +2391,7 @@ if (planTripForm) {
                 window.confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
             }
 
+            ViaValidator.clearFormErrors(planTripForm);
             showToast('🎉 Your bespoke itinerary inquiry has been received! Our specialist will contact you shortly.', 'success');
             
             // Redirect to WhatsApp handover option or home
@@ -2195,16 +2409,62 @@ if (tripModalForm) {
         e.preventDefault();
         if (document.getElementById('modal_honeypot')?.value) return;
 
-        const name = document.getElementById('modal_pt_name')?.value.trim();
-        const email = document.getElementById('modal_pt_email')?.value.trim();
-        const phone = document.getElementById('modal_pt_phone')?.value.trim();
-        const dest = document.getElementById('modal_pt_dest')?.value.trim();
-        const dates = document.getElementById('modal_pt_dates')?.value;
-        const travelers = document.getElementById('modal_pt_travelers')?.value || '2';
-        const req = document.getElementById('modal_pt_req')?.value.trim();
+        const nameInput = document.getElementById('modal_pt_name');
+        const emailInput = document.getElementById('modal_pt_email');
+        const phoneInput = document.getElementById('modal_pt_phone');
+        const destInput = document.getElementById('modal_pt_dest');
+        const dateInput = document.getElementById('modal_pt_dates');
+        const travelersInput = document.getElementById('modal_pt_travelers');
+        const reqInput = document.getElementById('modal_pt_req');
 
-        if (!name || !email || !phone) {
-            showToast('Please fill all required fields.', 'error');
+        const name = nameInput ? nameInput.value.trim() : '';
+        const email = emailInput ? emailInput.value.trim() : '';
+        const phone = phoneInput ? phoneInput.value.trim() : '';
+        const dest = destInput ? destInput.value.trim() : '';
+        const dates = dateInput ? dateInput.value : '';
+        const travelers = travelersInput ? (travelersInput.value || '2') : '2';
+        const req = reqInput ? reqInput.value.trim() : '';
+
+        let modalValid = true;
+
+        if (!ViaValidator.isValidName(name, 2)) {
+            ViaValidator.setFieldError(nameInput, 'Please enter your full name (at least 2 letters).');
+            modalValid = false;
+        } else {
+            ViaValidator.markFieldValid(nameInput);
+        }
+
+        if (!ViaValidator.isValidEmail(email)) {
+            ViaValidator.setFieldError(emailInput, 'Please enter a valid email address.');
+            modalValid = false;
+        } else {
+            ViaValidator.markFieldValid(emailInput);
+        }
+
+        if (!ViaValidator.isValidPhone(phone)) {
+            ViaValidator.setFieldError(phoneInput, 'Please enter a valid phone or WhatsApp number (7–15 digits).');
+            modalValid = false;
+        } else {
+            ViaValidator.markFieldValid(phoneInput);
+        }
+
+        if (dates && !ViaValidator.isValidDate(dates, false)) {
+            ViaValidator.setFieldError(dateInput, 'Travel date cannot be in the past.');
+            modalValid = false;
+        } else if (dates) {
+            ViaValidator.markFieldValid(dateInput);
+        }
+
+        if (travelersInput?.value && !ViaValidator.isValidNumber(travelersInput.value, 1, 50)) {
+            ViaValidator.setFieldError(travelersInput, 'Please enter between 1 and 50 travelers.');
+            modalValid = false;
+        } else if (travelersInput?.value) {
+            ViaValidator.markFieldValid(travelersInput);
+        }
+
+        if (!modalValid) {
+            ViaValidator.focusFirstError(tripModalForm);
+            showToast('Please correct the highlighted fields.', 'error');
             return;
         }
 
@@ -2226,6 +2486,7 @@ if (tripModalForm) {
         }
 
         if (window.confetti) window.confetti({ particleCount: 100, spread: 70 });
+        ViaValidator.clearFormErrors(tripModalForm);
         showToast('Thank you! Your travel quotation request has been received.', 'success');
         hideTripModal();
     });
@@ -2235,22 +2496,60 @@ if (tripModalForm) {
 async function handleQuickContact(e) {
     e.preventDefault();
     if (document.getElementById('c_honeypot')?.value) return; // Anti-spam bot trap
-    const name = document.getElementById('c_name')?.value.trim() || '';
-    const email = document.getElementById('c_email')?.value.trim() || '';
-    const phone = document.getElementById('c_phone')?.value.trim() || '';
-    const msg = document.getElementById('c_msg')?.value.trim() || '';
+    
+    const form = e.target;
+    const nameInput = document.getElementById('c_name');
+    const emailInput = document.getElementById('c_email');
+    const phoneInput = document.getElementById('c_phone');
+    const msgInput = document.getElementById('c_msg');
 
-    if (!name || (!email && !phone)) {
-        showToast('Please provide your name and at least an email or phone number.', 'error');
+    const name = nameInput ? nameInput.value.trim() : '';
+    const email = emailInput ? emailInput.value.trim() : '';
+    const phone = phoneInput ? phoneInput.value.trim() : '';
+    const msg = msgInput ? msgInput.value.trim() : '';
+
+    let valid = true;
+
+    if (!ViaValidator.isValidName(name, 2)) {
+        ViaValidator.setFieldError(nameInput, 'Please provide your full name (min 2 characters).');
+        valid = false;
+    } else {
+        ViaValidator.markFieldValid(nameInput);
+    }
+
+    if (!email && !phone) {
+        ViaValidator.setFieldError(emailInput, 'Please provide at least an email or phone number.');
+        ViaValidator.setFieldError(phoneInput, 'Please provide at least an email or phone number.');
+        valid = false;
+    } else {
+        if (email && !ViaValidator.isValidEmail(email)) {
+            ViaValidator.setFieldError(emailInput, 'Please enter a valid email address.');
+            valid = false;
+        } else if (email) {
+            ViaValidator.markFieldValid(emailInput);
+        }
+        if (phone && !ViaValidator.isValidPhone(phone)) {
+            ViaValidator.setFieldError(phoneInput, 'Please enter a valid phone number (7–15 digits).');
+            valid = false;
+        } else if (phone) {
+            ViaValidator.markFieldValid(phoneInput);
+        }
+    }
+
+    if (!ViaValidator.isValidText(msg, 10, 2000)) {
+        ViaValidator.setFieldError(msgInput, 'Please describe your inquiry (at least 10 characters).');
+        valid = false;
+    } else {
+        ViaValidator.markFieldValid(msgInput);
+    }
+
+    if (!valid) {
+        ViaValidator.focusFirstError(form);
+        showToast('Please check the highlighted fields above.', 'error');
         return;
     }
 
-    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        showToast('Please enter a valid email address.', 'error');
-        return;
-    }
-
-    const btn = e.target.querySelector('button[type="submit"]');
+    const btn = form.querySelector('button[type="submit"]');
     await withLoading(btn, async () => {
         if (sb) {
             try {
@@ -2266,8 +2565,9 @@ async function handleQuickContact(e) {
                 console.warn('Contact inquiry save error:', err);
             }
         }
+        ViaValidator.clearFormErrors(form);
         showToast('Your message has been sent to our concierge desk!', 'success');
-        e.target.reset();
+        form.reset();
     });
 }
 
@@ -2293,7 +2593,14 @@ async function handleNewsletter(e) {
     e.preventDefault();
     const emailInput = document.getElementById('nl_email');
     const email = emailInput ? emailInput.value.trim() : '';
-    if (!email) return;
+
+    if (!ViaValidator.isValidEmail(email)) {
+        ViaValidator.setFieldError(emailInput, 'Please enter a valid email address.');
+        emailInput?.focus();
+        showToast('Please enter a valid email address to subscribe.', 'error');
+        return;
+    }
+    ViaValidator.clearFieldError(emailInput);
 
     if (sb) {
         try {

@@ -834,7 +834,7 @@
                     <div class="wizard-step-node" id="node-4">4</div>
                 </div>
 
-                <form id="planTripForm">
+                <form id="planTripForm" novalidate>
                     <input type="hidden" id="pt_pkg_id">
                     <input type="text" id="honeypot" name="honeypot" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true">
 
@@ -1039,7 +1039,7 @@
             <div class="grid-2" style="max-width:1060px; margin:0 auto;">
                 <div style="background:var(--surface-card); border:1px solid var(--border-gold); border-radius:var(--radius-xl); padding:40px; box-shadow:var(--shadow-md);">
                     <h3 style="margin-bottom:20px;">Send an Inquiry</h3>
-                    <form onsubmit="handleQuickContact(event)">
+                    <form id="contactForm" onsubmit="handleQuickContact(event)" novalidate>
                         <input type="text" id="c_honeypot" style="display:none;" tabindex="-1" autocomplete="off" aria-hidden="true">
                         <div class="form-sec">
                             <label for="c_name">Your Name</label>
@@ -1804,7 +1804,7 @@
                 <div class="footer-col footer-newsletter">
                     <h4>The Luxury Bulletin</h4>
                     <p>Subscribe to receive secret villa deals, seasonal travel guides, and VIP invitations.</p>
-                    <form onsubmit="handleNewsletter(event)" class="newsletter-form">
+                    <form id="newsletterForm" onsubmit="handleNewsletter(event)" class="newsletter-form" novalidate>
                         <input type="email" id="nl_email" placeholder="Your email address..." required aria-label="Email address for luxury bulletin subscription">
                         <button type="submit" class="btn btn-gold" aria-label="Subscribe to luxury bulletin"><i class="fas fa-arrow-right"></i></button>
                     </form>
@@ -1874,7 +1874,7 @@
                 <p class="trip-modal-sub">Share your travel vision and our specialists will curate a tailored proposal within 24 hours.</p>
             </div>
             
-            <form id="tripModalForm" class="trip-modal-form">
+            <form id="tripModalForm" class="trip-modal-form" novalidate>
                 <input type="hidden" id="modal_pt_pkg_id">
                 <input type="text" id="modal_honeypot" name="honeypot" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true">
                 
@@ -1958,7 +1958,7 @@
                 <p style="color:var(--text-muted); font-size:0.9rem; margin-top:4px;">Enter your details to receive the curated guide immediately.</p>
             </div>
             
-            <form id="sampleItineraryForm" onsubmit="handleSampleItineraryDownload(event)">
+            <form id="sampleItineraryForm" onsubmit="handleSampleItineraryDownload(event)" novalidate>
                 <div class="form-sec">
                     <label for="sample_name">Your Full Name *</label>
                     <input type="text" id="sample_name" required placeholder="e.g. Eleanor Vance">

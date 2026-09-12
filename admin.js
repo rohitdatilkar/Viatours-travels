@@ -47,6 +47,138 @@ async function withLoading(button, asyncFn) {
     }
 }
 
+// --- UNIFIED FORM VALIDATION ENGINE FOR ADMIN ---
+const ViaValidator = window.ViaValidator || {
+    emailRegex: /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/,
+    phoneRegex: /^(?:\+?\d{1,4}[\s\-]?)?(?:\(?\d{2,5}\)?[\s\-]?)?\d{3,5}[\s\-]?\d{3,5}$/,
+
+    isValidEmail(email) {
+        if (!email || typeof email !== 'string') return false;
+        const trimmed = email.trim();
+        return trimmed.length <= 254 && this.emailRegex.test(trimmed);
+    },
+
+    isValidPhone(phone) {
+        if (!phone || typeof phone !== 'string') return false;
+        const trimmed = phone.trim();
+        const digitsOnly = trimmed.replace(/\D/g, '');
+        return digitsOnly.length >= 7 && digitsOnly.length <= 15 && this.phoneRegex.test(trimmed);
+    },
+
+    isValidName(name, minLength = 2) {
+        if (!name || typeof name !== 'string') return false;
+        const trimmed = name.trim();
+        return trimmed.length >= minLength && /[a-zA-Z\u00C0-\u024F\u1E00-\u1EFF]/.test(trimmed);
+    },
+
+    isValidDate(dateStr, allowPast = false) {
+        if (!dateStr || typeof dateStr !== 'string') return false;
+        const parsed = new Date(dateStr);
+        if (isNaN(parsed.getTime())) return false;
+        if (!allowPast) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const parts = dateStr.split('-');
+            if (parts.length === 3) {
+                const selected = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+                return selected >= today;
+            }
+            return parsed >= today;
+        }
+        return true;
+    },
+
+    isValidNumber(val, min = 0, max = Infinity) {
+        const num = Number(val);
+        return !isNaN(num) && num >= min && num <= max;
+    },
+
+    isValidText(text, minLength = 1, maxLength = 20000) {
+        if (!text || typeof text !== 'string') return false;
+        const trimmed = text.trim();
+        return trimmed.length >= minLength && trimmed.length <= maxLength;
+    },
+
+    setFieldError(inputEl, message) {
+        if (!inputEl) return;
+        inputEl.classList.add('is-invalid');
+        inputEl.classList.remove('is-valid');
+        inputEl.setAttribute('aria-invalid', 'true');
+
+        inputEl.classList.remove('field-shake');
+        void inputEl.offsetWidth;
+        inputEl.classList.add('field-shake');
+
+        const fieldId = inputEl.id || ('f_' + Math.random().toString(36).substr(2, 6));
+        inputEl.id = fieldId;
+        const errorId = fieldId + '-error';
+        inputEl.setAttribute('aria-describedby', errorId);
+
+        let errorEl = document.getElementById(errorId);
+        if (!errorEl) {
+            errorEl = document.createElement('div');
+            errorEl.id = errorId;
+            errorEl.className = 'field-error-msg';
+            errorEl.setAttribute('role', 'alert');
+            if (inputEl.nextSibling) {
+                inputEl.parentNode.insertBefore(errorEl, inputEl.nextSibling);
+            } else {
+                inputEl.parentNode.appendChild(errorEl);
+            }
+        }
+        errorEl.innerHTML = `<i class="fas fa-exclamation-circle" aria-hidden="true"></i> <span>${escapeHTML(message)}</span>`;
+        errorEl.style.display = 'flex';
+
+        const clearHandler = () => {
+            ViaValidator.clearFieldError(inputEl);
+            inputEl.removeEventListener('input', clearHandler);
+            inputEl.removeEventListener('change', clearHandler);
+        };
+        inputEl.addEventListener('input', clearHandler);
+        inputEl.addEventListener('change', clearHandler);
+    },
+
+    clearFieldError(inputEl) {
+        if (!inputEl) return;
+        inputEl.classList.remove('is-invalid', 'field-shake');
+        inputEl.removeAttribute('aria-invalid');
+        const errorId = inputEl.id ? inputEl.id + '-error' : null;
+        if (errorId) {
+            const errorEl = document.getElementById(errorId);
+            if (errorEl) {
+                errorEl.remove();
+            }
+        }
+    },
+
+    markFieldValid(inputEl) {
+        if (!inputEl) return;
+        this.clearFieldError(inputEl);
+        inputEl.classList.add('is-valid');
+    },
+
+    clearFormErrors(formEl) {
+        if (!formEl) return;
+        formEl.querySelectorAll('.is-invalid, .is-valid').forEach(el => {
+            el.classList.remove('is-invalid', 'is-valid', 'field-shake');
+            el.removeAttribute('aria-invalid');
+        });
+        formEl.querySelectorAll('.field-error-msg').forEach(el => el.remove());
+    },
+
+    focusFirstError(formEl) {
+        if (!formEl) return;
+        const firstInvalid = formEl.querySelector('.is-invalid');
+        if (firstInvalid) {
+            firstInvalid.focus();
+            if (typeof firstInvalid.scrollIntoView === 'function') {
+                firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+    }
+};
+window.ViaValidator = ViaValidator;
+
 function showConfirm(message, onConfirm) {
     const modal = document.getElementById('confirmModal');
     if (!modal) {
@@ -113,12 +245,38 @@ async function adminLogin() {
         return;
     }
 
-    const email = document.getElementById('loginEmail')?.value.trim();
-    const password = document.getElementById('loginPass')?.value;
+    const emailInput = document.getElementById('loginEmail');
+    const passInput = document.getElementById('loginPass');
+    const email = emailInput?.value.trim() || '';
+    const password = passInput?.value || '';
     const btn = document.getElementById('loginBtn');
+    const form = document.getElementById('adminLoginForm');
 
-    if (!email || !password) {
-        showToast('Please enter both admin email and password.', 'error');
+    let valid = true;
+
+    if (!email) {
+        ViaValidator.setFieldError(emailInput, 'Please enter your admin email address.');
+        valid = false;
+    } else if (!ViaValidator.isValidEmail(email)) {
+        ViaValidator.setFieldError(emailInput, 'Please enter a valid email address.');
+        valid = false;
+    } else {
+        ViaValidator.markFieldValid(emailInput);
+    }
+
+    if (!password) {
+        ViaValidator.setFieldError(passInput, 'Please enter your account password.');
+        valid = false;
+    } else if (password.length < 6) {
+        ViaValidator.setFieldError(passInput, 'Password must be at least 6 characters.');
+        valid = false;
+    } else {
+        ViaValidator.markFieldValid(passInput);
+    }
+
+    if (!valid) {
+        ViaValidator.focusFirstError(form);
+        showToast('Please check the highlighted login fields.', 'error');
         return;
     }
 
@@ -136,23 +294,28 @@ async function adminLogin() {
                 loginAttempts = 0;
                 showToast('Too many failed attempts. Locked for 60 seconds.', 'error');
             } else {
+                ViaValidator.setFieldError(passInput, 'Invalid email or password credentials.');
                 showToast(`Login failed (${loginAttempts}/5): ${error.message}`, 'error');
             }
             return;
         }
 
+        ViaValidator.clearFormErrors(form);
         loginAttempts = 0;
-        showToast('Welcome back, Admin!', 'success');
+        showToast('Welcome back, Executive Administrator.', 'success');
         initAdminDashboard();
     });
 }
 
 async function forgotPassword() {
-    const email = document.getElementById('loginEmail')?.value.trim();
-    if (!email) {
-        showToast('Please enter your admin email above first.', 'error');
+    const emailInput = document.getElementById('loginEmail');
+    const email = emailInput?.value.trim() || '';
+    if (!ViaValidator.isValidEmail(email)) {
+        ViaValidator.setFieldError(emailInput, 'Please enter a valid admin email address to receive password reset link.');
+        showToast('Please enter a valid admin email address.', 'error');
         return;
     }
+    ViaValidator.clearFieldError(emailInput);
     if (sb) {
         const { error } = await sb.auth.resetPasswordForEmail(email);
         if (error) showToast(error.message, 'error');
@@ -310,7 +473,9 @@ async function loadAdminPackages() {
 }
 
 function openPkgModal() {
-    document.getElementById('pkgFormModal').style.display = 'block';
+    const modal = document.getElementById('pkgFormModal');
+    modal.style.display = 'block';
+    ViaValidator.clearFormErrors(modal);
     document.getElementById('m_pkg_id').value = '';
     document.getElementById('pkg_modal_title').textContent = 'Add Luxury Package';
     document.querySelectorAll('#pkgFormModal input, #pkgFormModal textarea').forEach(i => {
@@ -368,16 +533,49 @@ async function loadDestDropdown() {
 }
 
 async function savePackage() {
-    const title = document.getElementById('m_pkg_title').value.trim();
-    if (!title) {
-        showToast('Please enter package title.', 'error');
+    const titleInput = document.getElementById('m_pkg_title');
+    const priceInput = document.getElementById('m_pkg_price');
+    const durationInput = document.getElementById('m_pkg_duration');
+    const modal = document.getElementById('pkgFormModal');
+
+    const title = titleInput ? titleInput.value.trim() : '';
+    const price = parseFloat(priceInput?.value || 0);
+    const duration = durationInput ? durationInput.value.trim() : '';
+
+    let valid = true;
+
+    if (!title || title.length < 3) {
+        ViaValidator.setFieldError(titleInput, 'Please enter package title (at least 3 characters).');
+        valid = false;
+    } else {
+        ViaValidator.markFieldValid(titleInput);
+    }
+
+    if (isNaN(price) || price <= 0) {
+        ViaValidator.setFieldError(priceInput, 'Please enter a valid price greater than 0.');
+        valid = false;
+    } else {
+        ViaValidator.markFieldValid(priceInput);
+    }
+
+    if (!duration) {
+        ViaValidator.setFieldError(durationInput, 'Please enter package duration (e.g. 5 Days / 4 Nights).');
+        valid = false;
+    } else {
+        ViaValidator.markFieldValid(durationInput);
+    }
+
+    if (!valid) {
+        ViaValidator.focusFirstError(modal);
+        showToast('Please fix the package form errors.', 'error');
         return;
     }
+
     const id = document.getElementById('m_pkg_id').value;
     const payload = {
         title,
-        price: parseFloat(document.getElementById('m_pkg_price').value || 0),
-        duration: document.getElementById('m_pkg_duration').value.trim(),
+        price,
+        duration,
         category: document.getElementById('m_pkg_cat').value.trim(),
         destination_id: document.getElementById('m_pkg_dest').value || null,
         short_description: document.getElementById('m_pkg_short_desc').value.trim(),
@@ -416,6 +614,7 @@ async function savePackage() {
             return;
         }
     }
+    ViaValidator.clearFormErrors(document.getElementById('pkgFormModal'));
     document.getElementById('pkgFormModal').style.display = 'none';
     showToast('Package saved successfully!');
     loadAdminPackages();
@@ -491,7 +690,9 @@ async function loadAdminDestinations() {
 }
 
 function openDestModal() {
-    document.getElementById('destFormModal').style.display = 'block';
+    const modal = document.getElementById('destFormModal');
+    modal.style.display = 'block';
+    ViaValidator.clearFormErrors(modal);
     document.getElementById('m_dest_id').value = '';
     document.querySelectorAll('#destFormModal input, #destFormModal textarea').forEach(i => {
         if (i.type !== 'hidden' && i.type !== 'file') i.value = '';
@@ -525,12 +726,39 @@ async function editDestination(id) {
 }
 
 async function saveDestination() {
-    const name = document.getElementById('m_dest_name').value.trim();
-    if (!name) { showToast('Please enter destination name.', 'error'); return; }
+    const nameInput = document.getElementById('m_dest_name');
+    const countryInput = document.getElementById('m_dest_country');
+    const modal = document.getElementById('destFormModal');
+
+    const name = nameInput ? nameInput.value.trim() : '';
+    const country = countryInput ? countryInput.value.trim() : '';
+
+    let valid = true;
+
+    if (!name || name.length < 2) {
+        ViaValidator.setFieldError(nameInput, 'Please enter destination name (at least 2 letters).');
+        valid = false;
+    } else {
+        ViaValidator.markFieldValid(nameInput);
+    }
+
+    if (!country) {
+        ViaValidator.setFieldError(countryInput, 'Please enter country or territory.');
+        valid = false;
+    } else {
+        ViaValidator.markFieldValid(countryInput);
+    }
+
+    if (!valid) {
+        ViaValidator.focusFirstError(modal);
+        showToast('Please check destination required fields.', 'error');
+        return;
+    }
+
     const id = document.getElementById('m_dest_id')?.value;
     const payload = {
         name,
-        country: document.getElementById('m_dest_country').value.trim(),
+        country,
         region: document.getElementById('m_dest_region').value.trim(),
         description: document.getElementById('m_dest_desc').value.trim(),
         best_time: document.getElementById('m_dest_time').value.trim(),
@@ -551,6 +779,7 @@ async function saveDestination() {
             return;
         }
     }
+    ViaValidator.clearFormErrors(modal);
     document.getElementById('destFormModal').style.display = 'none';
     showToast('Destination saved successfully!');
     loadAdminDestinations();
@@ -659,23 +888,81 @@ async function loadAdminBookings() {
 
 function openBookModal() {
     initDatePickers();
-    document.getElementById('bookFormModal').style.display = 'block';
+    const modal = document.getElementById('bookFormModal');
+    modal.style.display = 'block';
+    ViaValidator.clearFormErrors(modal);
 }
 
 async function saveBooking() {
-    const total = parseFloat(document.getElementById('m_book_total').value || 0);
-    const paid = parseFloat(document.getElementById('m_book_paid').value || 0);
+    const custInput = document.getElementById('m_book_customer_name');
+    const pkgInput = document.getElementById('m_book_package_name');
+    const dateInput = document.getElementById('m_book_date');
+    const totalInput = document.getElementById('m_book_total');
+    const travelersInput = document.getElementById('m_book_travelers');
+    const modal = document.getElementById('bookFormModal');
+
+    const custName = custInput ? custInput.value.trim() : '';
+    const pkgName = pkgInput ? pkgInput.value.trim() : '';
+    const travelDate = dateInput ? dateInput.value : '';
+    const travelers = parseInt(travelersInput?.value, 10) || 0;
+    const total = parseFloat(totalInput?.value || 0);
+    const paid = parseFloat(document.getElementById('m_book_paid')?.value || 0);
+
+    let valid = true;
+
+    if (!custName || custName.length < 2) {
+        ViaValidator.setFieldError(custInput, 'Please enter customer full name.');
+        valid = false;
+    } else {
+        ViaValidator.markFieldValid(custInput);
+    }
+
+    if (!pkgName) {
+        ViaValidator.setFieldError(pkgInput, 'Please specify tour package name.');
+        valid = false;
+    } else {
+        ViaValidator.markFieldValid(pkgInput);
+    }
+
+    if (!travelDate) {
+        ViaValidator.setFieldError(dateInput, 'Please select a travel date.');
+        valid = false;
+    } else {
+        ViaValidator.markFieldValid(dateInput);
+    }
+
+    if (isNaN(travelers) || travelers < 1 || travelers > 50) {
+        ViaValidator.setFieldError(travelersInput, 'Travelers must be between 1 and 50.');
+        valid = false;
+    } else {
+        ViaValidator.markFieldValid(travelersInput);
+    }
+
+    if (isNaN(total) || total < 0) {
+        ViaValidator.setFieldError(totalInput, 'Total amount cannot be negative.');
+        valid = false;
+    } else {
+        ViaValidator.markFieldValid(totalInput);
+    }
+
+    if (!valid) {
+        ViaValidator.focusFirstError(modal);
+        showToast('Please correct booking fields.', 'error');
+        return;
+    }
+
     const payload = {
-        customer_name: document.getElementById('m_book_customer_name').value.trim(),
-        package_name: document.getElementById('m_book_package_name').value.trim(),
-        travel_date: document.getElementById('m_book_date').value,
-        travelers: parseInt(document.getElementById('m_book_travelers').value) || 2,
+        customer_name: custName,
+        package_name: pkgName,
+        travel_date: travelDate,
+        travelers: travelers,
         total_amount: total,
         amount_paid: paid,
         balance: total - paid,
         booking_status: document.getElementById('m_book_status').value
     };
     if (sb) await sb.from('bookings').insert([payload]);
+    ViaValidator.clearFormErrors(modal);
     document.getElementById('bookFormModal').style.display = 'none';
     showToast('Booking saved.');
     loadAdminBookings();
@@ -712,7 +999,9 @@ async function loadAdminBlog() {
 }
 
 function openBlogModal() {
-    document.getElementById('blogFormModal').style.display = 'block';
+    const modal = document.getElementById('blogFormModal');
+    modal.style.display = 'block';
+    ViaValidator.clearFormErrors(modal);
     document.getElementById('m_blog_id').value = '';
     document.querySelectorAll('#blogFormModal input, #blogFormModal textarea').forEach(i => {
         if (i.type !== 'hidden') i.value = '';
@@ -746,15 +1035,42 @@ async function editBlog(id) {
 }
 
 async function saveBlogPost() {
-    const title = document.getElementById('m_blog_title').value.trim();
-    if (!title) { showToast('Please enter title.', 'error'); return; }
+    const titleInput = document.getElementById('m_blog_title');
+    const contentInput = document.getElementById('m_blog_content');
+    const modal = document.getElementById('blogFormModal');
+
+    const title = titleInput ? titleInput.value.trim() : '';
+    const content = contentInput ? contentInput.value.trim() : '';
+
+    let valid = true;
+
+    if (!title || title.length < 3) {
+        ViaValidator.setFieldError(titleInput, 'Please enter article title (at least 3 characters).');
+        valid = false;
+    } else {
+        ViaValidator.markFieldValid(titleInput);
+    }
+
+    if (!content || content.length < 20) {
+        ViaValidator.setFieldError(contentInput, 'Please provide article content (at least 20 characters).');
+        valid = false;
+    } else {
+        ViaValidator.markFieldValid(contentInput);
+    }
+
+    if (!valid) {
+        ViaValidator.focusFirstError(modal);
+        showToast('Please check the blog post fields.', 'error');
+        return;
+    }
+
     const id = document.getElementById('m_blog_id')?.value;
     const payload = {
         title,
         slug: document.getElementById('m_blog_slug').value.trim() || title.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
         image_url: document.getElementById('m_blog_img').value.trim(),
         excerpt: document.getElementById('m_blog_excerpt').value.trim(),
-        content: document.getElementById('m_blog_content').value.trim(),
+        content: content,
         is_published: document.getElementById('m_blog_pub').value === 'true'
     };
     if (id) payload.id = id;
@@ -768,6 +1084,7 @@ async function saveBlogPost() {
             return;
         }
     }
+    ViaValidator.clearFormErrors(modal);
     document.getElementById('blogFormModal').style.display = 'none';
     showToast('Blog post saved.');
     loadAdminBlog();
@@ -804,7 +1121,9 @@ async function loadAdminTestimonials() {
 }
 
 function openTestModal() {
-    document.getElementById('testFormModal').style.display = 'block';
+    const modal = document.getElementById('testFormModal');
+    modal.style.display = 'block';
+    ViaValidator.clearFormErrors(modal);
     document.getElementById('test_modal_title').textContent = 'Add Testimonial';
     document.getElementById('m_test_id').value = '';
     document.querySelectorAll('#testFormModal input, #testFormModal textarea').forEach(i => i.value = '');
@@ -821,7 +1140,9 @@ async function editTestimonial(id) {
         t = data;
     }
     if (!t) return;
-    document.getElementById('testFormModal').style.display = 'block';
+    const modal = document.getElementById('testFormModal');
+    modal.style.display = 'block';
+    ViaValidator.clearFormErrors(modal);
     document.getElementById('test_modal_title').textContent = 'Edit Testimonial';
     document.getElementById('m_test_id').value = t.id;
     document.getElementById('m_test_name').value = t.name || '';
@@ -832,15 +1153,42 @@ async function editTestimonial(id) {
 }
 
 async function saveTestimonial() {
-    const name = document.getElementById('m_test_name').value.trim();
-    if (!name) { showToast('Please enter guest name.', 'error'); return; }
+    const nameInput = document.getElementById('m_test_name');
+    const msgInput = document.getElementById('m_test_msg');
+    const modal = document.getElementById('testFormModal');
+
+    const name = nameInput ? nameInput.value.trim() : '';
+    const message = msgInput ? msgInput.value.trim() : '';
+
+    let valid = true;
+
+    if (!name || name.length < 2) {
+        ViaValidator.setFieldError(nameInput, 'Please enter guest name (at least 2 letters).');
+        valid = false;
+    } else {
+        ViaValidator.markFieldValid(nameInput);
+    }
+
+    if (!message || message.length < 5) {
+        ViaValidator.setFieldError(msgInput, 'Please enter guest feedback or message (at least 5 characters).');
+        valid = false;
+    } else {
+        ViaValidator.markFieldValid(msgInput);
+    }
+
+    if (!valid) {
+        ViaValidator.focusFirstError(modal);
+        showToast('Please fix the testimonial form errors.', 'error');
+        return;
+    }
+
     const id = document.getElementById('m_test_id').value;
     const payload = {
         name,
         location: document.getElementById('m_test_loc').value.trim(),
         rating: parseInt(document.getElementById('m_test_rating').value) || 5,
         image_url: document.getElementById('m_test_img').value.trim(),
-        message: document.getElementById('m_test_msg').value.trim()
+        message: message
     };
     if (id) payload.id = id;
 
@@ -888,7 +1236,9 @@ async function loadAdminFaqs() {
 }
 
 function openFaqModal() {
-    document.getElementById('faqFormModal').style.display = 'block';
+    const modal = document.getElementById('faqFormModal');
+    modal.style.display = 'block';
+    ViaValidator.clearFormErrors(modal);
     document.getElementById('faq_modal_title').textContent = 'Add FAQ';
     document.getElementById('m_faq_id').value = '';
     document.querySelectorAll('#faqFormModal input, #faqFormModal textarea').forEach(i => i.value = '');
@@ -905,7 +1255,9 @@ async function editFaq(id) {
         f = data;
     }
     if (!f) return;
-    document.getElementById('faqFormModal').style.display = 'block';
+    const modal = document.getElementById('faqFormModal');
+    modal.style.display = 'block';
+    ViaValidator.clearFormErrors(modal);
     document.getElementById('faq_modal_title').textContent = 'Edit FAQ';
     document.getElementById('m_faq_id').value = f.id;
     document.getElementById('m_faq_question').value = f.question || '';
@@ -914,12 +1266,39 @@ async function editFaq(id) {
 }
 
 async function saveFaq() {
-    const question = document.getElementById('m_faq_question').value.trim();
-    if (!question) { showToast('Please enter question.', 'error'); return; }
+    const qInput = document.getElementById('m_faq_question');
+    const aInput = document.getElementById('m_faq_answer');
+    const modal = document.getElementById('faqFormModal');
+
+    const question = qInput ? qInput.value.trim() : '';
+    const answer = aInput ? aInput.value.trim() : '';
+
+    let valid = true;
+
+    if (!question || question.length < 5) {
+        ViaValidator.setFieldError(qInput, 'Please enter FAQ question (at least 5 characters).');
+        valid = false;
+    } else {
+        ViaValidator.markFieldValid(qInput);
+    }
+
+    if (!answer || answer.length < 5) {
+        ViaValidator.setFieldError(aInput, 'Please enter FAQ answer (at least 5 characters).');
+        valid = false;
+    } else {
+        ViaValidator.markFieldValid(aInput);
+    }
+
+    if (!valid) {
+        ViaValidator.focusFirstError(modal);
+        showToast('Please fix the FAQ form errors.', 'error');
+        return;
+    }
+
     const id = document.getElementById('m_faq_id').value;
     const payload = {
         question,
-        answer: document.getElementById('m_faq_answer').value.trim(),
+        answer: answer,
         is_published: document.getElementById('m_faq_pub').value === 'true'
     };
     if (id) payload.id = id;
@@ -955,10 +1334,48 @@ async function loadAdminSettings() {
 }
 
 async function saveSettings() {
+    const nameInput = document.getElementById('set_name');
+    const emailInput = document.getElementById('set_email');
+    const phoneInput = document.getElementById('set_phone');
+    const tab = document.getElementById('tab-settings');
+
+    const businessName = nameInput ? nameInput.value.trim() : '';
+    const email = emailInput ? emailInput.value.trim() : '';
+    const phone = phoneInput ? phoneInput.value.trim() : '';
+
+    let valid = true;
+
+    if (!businessName || businessName.length < 2) {
+        ViaValidator.setFieldError(nameInput, 'Please enter agency business legal name (at least 2 letters).');
+        valid = false;
+    } else {
+        ViaValidator.markFieldValid(nameInput);
+    }
+
+    if (!ViaValidator.isValidEmail(email)) {
+        ViaValidator.setFieldError(emailInput, 'Please enter a valid business email address.');
+        valid = false;
+    } else {
+        ViaValidator.markFieldValid(emailInput);
+    }
+
+    if (phone && !ViaValidator.isValidPhone(phone)) {
+        ViaValidator.setFieldError(phoneInput, 'Please enter a valid phone number (7-15 digits).');
+        valid = false;
+    } else if (phone) {
+        ViaValidator.markFieldValid(phoneInput);
+    }
+
+    if (!valid) {
+        ViaValidator.focusFirstError(tab);
+        showToast('Please fix settings form errors.', 'error');
+        return;
+    }
+
     appSettings = {
-        business_name: document.getElementById('set_name').value.trim(),
-        email: document.getElementById('set_email').value.trim(),
-        phone: document.getElementById('set_phone').value.trim(),
+        business_name: businessName,
+        email: email,
+        phone: phone,
         whatsapp: document.getElementById('set_whatsapp').value.trim(),
         address: document.getElementById('set_address').value.trim()
     };
