@@ -17,24 +17,25 @@
             if (!img) return;
             img.onerror = null;
 
-            var remoteUrl = 'https://goqwtovltftehautxekh.supabase.co/storage/v1/object/public/package-images/Via%20tours%20&%20travels.png';
             var localPng = 'assets/agency-logo.png';
+            var localEmblem = 'assets/agency-logo-emblem.png';
+            var localSvg = 'assets/logo.svg';
 
-            // 1. Try remote CDN if not already on it
-            if (!img.dataset.triedRemote && img.src !== remoteUrl) {
-                img.dataset.triedRemote = 'true';
-                img.removeAttribute('srcset');
-                img.onerror = function() { handleLogoError(this); };
-                img.src = remoteUrl;
-                return;
-            }
-
-            // 2. Try local PNG asset if remote failed
-            if (!img.dataset.triedLocal && !img.src.includes('agency-logo.png')) {
+            // 1. Try local PNG asset if failed
+            if (!img.dataset.triedLocal && !img.src.includes('agency-logo')) {
                 img.dataset.triedLocal = 'true';
                 img.removeAttribute('srcset');
                 img.onerror = function() { handleLogoError(this); };
                 img.src = localPng;
+                return;
+            }
+
+            // 2. Try vector SVG asset
+            if (!img.dataset.triedSvg && !img.src.includes('logo.svg')) {
+                img.dataset.triedSvg = 'true';
+                img.removeAttribute('srcset');
+                img.onerror = function() { handleLogoError(this); };
+                img.src = localSvg;
                 return;
             }
 
@@ -45,23 +46,20 @@
             fallback.setAttribute('aria-label', 'Via Tours & Travels Emblem');
             fallback.innerHTML = '<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
                 '<defs>' +
-                    '<linearGradient id="viaBrandGrad" x1="0%" y1="0%" x2="100%" y2="100%">' +
-                        '<stop offset="0%" stop-color="#fef08a"/>' +
-                        '<stop offset="50%" stop-color="#d97706"/>' +
-                        '<stop offset="100%" stop-color="#92400e"/>' +
+                    '<linearGradient id="viaSkyGrad" x1="0%" y1="0%" x2="100%" y2="100%">' +
+                        '<stop offset="0%" stop-color="#58b9ea"/>' +
+                        '<stop offset="100%" stop-color="#0276b7"/>' +
                     '</linearGradient>' +
-                    '<radialGradient id="viaBgGrad" cx="50%" cy="50%" r="50%">' +
-                        '<stop offset="0%" stop-color="rgba(217,119,6,0.2)"/>' +
-                        '<stop offset="100%" stop-color="rgba(217,119,6,0.05)"/>' +
-                    '</radialGradient>' +
+                    '<linearGradient id="viaSunGrad" x1="0%" y1="0%" x2="100%" y2="100%">' +
+                        '<stop offset="0%" stop-color="#f6c321"/>' +
+                        '<stop offset="100%" stop-color="#e87722"/>' +
+                    '</linearGradient>' +
                 '</defs>' +
-                '<circle cx="32" cy="32" r="30" stroke="url(#viaBrandGrad)" stroke-width="2.5" fill="url(#viaBgGrad)"/>' +
-                '<polygon points="32,7 34,13 32,11 30,13" fill="url(#viaBrandGrad)"/>' +
-                '<polygon points="32,57 34,51 32,53 30,51" fill="url(#viaBrandGrad)"/>' +
-                '<polygon points="7,32 13,34 11,32 13,30" fill="url(#viaBrandGrad)"/>' +
-                '<polygon points="57,32 51,34 53,32 51,30" fill="url(#viaBrandGrad)"/>' +
-                '<path d="M20 21 L32 45 L44 21" stroke="url(#viaBrandGrad)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>' +
-                '<path d="M26 29 L38 29" stroke="url(#viaBrandGrad)" stroke-width="2" stroke-linecap="round" opacity="0.8"/>' +
+                '<circle cx="32" cy="32" r="30" fill="url(#viaSkyGrad)"/>' +
+                '<circle cx="44" cy="32" r="11" fill="url(#viaSunGrad)"/>' +
+                '<path d="M10 45 C18 40 28 50 38 44 C46 40 54 46 58 44" stroke="#ffffff" stroke-width="2.5" fill="none" stroke-linecap="round"/>' +
+                '<path d="M8 51 C20 46 32 54 44 49 C50 46 56 50 60 49" stroke="#062956" stroke-width="2.5" fill="none" stroke-linecap="round"/>' +
+                '<polygon points="42,16 48,17 56,12 55,14 47,19 44,25 42,24 44,19 36,18" fill="#ffffff"/>' +
             '</svg>';
 
             var target = (img.parentNode && img.parentNode.tagName === 'PICTURE') ? img.parentNode : img;
@@ -113,7 +111,7 @@
       "name": "Via Tours & Travels",
       "description": "Bespoke luxury holiday itineraries, 5-star private stays, chauffeured transfers, and 24/7 dedicated travel concierge.",
       "url": "https://viatoursandtravels.com",
-      "logo": "https://goqwtovltftehautxekh.supabase.co/storage/v1/object/public/package-images/Via%20tours%20&%20travels.png",
+      "logo": "https://viatoursandtravels.com/assets/agency-logo.png",
       "image": "https://viatoursandtravels.com/assets/social-preview.jpg",
       "telephone": "+919876543210",
       "priceRange": "$$$$",
@@ -187,7 +185,10 @@
     <div class="preloader-content">
         <div class="preloader-logo-wrap">
             <div class="preloader-ring"></div>
-            <img src="https://goqwtovltftehautxekh.supabase.co/storage/v1/object/public/package-images/Via%20tours%20&%20travels.png" alt="Via Tours & Travels Official Agency Logo" class="preloader-logo" width="68" height="68" onerror="handleLogoError(this)">
+            <picture>
+                <source type="image/webp" srcset="assets/agency-logo.webp">
+                <img src="assets/agency-logo.png" alt="Via Tours &amp; Travels Official Agency Logo" class="preloader-logo" width="68" height="68" onerror="handleLogoError(this)">
+            </picture>
         </div>
         <div class="preloader-brand">
             <span class="preloader-title">VIA TOURS &amp; TRAVELS</span>
@@ -248,11 +249,10 @@
     <header class="header" id="mainHeader">
         <div class="container header-in">
             <a href="#/home" class="logo-wrap" onclick="navTo('home'); return false;" aria-label="Via Tours & Travels Home">
-                <img src="https://goqwtovltftehautxekh.supabase.co/storage/v1/object/public/package-images/Via%20tours%20&%20travels.png" alt="Via Tours & Travels Official Agency Logo" width="64" height="64" onerror="handleLogoError(this)">
-                <div class="logo-txt">
-                    <strong>Via</strong>
-                    <span>Tours & Travels</span>
-                </div>
+                <picture>
+                    <source type="image/webp" srcset="assets/agency-logo.webp">
+                    <img src="assets/agency-logo.png" alt="Via Tours &amp; Travels Official Agency Logo" width="66" height="66" class="agency-logo-nav" onerror="handleLogoError(this)">
+                </picture>
             </a>
             
             <button class="mobile-toggle" id="mobileMenuToggle" onclick="toggleMenu()" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="navMenu">
@@ -262,11 +262,10 @@
             <nav class="nav-menu" id="navMenu" aria-label="Primary navigation">
                 <div class="nav-drawer-header">
                     <div class="drawer-logo-wrap">
-                        <img src="https://goqwtovltftehautxekh.supabase.co/storage/v1/object/public/package-images/Via%20tours%20&%20travels.png" alt="Via Tours & Travels Official Agency Logo" class="drawer-logo-img" width="52" height="52" onerror="handleLogoError(this)">
-                        <div class="logo-txt">
-                            <strong>Via</strong>
-                            <span>Tours & Travels</span>
-                        </div>
+                        <picture>
+                            <source type="image/webp" srcset="assets/agency-logo.webp">
+                            <img src="assets/agency-logo.png" alt="Via Tours &amp; Travels Official Agency Logo" class="drawer-logo-img" width="52" height="52" onerror="handleLogoError(this)">
+                        </picture>
                     </div>
                     <button class="nav-drawer-close" onclick="toggleMenu(false)" aria-label="Close navigation menu">
                         <i class="fas fa-times"></i>
@@ -1760,12 +1759,11 @@
             <div class="footer-grid">
                 <!-- Col 1: Brand -->
                 <div class="footer-col">
-                    <a href="#/home" onclick="navTo('home'); return false;" style="display:flex; align-items:center; gap:12px; margin-bottom:16px; text-decoration:none; color:inherit;" aria-label="Via Tours & Travels Home">
-                        <img src="https://goqwtovltftehautxekh.supabase.co/storage/v1/object/public/package-images/Via%20tours%20&%20travels.png" alt="Via Tours & Travels Official Agency Logo" width="55" height="55" style="height:55px; width:auto; border-radius:6px;" onerror="handleLogoError(this)">
-                        <div class="logo-txt">
-                            <strong style="color:#ffffff;">Via</strong>
-                            <span>Tours & Travels</span>
-                        </div>
+                    <a href="#/home" onclick="navTo('home'); return false;" style="display:inline-flex; align-items:center; margin-bottom:18px; text-decoration:none; color:inherit;" aria-label="Via Tours & Travels Home">
+                        <picture>
+                            <source type="image/webp" srcset="assets/agency-logo.webp">
+                            <img src="assets/agency-logo.png" alt="Via Tours &amp; Travels Official Agency Logo" width="62" height="62" style="height:62px; width:auto; border-radius:10px; background:rgba(255,255,255,0.96); padding:4px 8px; box-shadow:0 3px 12px rgba(0,0,0,0.25);" onerror="handleLogoError(this)">
+                        </picture>
                     </a>
                     <p style="font-size:0.9rem; color:#94a3b8; line-height:1.6; margin-bottom:20px;">Your trusted partner for extraordinary journeys. Creating world-class, bespoke luxury memories since 2009.</p>
                     <div style="display:flex; gap:14px; color:#cbd5e1; font-size:1.1rem;">

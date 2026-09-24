@@ -60,16 +60,18 @@
         function handleLogoError(img) {
             if (!img) return;
             img.onerror = null;
-            var remoteUrl = 'https://goqwtovltftehautxekh.supabase.co/storage/v1/object/public/package-images/Via%20tours%20&%20travels.png';
             var localPng = 'assets/agency-logo.png';
-            if (!img.dataset.triedRemote && img.src !== remoteUrl) {
-                img.dataset.triedRemote = 'true';
-                img.src = remoteUrl;
+            var localSvg = 'assets/logo.svg';
+            if (!img.dataset.triedLocal && !img.src.includes('agency-logo')) {
+                img.dataset.triedLocal = 'true';
+                img.removeAttribute('srcset');
+                img.src = localPng;
                 return;
             }
-            if (!img.dataset.triedLocal && img.src !== localPng) {
-                img.dataset.triedLocal = 'true';
-                img.src = localPng;
+            if (!img.dataset.triedSvg && !img.src.includes('logo.svg')) {
+                img.dataset.triedSvg = 'true';
+                img.removeAttribute('srcset');
+                img.src = localSvg;
                 return;
             }
             img.style.display = 'none';
@@ -106,21 +108,19 @@
     <header class="header">
         <div class="container header-in">
             <a href="index.html#/home" class="logo-wrap" aria-label="Via Tours & Travels Home">
-                <img src="assets/agency-logo.png" alt="Via Tours & Travels Official Agency Logo" width="55" height="55" onerror="handleLogoError(this)">
-                <div class="logo-txt">
-                    <strong>Via</strong>
-                    <span>Tours &amp; Travels</span>
-                </div>
+                <picture>
+                    <source type="image/webp" srcset="assets/agency-logo.webp">
+                    <img src="assets/agency-logo.png" alt="Via Tours &amp; Travels Official Agency Logo" width="62" height="62" class="agency-logo-nav" onerror="handleLogoError(this)">
+                </picture>
             </a>
 
             <nav class="nav-menu" aria-label="Main Navigation">
                 <div class="nav-drawer-header">
                     <div class="drawer-logo-wrap">
-                        <img src="assets/agency-logo.png" alt="Via Tours & Travels Official Logo" width="38" height="38" class="drawer-logo-img" onerror="handleLogoError(this)">
-                        <div class="logo-txt">
-                            <strong style="font-size:1.15rem;">Via</strong>
-                            <span style="font-size:0.6rem; letter-spacing:1px;">Tours &amp; Travels</span>
-                        </div>
+                        <picture>
+                            <source type="image/webp" srcset="assets/agency-logo.webp">
+                            <img src="assets/agency-logo.png" alt="Via Tours &amp; Travels Official Logo" width="50" height="50" class="drawer-logo-img" onerror="handleLogoError(this)">
+                        </picture>
                     </div>
                     <button class="nav-drawer-close" onclick="toggleMobileMenu()" aria-label="Close navigation drawer">&times;</button>
                 </div>
@@ -198,12 +198,11 @@
             <div class="footer-grid">
                 <!-- Col 1: Brand -->
                 <div class="footer-col">
-                    <a href="index.html#/home" style="display:flex; align-items:center; gap:12px; margin-bottom:16px; text-decoration:none; color:inherit;" aria-label="Via Tours & Travels Home">
-                        <img src="assets/agency-logo.png" alt="Via Tours & Travels Official Agency Logo" width="55" height="55" style="height:55px; width:auto; border-radius:6px;" onerror="handleLogoError(this)">
-                        <div class="logo-txt">
-                            <strong style="color:#ffffff;">Via</strong>
-                            <span>Tours &amp; Travels</span>
-                        </div>
+                    <a href="index.html#/home" style="display:inline-flex; align-items:center; margin-bottom:18px; text-decoration:none; color:inherit;" aria-label="Via Tours & Travels Home">
+                        <picture>
+                            <source type="image/webp" srcset="assets/agency-logo.webp">
+                            <img src="assets/agency-logo.png" alt="Via Tours &amp; Travels Official Agency Logo" width="62" height="62" style="height:62px; width:auto; border-radius:10px; background:rgba(255,255,255,0.96); padding:4px 8px; box-shadow:0 3px 12px rgba(0,0,0,0.25);" onerror="handleLogoError(this)">
+                        </picture>
                     </a>
                     <p style="font-size:0.9rem; color:#94a3b8; line-height:1.6; margin-bottom:20px;">Your trusted partner for extraordinary journeys. Creating world-class, bespoke luxury memories since 2009.</p>
                     <div style="display:flex; gap:14px; color:#cbd5e1; font-size:1.1rem;">

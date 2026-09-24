@@ -272,9 +272,9 @@ ul {
     height: 90px;
     object-fit: contain;
     border-radius: 50%;
-    background: #061029;
+    background: rgba(255, 255, 255, 0.96);
     padding: 8px;
-    box-shadow: 0 0 25px rgba(0, 0, 0, 0.5), 0 0 15px rgba(232, 119, 34, 0.25);
+    box-shadow: 0 0 25px rgba(212, 175, 55, 0.35);
     animation: preloaderPulse 2s ease-in-out infinite alternate;
 }
 .preloader-brand {
@@ -555,7 +555,16 @@ ul {
     height: 64px;
     width: auto;
     object-fit: contain;
-    border-radius: 8px;
+    transition: transform var(--transition-fast);
+    display: block;
+}
+body.dark-mode .header .logo-wrap img,
+body.dark-mode .nav-drawer-header .drawer-logo-wrap img,
+.site-footer .logo-wrap img {
+    background: rgba(255, 255, 255, 0.96);
+    border-radius: 10px;
+    padding: 3px 8px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.25);
 }
 
 /* --- BRAND EMBLEM FALLBACK (When Remote Logo Fails to Load) --- */
@@ -584,6 +593,11 @@ ul {
     width: 52px;
     height: 52px;
     min-width: 52px;
+}
+.logo-txt {
+    display: flex;
+    flex-direction: column;
+    white-space: nowrap;
 }
 .logo-txt strong {
     font-family: var(--font-heading);

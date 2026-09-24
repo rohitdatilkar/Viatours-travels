@@ -69,7 +69,16 @@
     <div class="admin-layout">
         <div class="admin-side" id="adminSide">
             <div style="display:flex; align-items:center; justify-content:space-between; padding:0 20px 20px; border-bottom:1px solid rgba(255,255,255,0.1);">
-                <div style="display:flex; flex-direction:column; gap:4px;"><h3 style="margin:0; font-size:1.15rem; color:var(--gold-400);">Via Admin</h3><a href="index.html#/home" class="admin-back-link" style="color:#94a3b8; font-size:0.75rem; text-decoration:none;"><i class="fas fa-arrow-left"></i> View Live Site</a></div>
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <picture>
+                        <source type="image/webp" srcset="assets/agency-logo.webp">
+                        <img src="assets/agency-logo.png" alt="Via Brand Logo" width="46" height="46" style="height:46px; width:46px; object-fit:contain; border-radius:10px; background:rgba(255,255,255,0.96); padding:3px; box-shadow:0 2px 8px rgba(0,0,0,0.3);">
+                    </picture>
+                    <div style="display:flex; flex-direction:column; gap:2px;">
+                        <h3 style="margin:0; font-size:1.15rem; color:var(--gold-400); font-family:var(--font-heading); font-weight:700;">Via Admin</h3>
+                        <a href="index.html#/home" class="admin-back-link" style="color:#94a3b8; font-size:0.75rem; text-decoration:none;"><i class="fas fa-arrow-left"></i> View Live Site</a>
+                    </div>
+                </div>
                 <button onclick="toggleSidebar()" style="background:none; border:none; color:white; font-size:18px; cursor:pointer;" aria-label="Toggle sidebar"><i class="fas fa-bars"></i></button>
             </div>
             <ul class="admin-menu">

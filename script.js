@@ -32,20 +32,11 @@ function handleLogoError(img) {
     if (!img) return;
     img.onerror = null;
 
-    const remoteUrl = 'https://goqwtovltftehautxekh.supabase.co/storage/v1/object/public/package-images/Via%20tours%20&%20travels.png';
     const localPng = 'assets/agency-logo.png';
+    const localSvg = 'assets/logo.svg';
 
-    // 1. Try remote CDN if not already on it
-    if (!img.dataset.triedRemote && img.src !== remoteUrl) {
-        img.dataset.triedRemote = 'true';
-        img.removeAttribute('srcset');
-        img.onerror = function() { handleLogoError(this); };
-        img.src = remoteUrl;
-        return;
-    }
-
-    // 2. Try local PNG asset if remote failed
-    if (!img.dataset.triedLocal && !img.src.includes('agency-logo.png')) {
+    // 1. Try local PNG asset if failed
+    if (!img.dataset.triedLocal && !img.src.includes('agency-logo')) {
         img.dataset.triedLocal = 'true';
         img.removeAttribute('srcset');
         img.onerror = function() { handleLogoError(this); };
@@ -53,31 +44,37 @@ function handleLogoError(img) {
         return;
     }
 
+    // 2. Try vector SVG asset
+    if (!img.dataset.triedSvg && !img.src.includes('logo.svg')) {
+        img.dataset.triedSvg = 'true';
+        img.removeAttribute('srcset');
+        img.onerror = function() { handleLogoError(this); };
+        img.src = localSvg;
+        return;
+    }
+
     // 3. Fallback: Render vector SVG emblem so broken image icon is never shown
     const fallback = document.createElement('div');
     fallback.className = 'brand-emblem-fallback';
     fallback.setAttribute('role', 'img');
-    fallback.setAttribute('aria-label', 'Via Tours & Travels Emblem');
+    fallback.setAttribute('aria-label', 'Via Tours & Travels Official Emblem');
     fallback.innerHTML = `
         <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <defs>
-                <linearGradient id="viaBrandGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#fef08a"/>
-                    <stop offset="50%" stop-color="#d97706"/>
-                    <stop offset="100%" stop-color="#92400e"/>
+                <linearGradient id="viaSkyGradJs" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#58b9ea"/>
+                    <stop offset="100%" stop-color="#0276b7"/>
                 </linearGradient>
-                <radialGradient id="viaBgGrad" cx="50%" cy="50%" r="50%">
-                    <stop offset="0%" stop-color="rgba(217,119,6,0.2)"/>
-                    <stop offset="100%" stop-color="rgba(217,119,6,0.05)"/>
-                </radialGradient>
+                <linearGradient id="viaSunGradJs" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#f6c321"/>
+                    <stop offset="100%" stop-color="#e87722"/>
+                </linearGradient>
             </defs>
-            <circle cx="32" cy="32" r="30" stroke="url(#viaBrandGrad)" stroke-width="2.5" fill="url(#viaBgGrad)"/>
-            <polygon points="32,7 34,13 32,11 30,13" fill="url(#viaBrandGrad)"/>
-            <polygon points="32,57 34,51 32,53 30,51" fill="url(#viaBrandGrad)"/>
-            <polygon points="7,32 13,34 11,32 13,30" fill="url(#viaBrandGrad)"/>
-            <polygon points="57,32 51,34 53,32 51,30" fill="url(#viaBrandGrad)"/>
-            <path d="M20 21 L32 45 L44 21" stroke="url(#viaBrandGrad)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M26 29 L38 29" stroke="url(#viaBrandGrad)" stroke-width="2" stroke-linecap="round" opacity="0.8"/>
+            <circle cx="32" cy="32" r="30" fill="url(#viaSkyGradJs)"/>
+            <circle cx="44" cy="32" r="11" fill="url(#viaSunGradJs)"/>
+            <path d="M10 45 C18 40 28 50 38 44 C46 40 54 46 58 44" stroke="#ffffff" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <path d="M8 51 C20 46 32 54 44 49 C50 46 56 50 60 49" stroke="#062956" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <polygon points="42,16 48,17 56,12 55,14 47,19 44,25 42,24 44,19 36,18" fill="#ffffff"/>
         </svg>
     `;
 
@@ -512,8 +509,10 @@ function buildResponsiveImgHtml({
 
     // Handle agency logo
     if (src.includes('agency-logo') || src.includes('Via%20tours')) {
-        const logoUrl = 'https://goqwtovltftehautxekh.supabase.co/storage/v1/object/public/package-images/Via%20tours%20&%20travels.png';
-        return `<img src="${logoUrl}" alt="${safeAlt}"${safeClass}${safeId}${safeLoading}${safePriority}${safeDecoding} onerror="handleLogoError(this)"${extra}>`;
+        return `<picture>
+            <source type="image/webp" srcset="assets/agency-logo.webp">
+            <img src="assets/agency-logo.png" alt="${safeAlt}"${safeClass}${safeId}${safeLoading}${safePriority}${safeDecoding} onerror="handleLogoError(this)"${extra}>
+        </picture>`.trim();
     }
 
     // Handle local social-preview or og-background
@@ -1217,6 +1216,16 @@ async function handleSampleItineraryDownload(e) {
                 doc.setFillColor(232, 119, 34);
                 doc.rect(0, 38, 210, 2, 'F');
 
+                // Embed Official Brand Logo Emblem on Header Banner
+                try {
+                    const logoImg = document.querySelector('.logo-wrap img') || document.querySelector('.drawer-logo-img');
+                    if (logoImg && logoImg.complete && logoImg.naturalWidth > 0) {
+                        doc.addImage(logoImg, 'PNG', 166, 4, 30, 30);
+                    }
+                } catch (imgErr) {
+                    console.warn('PDF logo render skipped:', imgErr);
+                }
+
                 // Brand Title & Tagline
                 doc.setTextColor(255, 255, 255);
                 doc.setFont('helvetica', 'bold');
@@ -1226,7 +1235,7 @@ async function handleSampleItineraryDownload(e) {
                 doc.setFont('helvetica', 'normal');
                 doc.setFontSize(9);
                 doc.setTextColor(232, 119, 34);
-                doc.text('CURATED LUXURY & BESPOKE BESPOKE JOURNEYS', 14, 23);
+                doc.text('CURATED LUXURY & BESPOKE JOURNEYS', 14, 23);
 
                 doc.setTextColor(148, 163, 184);
                 doc.setFontSize(7.5);
@@ -2603,20 +2612,17 @@ const tripModalForm = document.getElementById('tripModalForm');
 if (tripModalForm) {
     tripModalForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-
-        // Bot/spam protection
-        if (window.ViaSecurity) {
-            const botCheck = ViaSecurity.checkBotSubmission('tripModalForm', document.getElementById('modal_honeypot')?.value, 1.5);
-            if (botCheck === 'bot') {
-                await new Promise(r => setTimeout(r, 1200));
-                showToast('Thank you! Your travel quotation request has been received.', 'success');
-                hideTripModal();
-                return;
-            }
-            if (botCheck === 'rate_limited') {
-                showToast('Too many requests. Please wait a few minutes before submitting again.', 'error');
-                return;
-            }
+        // Anti-spam & Bot defense (Honeypot + Time-lock + Rate limit)
+        const botCheck = window.ViaSecurity ? window.ViaSecurity.checkBotSubmission('tripModalForm', document.getElementById('modal_honeypot')?.value, 1.5) : { isBot: false, isRateLimited: false };
+        if (botCheck.isRateLimited) {
+            showToast(botCheck.message, 'error');
+            return;
+        }
+        if (botCheck.isBot) {
+            await new Promise(r => setTimeout(r, 1200));
+            showToast('Thank you! Your travel quotation request has been received.', 'success');
+            hideTripModal();
+            return;
         }
 
         const nameInput = document.getElementById('modal_pt_name');
@@ -2678,14 +2684,21 @@ if (tripModalForm) {
             return;
         }
 
+        // XSS sanitization
+        const sName = window.ViaSecurity ? window.ViaSecurity.sanitizeInput(name) : name;
+        const sEmail = window.ViaSecurity ? window.ViaSecurity.sanitizeInput(email) : email;
+        const sPhone = window.ViaSecurity ? window.ViaSecurity.sanitizeInput(phone) : phone;
+        const sDest = window.ViaSecurity ? window.ViaSecurity.sanitizeInput(dest) : dest;
+        const sReq = window.ViaSecurity ? window.ViaSecurity.sanitizeInput(req) : req;
+
         const payload = {
-            name: window.ViaSecurity ? ViaSecurity.sanitizeInput(name) : name,
-            email: window.ViaSecurity ? ViaSecurity.sanitizeInput(email) : email,
-            phone: window.ViaSecurity ? ViaSecurity.sanitizeInput(phone) : phone,
-            destination: (window.ViaSecurity ? ViaSecurity.sanitizeInput(dest) : dest) || 'General Luxury Escapes',
+            name: sName,
+            email: sEmail,
+            phone: sPhone,
+            destination: sDest || 'General Luxury Escapes',
             travel_dates: dates || 'Flexible',
             travelers,
-            requirements: window.ViaSecurity ? ViaSecurity.sanitizeInput(req) : req,
+            requirements: sReq,
             status: 'New'
         };
 
@@ -2695,7 +2708,10 @@ if (tripModalForm) {
             } catch (err) {}
         }
 
-        if (window.ViaAnalytics) ViaAnalytics.trackLeadSubmission('trip_modal', payload.destination);
+        if (window.ViaAnalytics) {
+            window.ViaAnalytics.trackLeadSubmission('trip_modal', sDest || 'General Luxury Escapes');
+        }
+
         if (window.confetti) window.confetti({ particleCount: 100, spread: 70 });
         ViaValidator.clearFormErrors(tripModalForm);
         showToast('Thank you! Your travel quotation request has been received.', 'success');
@@ -2706,23 +2722,24 @@ if (tripModalForm) {
 // Quick Contact Form
 async function handleQuickContact(e) {
     e.preventDefault();
-
-    // Bot/spam protection
-    if (window.ViaSecurity) {
-        const botCheck = ViaSecurity.checkBotSubmission('contactForm', document.getElementById('c_honeypot')?.value, 1.5);
-        if (botCheck === 'bot') {
-            await new Promise(r => setTimeout(r, 1200));
-            showToast('Your message has been sent to our concierge desk!', 'success');
-            e.target?.reset();
-            return;
-        }
-        if (botCheck === 'rate_limited') {
-            showToast('Too many requests. Please wait a few minutes before trying again.', 'error');
-            return;
-        }
-    }
-
     const form = e.target;
+
+    // Anti-spam & Bot defense (Honeypot + Time-lock + Rate limit)
+    const botCheck = window.ViaSecurity ? window.ViaSecurity.checkBotSubmission('contactForm', document.getElementById('c_honeypot')?.value, 1.5) : { isBot: false, isRateLimited: false };
+    if (botCheck.isRateLimited) {
+        showToast(botCheck.message, 'error');
+        return;
+    }
+    if (botCheck.isBot) {
+        const btn = form.querySelector('button[type="submit"]');
+        await withLoading(btn, async () => {
+            await new Promise(r => setTimeout(r, 1200));
+        });
+        showToast('Your message has been sent to our concierge desk!', 'success');
+        form.reset();
+        return;
+    }
+    
     const nameInput = document.getElementById('c_name');
     const emailInput = document.getElementById('c_email');
     const phoneInput = document.getElementById('c_phone');
@@ -2774,22 +2791,32 @@ async function handleQuickContact(e) {
         return;
     }
 
+    const sName = window.ViaSecurity ? window.ViaSecurity.sanitizeInput(name) : name;
+    const sEmail = window.ViaSecurity ? window.ViaSecurity.sanitizeInput(email) : email;
+    const sPhone = window.ViaSecurity ? window.ViaSecurity.sanitizeInput(phone) : phone;
+    const sMsg = window.ViaSecurity ? window.ViaSecurity.sanitizeInput(msg) : msg;
+
     const btn = form.querySelector('button[type="submit"]');
     await withLoading(btn, async () => {
         if (sb) {
             try {
                 await sb.from('enquiries').insert([{
-                    name,
-                    email: email || 'N/A',
-                    phone: phone || 'N/A',
+                    name: sName,
+                    email: sEmail || 'N/A',
+                    phone: sPhone || 'N/A',
                     destination: 'Contact Page Inquiry',
-                    requirements: msg,
+                    requirements: sMsg,
                     status: 'New'
                 }]);
             } catch (err) {
                 console.warn('Contact inquiry save error:', err);
             }
         }
+
+        if (window.ViaAnalytics) {
+            window.ViaAnalytics.trackLeadSubmission('quick_contact', 'Contact Page Inquiry');
+        }
+
         ViaValidator.clearFormErrors(form);
         showToast('Your message has been sent to our concierge desk!', 'success');
         form.reset();
@@ -2816,6 +2843,19 @@ function handle404Search(e) {
 // Newsletter Subscription
 async function handleNewsletter(e) {
     e.preventDefault();
+
+    // Anti-spam & Bot defense (Honeypot + Time-lock + Rate limit)
+    const botCheck = window.ViaSecurity ? window.ViaSecurity.checkBotSubmission('newsletterForm', document.getElementById('nl_honeypot')?.value, 1.0) : { isBot: false, isRateLimited: false };
+    if (botCheck.isRateLimited) {
+        showToast(botCheck.message, 'error');
+        return;
+    }
+    if (botCheck.isBot) {
+        showToast('Thank you for subscribing to The Luxury Bulletin.', 'success');
+        if (e.target && e.target.reset) e.target.reset();
+        return;
+    }
+
     const emailInput = document.getElementById('nl_email');
     const email = emailInput ? emailInput.value.trim() : '';
 
@@ -2827,11 +2867,13 @@ async function handleNewsletter(e) {
     }
     ViaValidator.clearFieldError(emailInput);
 
+    const sEmail = window.ViaSecurity ? window.ViaSecurity.sanitizeInput(email) : email;
+
     if (sb) {
         try {
             await sb.from('enquiries').insert([{
                 name: 'Newsletter Subscriber',
-                email: email,
+                email: sEmail,
                 phone: 'N/A',
                 destination: 'Newsletter Subscription (The Luxury Bulletin)',
                 requirements: 'Opted in for secret villa deals, seasonal travel guides, and VIP invitations.',
@@ -2841,7 +2883,12 @@ async function handleNewsletter(e) {
             console.warn('Newsletter subscription save error:', err);
         }
     }
-    showToast(`Thank you! ${email} is now subscribed to The Luxury Bulletin.`, 'success');
+
+    if (window.ViaAnalytics) {
+        window.ViaAnalytics.trackNewsletterSignup();
+    }
+
+    showToast(`Thank you! ${sEmail} is now subscribed to The Luxury Bulletin.`, 'success');
     if (e.target && e.target.reset) e.target.reset();
 }
 

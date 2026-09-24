@@ -146,7 +146,7 @@
     }
 
     function getFormInteractionDuration(formId) {
-        if (!formId || !formInteractionTimers[formId]) return 0;
+        if (!formId || !formInteractionTimers[formId]) return -1;
         return (Date.now() - formInteractionTimers[formId]) / 1000;
     }
 
@@ -203,7 +203,7 @@
 
         // 2. Time-lock check (human needs at least minSeconds to fill form)
         const duration = getFormInteractionDuration(formId);
-        if (duration > 0 && duration < minSeconds) {
+        if (duration >= 0 && duration < minSeconds) {
             return {
                 isBot: true,
                 reason: 'time_lock_violation',
