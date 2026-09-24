@@ -49,3 +49,4 @@ build/
 .cache/
 .temp/
 .tmp/
+scratch/

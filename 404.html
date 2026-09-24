@@ -60,18 +60,36 @@
         function handleLogoError(img) {
             if (!img) return;
             img.onerror = null;
-            var localPng = 'assets/agency-logo.png';
-            var localSvg = 'assets/logo.svg';
-            if (!img.dataset.triedLocal && !img.src.includes('agency-logo')) {
-                img.dataset.triedLocal = 'true';
-                img.removeAttribute('srcset');
-                img.src = localPng;
+
+            if (img.parentNode && img.parentNode.tagName === 'PICTURE') {
+                var sources = img.parentNode.querySelectorAll('source');
+                for (var s = 0; s < sources.length; s++) {
+                    sources[s].removeAttribute('srcset');
+                }
+            }
+            img.removeAttribute('srcset');
+
+            var step = parseInt(img.dataset.errorStep || '0', 10);
+            img.dataset.errorStep = (step + 1).toString();
+
+            if (step === 0) {
+                img.onerror = function() { handleLogoError(this); };
+                img.src = 'agency-logo.png';
                 return;
             }
-            if (!img.dataset.triedSvg && !img.src.includes('logo.svg')) {
-                img.dataset.triedSvg = 'true';
-                img.removeAttribute('srcset');
-                img.src = localSvg;
+            if (step === 1) {
+                img.onerror = function() { handleLogoError(this); };
+                img.src = 'agency-logo.webp';
+                return;
+            }
+            if (step === 2) {
+                img.onerror = function() { handleLogoError(this); };
+                img.src = 'assets/logo.svg';
+                return;
+            }
+            if (step === 3) {
+                img.onerror = function() { handleLogoError(this); };
+                img.src = 'logo.svg';
                 return;
             }
             img.style.display = 'none';

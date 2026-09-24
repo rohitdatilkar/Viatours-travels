@@ -13,53 +13,58 @@
         }
 
         // --- LUXURY BRAND LOGO FAIL-SAFE HANDLER ---
+        // Guarantees the logo loads seamlessly whether hosted with an assets/ folder or flat on GitHub
         function handleLogoError(img) {
             if (!img) return;
             img.onerror = null;
 
-            var localPng = 'assets/agency-logo.png';
-            var localEmblem = 'assets/agency-logo-emblem.png';
-            var localSvg = 'assets/logo.svg';
+            // Clear any picture/source wrapper so the img tag controls source resolution
+            if (img.parentNode && img.parentNode.tagName === 'PICTURE') {
+                var sources = img.parentNode.querySelectorAll('source');
+                for (var s = 0; s < sources.length; s++) {
+                    sources[s].removeAttribute('srcset');
+                }
+            }
+            img.removeAttribute('srcset');
 
-            // 1. Try local PNG asset if failed
-            if (!img.dataset.triedLocal && !img.src.includes('agency-logo')) {
-                img.dataset.triedLocal = 'true';
-                img.removeAttribute('srcset');
+            var step = parseInt(img.dataset.errorStep || '0', 10);
+            img.dataset.errorStep = (step + 1).toString();
+
+            if (step === 0) {
+                // Stage 1: Try root-level PNG (works when uploaded to GitHub without assets/ folder)
                 img.onerror = function() { handleLogoError(this); };
-                img.src = localPng;
+                img.src = 'agency-logo.png';
+                return;
+            }
+            if (step === 1) {
+                // Stage 2: Try root-level WebP
+                img.onerror = function() { handleLogoError(this); };
+                img.src = 'agency-logo.webp';
+                return;
+            }
+            if (step === 2) {
+                // Stage 3: Try assets/logo.svg
+                img.onerror = function() { handleLogoError(this); };
+                img.src = 'assets/logo.svg';
+                return;
+            }
+            if (step === 3) {
+                // Stage 4: Try root-level logo.svg
+                img.onerror = function() { handleLogoError(this); };
+                img.src = 'logo.svg';
                 return;
             }
 
-            // 2. Try vector SVG asset
-            if (!img.dataset.triedSvg && !img.src.includes('logo.svg')) {
-                img.dataset.triedSvg = 'true';
-                img.removeAttribute('srcset');
-                img.onerror = function() { handleLogoError(this); };
-                img.src = localSvg;
-                return;
-            }
-
-            // 3. Fallback: Render vector SVG emblem so broken image icon is never shown
+            // Stage 5: In-DOM Vector Brandmark Fallback (Zero network requests)
             var fallback = document.createElement('div');
             fallback.className = 'brand-emblem-fallback';
             fallback.setAttribute('role', 'img');
             fallback.setAttribute('aria-label', 'Via Tours & Travels Emblem');
             fallback.innerHTML = '<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
-                '<defs>' +
-                    '<linearGradient id="viaSkyGrad" x1="0%" y1="0%" x2="100%" y2="100%">' +
-                        '<stop offset="0%" stop-color="#58b9ea"/>' +
-                        '<stop offset="100%" stop-color="#0276b7"/>' +
-                    '</linearGradient>' +
-                    '<linearGradient id="viaSunGrad" x1="0%" y1="0%" x2="100%" y2="100%">' +
-                        '<stop offset="0%" stop-color="#f6c321"/>' +
-                        '<stop offset="100%" stop-color="#e87722"/>' +
-                    '</linearGradient>' +
-                '</defs>' +
-                '<circle cx="32" cy="32" r="30" fill="url(#viaSkyGrad)"/>' +
-                '<circle cx="44" cy="32" r="11" fill="url(#viaSunGrad)"/>' +
-                '<path d="M10 45 C18 40 28 50 38 44 C46 40 54 46 58 44" stroke="#ffffff" stroke-width="2.5" fill="none" stroke-linecap="round"/>' +
-                '<path d="M8 51 C20 46 32 54 44 49 C50 46 56 50 60 49" stroke="#062956" stroke-width="2.5" fill="none" stroke-linecap="round"/>' +
-                '<polygon points="42,16 48,17 56,12 55,14 47,19 44,25 42,24 44,19 36,18" fill="#ffffff"/>' +
+                '<circle cx="32" cy="32" r="30" fill="#ffffff" stroke="#d4af37" stroke-width="2"/>' +
+                '<path d="M12 44 C20 38 28 48 38 42 C44 38 50 44 54 42" stroke="#062956" stroke-width="2.5" fill="none" stroke-linecap="round"/>' +
+                '<path d="M10 50 C20 44 30 52 42 47 C48 44 52 48 56 47" stroke="#e87722" stroke-width="2.5" fill="none" stroke-linecap="round"/>' +
+                '<polygon points="40,16 46,17 54,12 53,14 45,19 42,25 40,24 42,19 34,18" fill="#062956"/>' +
             '</svg>';
 
             var target = (img.parentNode && img.parentNode.tagName === 'PICTURE') ? img.parentNode : img;
