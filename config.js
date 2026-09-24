@@ -99,6 +99,14 @@
     const SUPABASE_URL = envOverrides.SUPABASE_URL || metaUrl || 'https://goqwtovltftehautxekh.supabase.co';
     const SUPABASE_KEY = envOverrides.SUPABASE_KEY || metaKey || 'sb_publishable_bQXp8x_2x4ymx4_oxcOFUA_UTGsqF-5';
 
+    // Standalone Python FastAPI Backend endpoint (optional, with auto-fallback to client-side Supabase)
+    const metaApiUrl = document.querySelector('meta[name="via-backend-api"]')?.getAttribute('content');
+    const BACKEND_API_URL = envOverrides.BACKEND_API_URL || metaApiUrl || (
+        (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+            ? 'http://127.0.0.1:8000/api'
+            : ''
+    );
+
     // Verify publishable key is not a private secret
     assertNotSecret(SUPABASE_KEY, 'SUPABASE_KEY');
 
@@ -231,6 +239,7 @@
     window.__VIA_CONFIG__ = Object.freeze({
         SUPABASE_URL,
         SUPABASE_KEY,
+        BACKEND_API_URL,
         GA_MEASUREMENT_ID: envOverrides.GA_MEASUREMENT_ID || 'G-XXXXXXXXXX',
         IS_PRODUCTION: window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1',
         SECRETS_OFF_FRONTEND: true
