@@ -47,7 +47,7 @@
         .admin-back-link:hover { color: var(--gold-400) !important; text-decoration: underline !important; }
     </style>
 </head>
-<body class="dark-mode">
+<body>
 
 <div id="confirmModal" style="display:none; position:fixed; inset:0; background:rgba(5,8,20,0.75); z-index:100000; align-items:center; justify-content:center; backdrop-filter:blur(8px);">
     <div style="background:var(--surface-card); max-width:440px; margin:auto; padding:32px; border-radius:var(--radius-lg); text-align:center; border:1px solid var(--border-gold); box-shadow:var(--shadow-xl);">
@@ -89,7 +89,6 @@
                 <li onclick="showAdminTab('testimonials', event)"><i class="fas fa-comment-dots"></i><span class="nav-text"> Testimonials</span></li>
                 <li onclick="showAdminTab('faqs', event)"><i class="fas fa-question-circle"></i><span class="nav-text"> FAQs</span></li>
                 <li onclick="showAdminTab('settings', event)"><i class="fas fa-cog"></i><span class="nav-text"> Settings</span></li>
-                <li onclick="toggleDarkMode()" style="margin-top:15px;"><i class="fas fa-moon"></i><span class="nav-text"> Theme Toggle</span></li>
                 <li onclick="window.location.href='index.html#/home'" style="margin-top:10px;"><i class="fas fa-globe"></i><span class="nav-text"> Return to Site</span></li>
                 <li onclick="logout()" style="margin-top:15px; color:#ef4444;"><i class="fas fa-sign-out-alt"></i><span class="nav-text"> Logout</span></li>
             </ul>

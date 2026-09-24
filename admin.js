@@ -203,14 +203,6 @@ function showConfirm(message, onConfirm) {
     }
 }
 
-let isDarkMode = localStorage.getItem('darkMode') === 'true';
-if (isDarkMode) document.body.classList.add('dark-mode');
-function toggleDarkMode() {
-    isDarkMode = !isDarkMode;
-    document.body.classList.toggle('dark-mode', isDarkMode);
-    localStorage.setItem('darkMode', isDarkMode);
-}
-
 // --- SUPABASE STORAGE FILE UPLOAD HELPER ---
 async function uploadFileToSupabase(file, folder = 'package-images') {
     if (!sb || !file) return null;
@@ -1483,11 +1475,6 @@ function toggleAllCheckboxes(type, master) {
 
 // --- AUTOMATIC SESSION VERIFICATION & BOOT ---
 window.addEventListener('DOMContentLoaded', async () => {
-    // Check dark mode
-    if (localStorage.getItem('darkMode') === 'true') {
-        document.body.classList.add('dark-mode');
-    }
-
     const loginBox = document.getElementById('admin-login');
     const dashBox = document.getElementById('admin-dashboard');
 

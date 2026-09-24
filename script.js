@@ -66,7 +66,15 @@ let appSettings = {
 };
 
 let currentCurrency = localStorage.getItem('via_currency') || 'INR';
-let isDarkMode = localStorage.getItem('darkMode') === 'true';
+
+// Clean up any legacy dark-mode storage or classes
+try {
+    localStorage.removeItem('darkMode');
+    localStorage.removeItem('via_theme');
+    document.documentElement.classList.remove('dark-mode');
+    document.body.classList.remove('dark-mode');
+} catch (e) {}
+
 let isSidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
 let activeDestFilter = null;
 let activeCategoryFilter = null;
@@ -82,22 +90,6 @@ const CURRENCY_RATES = {
     EUR: { rate: 0.011, symbol: '€', code: 'EUR' },
     AED: { rate: 0.044, symbol: 'AED ', code: 'AED' }
 };
-
-// Initialize Theme
-document.body.classList.toggle('dark-mode', isDarkMode);
-updateThemeIcon();
-
-function updateThemeIcon() {
-    const icon = document.getElementById('themeIcon');
-    if (icon) icon.className = isDarkMode ? 'fas fa-sun' : 'fas fa-moon';
-}
-
-function toggleDarkMode() {
-    isDarkMode = !isDarkMode;
-    document.body.classList.toggle('dark-mode', isDarkMode);
-    localStorage.setItem('darkMode', isDarkMode);
-    updateThemeIcon();
-}
 
 // --- CURRENCY CONVERTER ---
 function changeCurrency(curr) {
