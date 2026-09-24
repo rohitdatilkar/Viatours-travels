@@ -493,9 +493,9 @@ function renderItinEditor() {
     const editor = document.getElementById('itin_editor');
     if (!editor) return;
     editor.innerHTML = currentItinerary.map((d, i) => `
-        <div style="background:#081535; border:1px solid #1c3060; padding:12px; border-radius:8px; margin-bottom:10px;">
-            <input type="text" value="${escapeHTML(d.title)}" placeholder="Day Title" oninput="currentItinerary[${i}].title = this.value" style="margin-bottom:6px; background:#0c1a3d; color:#fff;">
-            <textarea placeholder="Day Description" rows="2" oninput="currentItinerary[${i}].desc = this.value" style="background:#0c1a3d; color:#fff;">${escapeHTML(d.desc || d.description || '')}</textarea>
+        <div style="background:#f8fafc; border:1px solid #e2e8f0; padding:12px; border-radius:8px; margin-bottom:10px;">
+            <input type="text" value="${escapeHTML(d.title)}" placeholder="Day Title" oninput="currentItinerary[${i}].title = this.value" style="margin-bottom:6px; background:#ffffff; color:#0c1a3d; border:1px solid #cbd5e1;">
+            <textarea placeholder="Day Description" rows="2" oninput="currentItinerary[${i}].desc = this.value" style="background:#ffffff; color:#0c1a3d; border:1px solid #cbd5e1;">${escapeHTML(d.desc || d.description || '')}</textarea>
             <button type="button" class="btn btn-danger btn-sm" onclick="currentItinerary.splice(${i}, 1); renderItinEditor();" style="margin-top:6px;"><i class="fas fa-trash"></i> Remove Day</button>
         </div>
     `).join('');
@@ -787,14 +787,14 @@ async function loadAdminEnquiries() {
             <td><strong>${escapeHTML(e.name || e.customer_name || 'Guest')}</strong><br>${escapeHTML(e.email || '')}<br>${escapeHTML(e.phone || '')}</td>
             <td>Dest: ${escapeHTML(e.destination || 'N/A')}<br>Dates: ${escapeHTML(e.travel_dates || 'N/A')}<br>Budget: ${escapeHTML(e.budget || 'N/A')}</td>
             <td>
-                <select class="status-dropdown" onchange="changeStatus('enquiries', '${escapeHTML(e.id)}', this.value)" style="background:#081535; color:#fff; padding:4px 8px; border-radius:4px;">
+                <select class="status-dropdown" onchange="changeStatus('enquiries', '${escapeHTML(e.id)}', this.value)" style="background:#ffffff; color:#0c1a3d; border:1px solid #cbd5e1; padding:4px 8px; border-radius:4px;">
                     <option ${e.status === 'New' ? 'selected' : ''}>New</option>
                     <option ${e.status === 'Contacted' ? 'selected' : ''}>Contacted</option>
                     <option ${e.status === 'Quotation Sent' ? 'selected' : ''}>Quotation Sent</option>
                     <option ${e.status === 'Confirmed' ? 'selected' : ''}>Confirmed</option>
                     <option ${e.status === 'Completed' ? 'selected' : ''}>Completed</option>
                 </select>
-                <textarea placeholder="VIP internal notes" onchange="saveNote('${escapeHTML(e.id)}', this.value)" style="width:100%; margin-top:6px; font-size:12px; background:#081535; color:#fff;">${escapeHTML(e.internal_notes || '')}</textarea>
+                <textarea placeholder="VIP internal notes" onchange="saveNote('${escapeHTML(e.id)}', this.value)" style="width:100%; margin-top:6px; font-size:12px; background:#ffffff; color:#0c1a3d; border:1px solid #cbd5e1; border-radius:4px; padding:4px 6px;">${escapeHTML(e.internal_notes || '')}</textarea>
             </td>
             <td>
                 <button class="btn btn-danger btn-sm" onclick="delItem('enquiries', '${escapeHTML(e.id)}')"><i class="fas fa-trash"></i></button>
@@ -858,7 +858,7 @@ async function loadAdminCustomers() {
         <tr>
             <td><strong>${escapeHTML(c.name)}</strong></td>
             <td>${escapeHTML(c.email)}<br>${escapeHTML(c.phone)}</td>
-            <td><textarea style="background:#081535; color:#fff; width:100%; font-size:12px;">${escapeHTML(c.notes || '')}</textarea></td>
+            <td><textarea style="background:#ffffff; color:#0c1a3d; border:1px solid #cbd5e1; border-radius:4px; padding:6px; width:100%; font-size:12px;">${escapeHTML(c.notes || '')}</textarea></td>
         </tr>
     `).join('');
 }
@@ -1432,10 +1432,12 @@ async function triggerPushCatalogToSupabase() {
             });
             if (logBox) {
                 logBox.innerHTML += `
-                    <div style="margin-top:12px; padding:10px; background:#0c1a3d; border-radius:6px; border:1px solid var(--border-gold);">
-                        <strong style="color:var(--gold-400);">Sync Complete!</strong><br>
-                        Inserted: ${report.inserted} | Updated: ${report.updated} | Errors: ${report.errors.length}
-                        ${report.errors.length > 0 ? '<br><small style="color:#ef4444;">' + report.errors.map(escapeHTML).join('<br>') + '</small>' : ''}
+                    <div style="margin-top:12px; padding:12px; background:#ffffff; border-radius:8px; border:1px solid #cbd5e1; box-shadow:0 2px 8px rgba(12,26,61,0.06); color:#0c1a3d;">
+                        <strong style="color:#0c1a3d; display:flex; align-items:center; gap:6px;"><i class="fas fa-check-circle" style="color:#10b981;"></i> Sync Complete!</strong>
+                        <div style="margin-top:4px; font-size:13px; color:#475569;">
+                            Inserted: <strong>${report.inserted}</strong> | Updated: <strong>${report.updated}</strong> | Errors: <strong>${report.errors.length}</strong>
+                        </div>
+                        ${report.errors.length > 0 ? '<div style="margin-top:6px; font-size:12px; color:#ef4444;">' + report.errors.map(escapeHTML).join('<br>') + '</div>' : ''}
                     </div>
                 `;
             }
