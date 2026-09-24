@@ -551,48 +551,73 @@ ul {
 .logo-wrap:hover {
     transform: scale(1.02);
 }
-.logo-wrap img {
+/* --- LUXURY BRANDMARK BADGE & CONTRAST CAPSULE --- */
+.brand-logo-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    transition: all var(--transition-fast);
+    background: rgba(255, 255, 255, 0.98);
+    padding: 4px 10px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.28);
+}
+.brand-logo-badge:hover {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+}
+.brand-logo-badge-sm {
+    padding: 3px 8px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+.logo-wrap img,
+.brand-logo-badge img {
     height: 64px;
     width: auto;
+    max-width: 100%;
     object-fit: contain;
     transition: transform var(--transition-fast);
+    display: block;
+}
+.agency-logo-footer {
+    height: 62px;
+    width: auto;
+    object-fit: contain;
     display: block;
 }
 body.dark-mode .header .logo-wrap img,
 body.dark-mode .nav-drawer-header .drawer-logo-wrap img,
 .site-footer .logo-wrap img {
-    background: rgba(255, 255, 255, 0.96);
-    border-radius: 10px;
-    padding: 3px 8px;
-    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.25);
+    background: transparent;
+    border-radius: 0;
+    padding: 0;
+    box-shadow: none;
 }
 
-/* --- BRAND EMBLEM FALLBACK (When Remote Logo Fails to Load) --- */
+/* --- BRAND EMBLEM FALLBACK CONTAINER --- */
 .brand-emblem-fallback {
-    width: 52px;
-    height: 52px;
-    min-width: 52px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-radius: 50%;
-    filter: drop-shadow(0 2px 8px rgba(217, 119, 6, 0.25));
+    background: rgba(255, 255, 255, 0.98);
+    border-radius: 12px;
+    padding: 4px 10px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.28);
     flex-shrink: 0;
 }
+.brand-emblem-fallback img,
 .brand-emblem-fallback svg {
-    width: 100%;
-    height: 100%;
+    width: auto;
+    height: 64px;
+    max-width: 100%;
+    object-fit: contain;
     display: block;
 }
 .preloader-logo-wrap .brand-emblem-fallback {
-    width: 68px;
     height: 68px;
-    min-width: 68px;
 }
 .footer-col .brand-emblem-fallback {
-    width: 52px;
-    height: 52px;
-    min-width: 52px;
+    height: 62px;
 }
 .logo-txt {
     display: flex;
