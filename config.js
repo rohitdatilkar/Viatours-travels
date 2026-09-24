@@ -122,10 +122,116 @@
         return clientInstance;
     }
 
+    // --- XSS INPUT SANITIZATION ---
+    function sanitizeInput(val) {
+        if (!val || typeof val !== 'string') return '';
+        return val
+            .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+            .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '')
+            .replace(/on\w+\s*=\s*(?:["'][^"']*["']|[^\s>]+)/gi, '')
+            .replace(/javascript:/gi, '')
+            .replace(/vbscript:/gi, '')
+            .replace(/data:text\/html/gi, '')
+            .trim();
+    }
+
+    // --- FORM INTERACTION TIME-LOCK BOT DEFENSE ---
+    const formInteractionTimers = {};
+
+    function recordFormStart(formId) {
+        if (!formId) return;
+        if (!formInteractionTimers[formId]) {
+            formInteractionTimers[formId] = Date.now();
+        }
+    }
+
+    function getFormInteractionDuration(formId) {
+        if (!formId || !formInteractionTimers[formId]) return 0;
+        return (Date.now() - formInteractionTimers[formId]) / 1000;
+    }
+
+    function resetFormTimer(formId) {
+        if (formId) delete formInteractionTimers[formId];
+    }
+
+    // --- CLIENT-SIDE SLIDING-WINDOW RATE LIMITER ---
+    function checkRateLimit(action, maxAllowed = 4, windowSeconds = 300) {
+        const storageKey = `via_rl_${action}`;
+        const now = Date.now();
+        let history = [];
+
+        try {
+            if (typeof sessionStorage !== 'undefined') {
+                const raw = sessionStorage.getItem(storageKey);
+                if (raw) history = JSON.parse(raw);
+            }
+        } catch (e) {}
+
+        const cutoff = now - (windowSeconds * 1000);
+        history = history.filter(ts => typeof ts === 'number' && ts > cutoff);
+
+        if (history.length >= maxAllowed) {
+            const oldestInWindow = history[0];
+            const remainingSec = Math.ceil(((oldestInWindow + (windowSeconds * 1000)) - now) / 1000);
+            return {
+                allowed: false,
+                remainingSeconds: Math.max(1, remainingSec),
+                message: `Too many submissions. Please wait ${Math.max(1, remainingSec)}s before submitting again, or contact our 24/7 concierge on WhatsApp.`
+            };
+        }
+
+        history.push(now);
+        try {
+            if (typeof sessionStorage !== 'undefined') {
+                sessionStorage.setItem(storageKey, JSON.stringify(history));
+            }
+        } catch (e) {}
+
+        return { allowed: true, remainingSeconds: 0 };
+    }
+
+    // --- COMPREHENSIVE BOT & SPAM CHECK ---
+    function checkBotSubmission(formId, honeypotValue, minSeconds = 1.5) {
+        // 1. Honeypot check
+        if (honeypotValue && String(honeypotValue).trim().length > 0) {
+            return {
+                isBot: true,
+                reason: 'honeypot_triggered',
+                silentlyDiscard: true
+            };
+        }
+
+        // 2. Time-lock check (human needs at least minSeconds to fill form)
+        const duration = getFormInteractionDuration(formId);
+        if (duration > 0 && duration < minSeconds) {
+            return {
+                isBot: true,
+                reason: 'time_lock_violation',
+                silentlyDiscard: true
+            };
+        }
+
+        // 3. Rate limiting check
+        const rateCheck = checkRateLimit(formId || 'general_form', 4, 300);
+        if (!rateCheck.allowed) {
+            return {
+                isBot: false,
+                isRateLimited: true,
+                reason: 'rate_limited',
+                message: rateCheck.message,
+                remainingSeconds: rateCheck.remainingSeconds,
+                silentlyDiscard: false
+            };
+        }
+
+        return { isBot: false, isRateLimited: false };
+    }
+
     // Export security suite and config to global window
     window.__VIA_CONFIG__ = Object.freeze({
         SUPABASE_URL,
         SUPABASE_KEY,
+        GA_MEASUREMENT_ID: envOverrides.GA_MEASUREMENT_ID || 'G-XXXXXXXXXX',
         IS_PRODUCTION: window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1',
         SECRETS_OFF_FRONTEND: true
     });
@@ -133,7 +239,13 @@
     window.ViaSecurity = Object.freeze({
         isSecretKey,
         assertNotSecret,
-        getSupabaseClient
+        getSupabaseClient,
+        sanitizeInput,
+        recordFormStart,
+        getFormInteractionDuration,
+        resetFormTimer,
+        checkRateLimit,
+        checkBotSubmission
     });
 
     // Provide backward-compatible globals for legacy scripts

@@ -329,6 +329,144 @@ const ViaValidator = {
 };
 window.ViaValidator = ViaValidator;
 
+// --- PRIVACY-FIRST ANALYTICS & CONVERSION TRACKING ENGINE (ITEM 19) ---
+const ViaAnalytics = {
+    measurementId: window.__VIA_CONFIG__?.GA_MEASUREMENT_ID || 'G-XXXXXXXXXX',
+    isInitialized: false,
+    consentGranted: false,
+    eventQueue: [],
+
+    init() {
+        try {
+            const rawConsent = localStorage.getItem('via_cookie_consent');
+            if (rawConsent) {
+                const parsed = JSON.parse(rawConsent);
+                if (parsed.choice === 'all') {
+                    this.grantConsent();
+                }
+            }
+        } catch (e) {}
+
+        // Listen for user granting consent in cookie banner
+        window.addEventListener('via:cookie_consent', (e) => {
+            if (e.detail && e.detail.choice === 'all') {
+                this.grantConsent();
+            }
+        });
+    },
+
+    grantConsent() {
+        this.consentGranted = true;
+        if (this.measurementId && this.measurementId !== 'G-XXXXXXXXXX' && !window.gtag) {
+            this.loadGtag();
+        }
+        while (this.eventQueue.length > 0) {
+            const ev = this.eventQueue.shift();
+            this.trackEvent(ev.name, ev.params);
+        }
+    },
+
+    loadGtag() {
+        if (document.getElementById('via_gtag_script')) return;
+        const script = document.createElement('script');
+        script.id = 'via_gtag_script';
+        script.async = true;
+        script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(this.measurementId)}`;
+        document.head.appendChild(script);
+
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = function() { window.dataLayer.push(arguments); };
+        window.gtag('js', new Date());
+        window.gtag('config', this.measurementId, {
+            anonymize_ip: true,
+            cookie_flags: 'SameSite=None;Secure'
+        });
+        this.isInitialized = true;
+    },
+
+    trackEvent(eventName, params = {}) {
+        const payload = {
+            ...params,
+            page_path: window.location.hash || '#/home',
+            timestamp: new Date().toISOString()
+        };
+
+        if (window.gtag && this.consentGranted) {
+            window.gtag('event', eventName, payload);
+        } else {
+            if (this.eventQueue.length < 50) {
+                this.eventQueue.push({ name: eventName, params: payload });
+            }
+        }
+
+        // CustomEvent dispatched for telemetry and verification
+        window.dispatchEvent(new CustomEvent('via:analytics_event', { detail: { event: eventName, payload } }));
+    },
+
+    trackPageView(pageRoute) {
+        this.trackEvent('page_view', {
+            page_title: document.title,
+            page_location: window.location.href,
+            page_path: pageRoute || window.location.hash || '#/home'
+        });
+    },
+
+    trackPackageView(pkgId, title, price) {
+        this.trackEvent('view_item', {
+            item_id: pkgId,
+            item_name: title,
+            price: price || 0
+        });
+    },
+
+    trackTripPlannerStep(step, destination) {
+        this.trackEvent('trip_planner_step', {
+            step_number: step,
+            destination: destination || 'Unspecified'
+        });
+    },
+
+    trackLeadSubmission(leadType, destination) {
+        this.trackEvent('generate_lead', {
+            lead_type: leadType,
+            destination: destination || 'General Inquiry'
+        });
+    },
+
+    trackItineraryDownload(destination) {
+        this.trackEvent('download_itinerary', {
+            destination: destination || 'Signature Journeys'
+        });
+    },
+
+    trackNewsletterSignup() {
+        this.trackEvent('newsletter_signup', {
+            channel: 'footer_luxury_bulletin'
+        });
+    },
+
+    trackConciergeClick(channel) {
+        this.trackEvent('contact_concierge', {
+            channel: channel // 'whatsapp', 'phone', 'email'
+        });
+    }
+};
+window.ViaAnalytics = ViaAnalytics;
+
+// Auto-track Concierge & Direct Communication Clicks
+document.addEventListener('click', (e) => {
+    const link = e.target.closest('a');
+    if (!link) return;
+    const href = link.getAttribute('href') || '';
+    if (href.includes('wa.me') || href.includes('whatsapp.com')) {
+        window.ViaAnalytics && window.ViaAnalytics.trackConciergeClick('whatsapp');
+    } else if (href.startsWith('tel:')) {
+        window.ViaAnalytics && window.ViaAnalytics.trackConciergeClick('phone');
+    } else if (href.startsWith('mailto:')) {
+        window.ViaAnalytics && window.ViaAnalytics.trackConciergeClick('email');
+    }
+}, { passive: true });
+
 // --- RESPONSIVE WEBP IMAGE HELPER ---
 /**
  * Generates an optimized responsive image HTML string using modern <picture>
@@ -687,6 +825,9 @@ async function router() {
 
     window.scrollTo({ top: 0, behavior: 'instant' });
 
+    // Track SPA route transition in Analytics
+    window.ViaAnalytics && window.ViaAnalytics.trackPageView('#/' + page + (id ? '/' + id : ''));
+
     // FIXED SWITCH STATEMENT: Explicit break on every case including default
     switch (page) {
         case 'home':
@@ -885,6 +1026,7 @@ window.addEventListener('resize', () => {
 // --- POPUP TRIP MODAL ---
 function showTripModal() {
     initDatePickers();
+    window.ViaSecurity && window.ViaSecurity.recordFormStart('tripModalForm');
     const modal = document.getElementById('tripModal');
     if (!modal) return;
     modal.classList.add('active');
@@ -909,6 +1051,7 @@ function hideTripModal() {
 
 // --- SAMPLE ITINERARY DOWNLOAD MODAL LOGIC ---
 function openSampleItineraryModal(pkgTitle) {
+    window.ViaSecurity && window.ViaSecurity.recordFormStart('sampleItineraryForm');
     const modal = document.getElementById('sampleItineraryModal');
     if (!modal) return;
     modal.classList.add('active');
@@ -976,6 +1119,21 @@ async function handleSampleItineraryDownload(e) {
     const email = emailInput ? emailInput.value.trim() : '';
     const dest = document.getElementById('sample_dest')?.value || 'Signature Luxury Journeys';
 
+    // Anti-spam & Bot defense (Honeypot + Time-lock + Rate limit)
+    const botCheck = window.ViaSecurity ? window.ViaSecurity.checkBotSubmission('sampleItineraryForm', document.getElementById('sample_honeypot')?.value, 1.5) : { isBot: false, isRateLimited: false };
+    if (botCheck.isRateLimited) {
+        showToast(botCheck.message, 'error');
+        return;
+    }
+    if (botCheck.isBot) {
+        await withLoading(btn, async () => {
+            await new Promise(r => setTimeout(r, 1200));
+        });
+        showToast('Your sample itinerary guide has been generated!', 'success');
+        closeSampleItineraryModal();
+        return;
+    }
+
     let valid = true;
 
     if (!ViaValidator.isValidName(name, 2)) {
@@ -998,13 +1156,16 @@ async function handleSampleItineraryDownload(e) {
         return;
     }
 
+    const sName = window.ViaSecurity ? window.ViaSecurity.sanitizeInput(name) : name;
+    const sEmail = window.ViaSecurity ? window.ViaSecurity.sanitizeInput(email) : email;
+
     await withLoading(btn, async () => {
         // Save lead to Supabase if connected
         if (sb) {
             try {
                 await sb.from('enquiries').insert([{
-                    name: name,
-                    email: email,
+                    name: sName,
+                    email: sEmail,
                     phone: 'Lead Capture (PDF Download)',
                     destination: dest,
                     requirements: 'Downloaded Sample Itinerary PDF Guide for ' + dest,
@@ -1013,6 +1174,10 @@ async function handleSampleItineraryDownload(e) {
             } catch(err) {
                 console.warn('Enquiry capture info:', err);
             }
+        }
+
+        if (window.ViaAnalytics) {
+            window.ViaAnalytics.trackItineraryDownload(dest);
         }
 
         // Dynamically load jsPDF on-demand if not already loaded
@@ -1763,6 +1928,10 @@ async function loadPackageDetails(id) {
     const metaPkgDesc = cleanPkgDesc.length > 155 ? cleanPkgDesc.substring(0, 152) + '...' : cleanPkgDesc;
     updateSEO(`${pkg.title} — Luxury Tour Package | Via Tours & Travels`, metaPkgDesc, uniqueImages[0], `#/package/${pkg.id}`);
 
+    if (window.ViaAnalytics) {
+        window.ViaAnalytics.trackPackageView(pkg.id, pkg.title, pkg.price);
+    }
+
     // Dynamic Schema.org TouristTrip JSON-LD for rich snippets
     let pkgSchema = document.getElementById('schema-package-tour');
     if (!pkgSchema) {
@@ -2247,6 +2416,11 @@ function nextTripStep(stepNum) {
 
     currentTripStep = stepNum;
 
+    if (window.ViaAnalytics) {
+        const dest = document.getElementById('pt_dest')?.value.trim();
+        window.ViaAnalytics.trackTripPlannerStep(stepNum, dest);
+    }
+
     // Update progress nodes
     for (let i = 1; i <= 4; i++) {
         const node = document.getElementById('node-' + i);
@@ -2296,9 +2470,19 @@ if (planTripForm) {
             return;
         }
 
-        // Spam check
-        if (document.getElementById('honeypot')?.value) {
-            showToast('Spam detected.', 'error');
+        // Anti-spam & Bot defense (Honeypot + Time-lock + Rate limit)
+        const botCheck = window.ViaSecurity ? window.ViaSecurity.checkBotSubmission('planTripForm', document.getElementById('honeypot')?.value, 1.5) : { isBot: false, isRateLimited: false };
+        if (botCheck.isRateLimited) {
+            showToast(botCheck.message, 'error');
+            return;
+        }
+        if (botCheck.isBot) {
+            const btn = document.getElementById('btn_submit_plan');
+            await withLoading(btn, async () => {
+                await new Promise(r => setTimeout(r, 1200));
+            });
+            showToast('Your bespoke quotation request has been received! Our concierge will contact you.', 'success');
+            document.getElementById('planTripForm')?.reset();
             return;
         }
 
@@ -2350,6 +2534,13 @@ if (planTripForm) {
             const req = document.getElementById('pt_req')?.value.trim();
             const pkgId = document.getElementById('pt_pkg_id')?.value || null;
 
+            // XSS sanitization
+            const sName = window.ViaSecurity ? window.ViaSecurity.sanitizeInput(name) : name;
+            const sEmail = window.ViaSecurity ? window.ViaSecurity.sanitizeInput(email) : email;
+            const sPhone = window.ViaSecurity ? window.ViaSecurity.sanitizeInput(phone) : phone;
+            const sBudget = window.ViaSecurity ? window.ViaSecurity.sanitizeInput(budget) : budget;
+            const sReq = window.ViaSecurity ? window.ViaSecurity.sanitizeInput(req) : req;
+
             // Guard against non-UUID package IDs (e.g. 'pkg-maldives-sanctuary') triggering PostgreSQL 22P02 error
             const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
             const validPackageId = (pkgId && uuidRegex.test(pkgId)) ? pkgId : null;
@@ -2359,17 +2550,18 @@ if (planTripForm) {
             if (pkgId && !validPackageId && !enrichedDest.includes(pkgId)) {
                 enrichedDest = enrichedDest ? `${enrichedDest} [Ref: ${pkgId}]` : `Package Ref: ${pkgId}`;
             }
+            const sDest = window.ViaSecurity ? window.ViaSecurity.sanitizeInput(enrichedDest) : enrichedDest;
 
             const payload = {
-                name,
-                email,
-                phone,
-                destination: enrichedDest,
+                name: sName,
+                email: sEmail,
+                phone: sPhone,
+                destination: sDest,
                 travel_dates: dates ? `${dates} (${duration})` : duration,
                 travelers,
                 hotel_pref: `${hotel} (${style})`,
-                budget: budget || 'Flexible',
-                requirements: req,
+                budget: sBudget || 'Flexible',
+                requirements: sReq,
                 package_id: validPackageId,
                 status: 'New'
             };
@@ -2377,13 +2569,17 @@ if (planTripForm) {
             if (sb) {
                 try {
                     await sb.from('enquiries').insert([payload]);
-                    const { data: cust } = await sb.from('customers').select('id').eq('email', email).maybeSingle();
+                    const { data: cust } = await sb.from('customers').select('id').eq('email', sEmail).maybeSingle();
                     if (!cust) {
-                        await sb.from('customers').insert([{ name, email, phone, whatsapp: phone }]);
+                        await sb.from('customers').insert([{ name: sName, email: sEmail, phone: sPhone, whatsapp: sPhone }]);
                     }
                 } catch (err) {
                     console.warn('Enquiry save to Supabase:', err);
                 }
+            }
+
+            if (window.ViaAnalytics) {
+                window.ViaAnalytics.trackLeadSubmission('trip_planner', sDest);
             }
 
             // Trigger celebratory confetti if library is available
@@ -2407,7 +2603,21 @@ const tripModalForm = document.getElementById('tripModalForm');
 if (tripModalForm) {
     tripModalForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        if (document.getElementById('modal_honeypot')?.value) return;
+
+        // Bot/spam protection
+        if (window.ViaSecurity) {
+            const botCheck = ViaSecurity.checkBotSubmission('tripModalForm', document.getElementById('modal_honeypot')?.value, 1.5);
+            if (botCheck === 'bot') {
+                await new Promise(r => setTimeout(r, 1200));
+                showToast('Thank you! Your travel quotation request has been received.', 'success');
+                hideTripModal();
+                return;
+            }
+            if (botCheck === 'rate_limited') {
+                showToast('Too many requests. Please wait a few minutes before submitting again.', 'error');
+                return;
+            }
+        }
 
         const nameInput = document.getElementById('modal_pt_name');
         const emailInput = document.getElementById('modal_pt_email');
@@ -2469,13 +2679,13 @@ if (tripModalForm) {
         }
 
         const payload = {
-            name,
-            email,
-            phone,
-            destination: dest || 'General Luxury Escapes',
+            name: window.ViaSecurity ? ViaSecurity.sanitizeInput(name) : name,
+            email: window.ViaSecurity ? ViaSecurity.sanitizeInput(email) : email,
+            phone: window.ViaSecurity ? ViaSecurity.sanitizeInput(phone) : phone,
+            destination: (window.ViaSecurity ? ViaSecurity.sanitizeInput(dest) : dest) || 'General Luxury Escapes',
             travel_dates: dates || 'Flexible',
             travelers,
-            requirements: req,
+            requirements: window.ViaSecurity ? ViaSecurity.sanitizeInput(req) : req,
             status: 'New'
         };
 
@@ -2485,6 +2695,7 @@ if (tripModalForm) {
             } catch (err) {}
         }
 
+        if (window.ViaAnalytics) ViaAnalytics.trackLeadSubmission('trip_modal', payload.destination);
         if (window.confetti) window.confetti({ particleCount: 100, spread: 70 });
         ViaValidator.clearFormErrors(tripModalForm);
         showToast('Thank you! Your travel quotation request has been received.', 'success');
@@ -2495,8 +2706,22 @@ if (tripModalForm) {
 // Quick Contact Form
 async function handleQuickContact(e) {
     e.preventDefault();
-    if (document.getElementById('c_honeypot')?.value) return; // Anti-spam bot trap
-    
+
+    // Bot/spam protection
+    if (window.ViaSecurity) {
+        const botCheck = ViaSecurity.checkBotSubmission('contactForm', document.getElementById('c_honeypot')?.value, 1.5);
+        if (botCheck === 'bot') {
+            await new Promise(r => setTimeout(r, 1200));
+            showToast('Your message has been sent to our concierge desk!', 'success');
+            e.target?.reset();
+            return;
+        }
+        if (botCheck === 'rate_limited') {
+            showToast('Too many requests. Please wait a few minutes before trying again.', 'error');
+            return;
+        }
+    }
+
     const form = e.target;
     const nameInput = document.getElementById('c_name');
     const emailInput = document.getElementById('c_email');
@@ -3002,6 +3227,7 @@ window.addEventListener('scroll', () => {
 
 // --- LUXURY COOKIE CONSENT CONTROLLER (GDPR / DPDP) ---
 function initCookieConsent() {
+    window.ViaAnalytics && window.ViaAnalytics.init();
     const consent = localStorage.getItem('via_cookie_consent');
     if (!consent) {
         setTimeout(() => {

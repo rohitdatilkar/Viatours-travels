@@ -6,6 +6,12 @@
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta name="robots" content="noindex, follow">
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <script>
+        // Force HTTPS in production (preserves localhost and private development IPs)
+        if (window.location.protocol === 'http:' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1' && !window.location.hostname.startsWith('192.168.') && !window.location.hostname.startsWith('10.')) {
+            window.location.replace('https://' + window.location.hostname + window.location.pathname + window.location.search + window.location.hash);
+        }
+    </script>
     <title>404 — Journey Off Course | Via Tours &amp; Travels</title>
     <meta name="description" content="The luxury holiday itinerary or destination page you requested could not be located. Explore our curated packages or contact our 24/7 dedicated travel concierge.">
     
@@ -312,5 +318,6 @@
             }
         }
     </script>
+    <script defer src="config.js"></script>
 </body>
 </html>
