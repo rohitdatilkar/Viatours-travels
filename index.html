@@ -110,16 +110,19 @@
 <div id="scrollProgress"></div>
 
 <!-- Preloader -->
-<div id="preloader" role="status" aria-live="polite">
-    <div style="text-align:center;">
-        <div class="brand-logo-badge" style="background:#ffffff; padding:12px; border-radius:18px; box-shadow:0 10px 30px rgba(0,0,0,0.1); margin-bottom:14px; display:inline-block;">
+<div id="preloader" role="status" aria-live="polite" aria-label="Loading Via Tours & Travels">
+    <div class="preloader-inner">
+        <div class="preloader-logo">
             <picture>
                 <source type="image/svg+xml" srcset="/logo.svg">
-                <img src="/apple-touch-icon.png" onerror="this.onerror=null; this.src='/logo.svg';" alt="Via Tours Logo" width="64" height="64" style="height:64px; width:auto; display:block;">
+                <img src="/apple-touch-icon.png" onerror="this.onerror=null; this.src='/logo.svg';" alt="Via Tours Logo" width="56" height="56">
             </picture>
         </div>
-        <div class="loader-plane" aria-hidden="true"><i class="fas fa-plane" style="color:var(--brand-orange); font-size:24px;"></i></div>
-        <div class="loader-text">VIA TOURS &amp; TRAVELS</div>
+        <div class="preloader-ring" aria-hidden="true">
+            <span></span>
+        </div>
+        <div class="preloader-wordmark">VIA TOURS <span>&amp;</span> TRAVELS</div>
+        <div class="preloader-tagline">Curating Your World</div>
     </div>
 </div>
 
@@ -181,16 +184,16 @@
                         <span class="stars">★★★★★</span>
                         <span>4.9 / 5.0 Rating based on 180+ Verified HNW &amp; VIP Travelers</span>
                     </div>
-                    <div class="search-box" role="search">
-                        <div class="form-sec" style="margin:0;">
+                    <div class="search-box" role="search" aria-label="Search for travel packages">
+                        <div class="form-sec">
                             <label for="hero_dest">Destination</label>
-                            <input type="text" placeholder="Where to? (e.g. Maldives, Bali)" id="hero_dest" autocomplete="off" onkeydown="if(event.key==='Enter') searchFromHero()">
+                            <input type="text" placeholder="Where to? Maldives, Bali, Switzerland..." id="hero_dest" autocomplete="off" onkeydown="if(event.key==='Enter') searchFromHero()">
                         </div>
-                        <div class="form-sec" style="margin:0;">
-                            <label for="hero_date">Date</label>
+                        <div class="form-sec">
+                            <label for="hero_date">Travel Date</label>
                             <input type="date" id="hero_date">
                         </div>
-                        <div class="form-sec" style="margin:0;">
+                        <div class="form-sec">
                             <label for="hero_travelers">Guests</label>
                             <select id="hero_travelers">
                                 <option value="2 Adults">2 Adults (Couple)</option>
@@ -199,7 +202,7 @@
                                 <option value="Family">Family / Group (4+)</option>
                             </select>
                         </div>
-                        <div class="form-sec" style="margin:0;">
+                        <div class="form-sec">
                             <label for="hero_style">Experience</label>
                             <select id="hero_style">
                                 <option value="">All Experiences</option>
@@ -209,9 +212,11 @@
                                 <option value="Adventure">Alpine &amp; Expedition</option>
                             </select>
                         </div>
-                        <button class="btn btn-blue" onclick="searchFromHero()" aria-label="Search travel packages">
-                            <i class="fas fa-search"></i> Explore Escapes
-                        </button>
+                        <div class="btn-search-wrap">
+                            <button class="btn btn-blue" onclick="searchFromHero()" aria-label="Search travel packages">
+                                <i class="fas fa-search"></i> Explore
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1099,10 +1104,10 @@
         <div class="chat-msg bot">Welcome to Via Tours &amp; Travels. I am your Private Travel Concierge. How may I orchestrate your next bespoke escape today?</div>
     </div>
     <div class="chat-pills">
-        <button type="button" class="chat-pill" onclick="sendQuickPrompt('Maldives Overwater Villa Quote')">🌴 Maldives Quote</button>
-        <button type="button" class="chat-pill" onclick="sendQuickPrompt('Swiss Alps Scenic Rail Itinerary')">🏔️ Swiss Alps</button>
-        <button type="button" class="chat-pill" onclick="sendQuickPrompt('Visa Assistance Requirements')">🛂 Visa Help</button>
-        <button type="button" class="chat-pill" onclick="sendQuickPrompt('Connect with Senior Concierge')">📞 WhatsApp Desk</button>
+        <button type="button" class="chat-pill" onclick="sendQuickPrompt('Maldives Overwater Villa Quote')">Maldives Quote</button>
+        <button type="button" class="chat-pill" onclick="sendQuickPrompt('Swiss Alps Scenic Rail Itinerary')">Swiss Alps</button>
+        <button type="button" class="chat-pill" onclick="sendQuickPrompt('Visa Assistance Requirements')">Visa Help</button>
+        <button type="button" class="chat-pill" onclick="sendQuickPrompt('Connect with Senior Concierge')">WhatsApp Desk</button>
     </div>
     <div class="chat-input-area">
         <input type="text" id="chatInput" placeholder="Ask about destinations, villas, quotes..." onkeypress="handleChat(event)">
@@ -1123,26 +1128,26 @@
     </div>
 </div>
 
-<!-- Mobile Sticky Bottom Bar (Active on mobile <= 768px) -->
-<nav class="mobile-bottom-bar" aria-label="Mobile quick actions">
-    <a href="/" onclick="navTo('home'); return false;">
-        <i class="fas fa-home"></i>
+<!-- Mobile Premium Bottom Tab Bar (< 768px) -->
+<nav class="mobile-bottom-bar" aria-label="Mobile navigation" id="mobileBottomBar">
+    <button type="button" class="btn" onclick="navTo('home')" aria-label="Home">
+        <i class="fas fa-house"></i>
         <span>Home</span>
-    </a>
-    <a href="/destinations" onclick="navTo('destinations'); return false;">
-        <i class="fas fa-compass"></i>
-        <span>Destinations</span>
-    </a>
-    <a href="/packages" onclick="navTo('packages'); return false;">
-        <i class="fas fa-suitcase-rolling"></i>
-        <span>Packages</span>
-    </a>
-    <a href="/packages" onclick="filterWishlist(event); return false;">
+    </button>
+    <button type="button" class="btn" onclick="navTo('destinations')" aria-label="Destinations">
+        <i class="fas fa-globe-asia"></i>
+        <span>Explore</span>
+    </button>
+    <button type="button" class="btn btn-primary" onclick="navTo('plan-trip')" aria-label="Plan My Trip">
+        <i class="fas fa-route"></i>
+        <span>Plan Trip</span>
+    </button>
+    <button type="button" class="btn" onclick="filterWishlist(event)" aria-label="Saved trips">
         <i class="fas fa-heart"></i>
-        <span>Saved (<span id="mobileWishlistCount">0</span>)</span>
-    </a>
-    <a href="https://wa.me/918879776866" target="_blank" rel="noopener noreferrer" style="color:var(--brand-orange);">
-        <i class="fab fa-whatsapp"></i>
+        <span>Saved <span id="mobileWishlistCount" style="display:inline;">0</span></span>
+    </button>
+    <a href="https://wa.me/918879776866" target="_blank" rel="noopener noreferrer" class="btn" aria-label="WhatsApp concierge" style="text-decoration:none;">
+        <i class="fab fa-whatsapp" style="color:#25D366;"></i>
         <span>VIP Desk</span>
     </a>
 </nav>
