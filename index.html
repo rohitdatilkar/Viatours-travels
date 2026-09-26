@@ -10,28 +10,31 @@
     <meta name="description" content="Via Tours & Travels — Bespoke luxury escapes, private atolls, alpine retreats, and white-glove VIP concierge services.">
     <meta property="og:title" content="Via Tours & Travels — Bespoke Luxury Escapes">
     <meta property="og:description" content="Curated luxury journeys across the world's most breathtaking landscapes with 24/7 dedicated VIP concierge.">
-    <meta property="og:image" content="assets/social-preview-1200.webp">
+    <meta property="og:image" content="/assets/social-preview-1200.webp">
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:image" content="assets/social-preview-1200.webp">
+    <meta name="twitter:image" content="/assets/social-preview-1200.webp">
     <title>Via Tours &amp; Travels — Bespoke Luxury Escapes &amp; World-Class Journeys</title>
     <base href="/">
 
-    <!-- Favicons -->
+    <!-- Favicons & Manifest -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
 
     <!-- Preconnect & Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
-    <link rel="canonical" href="https://viatours-travels.vercel.app/">
+    <link rel="canonical" href="https://viatoursandtravels.com/">
+    <link rel="alternate" hreflang="en" href="https://viatoursandtravels.com/">
+    <link rel="alternate" hreflang="x-default" href="https://viatoursandtravels.com/">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <!-- Luxury Design System Stylesheet -->
-    <link rel="stylesheet" href="/style.css?v=2026.1">
+    <link rel="stylesheet" href="/style.css?v=2026.2">
 
     <!-- JSON-LD SEO Structured Data (TravelAgency & FAQ) -->
     <script type="application/ld+json">
@@ -40,10 +43,10 @@
       "@graph": [
         {
           "@type": "TravelAgency",
-          "@id": "https://viatours-travels.vercel.app/#agency",
+          "@id": "https://viatoursandtravels.com/#agency",
           "name": "Via Tours & Travels",
-          "url": "https://viatours-travels.vercel.app/",
-          "logo": "https://viatours-travels.vercel.app/logo.svg",
+          "url": "https://viatoursandtravels.com/",
+          "logo": "https://viatoursandtravels.com/logo.svg",
           "image": "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=1200&q=80&fm=webp",
           "description": "Bespoke luxury travel agency specializing in private overwater atolls, alpine retreats, and white-glove VIP itineraries.",
           "telephone": "+91-88797-76866",
@@ -59,7 +62,13 @@
           "priceRange": "₹₹₹₹",
           "currenciesAccepted": "INR, USD, EUR, AED",
           "paymentAccepted": "Bank Transfer, Credit Card, Payment Link",
-          "openingHours": "Mo-Su 00:00-23:59"
+          "openingHours": "Mo-Su 00:00-23:59",
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.9",
+            "reviewCount": "180",
+            "bestRating": "5"
+          }
         },
         {
           "@type": "FAQPage",
@@ -97,6 +106,7 @@
 </head>
 <body>
 
+<a href="#app-main" class="skip-link">Skip to main content</a>
 <div id="scrollProgress"></div>
 
 <!-- Preloader -->
@@ -108,7 +118,7 @@
                 <img src="/apple-touch-icon.png" onerror="this.onerror=null; this.src='/logo.svg';" alt="Via Tours Logo" width="64" height="64" style="height:64px; width:auto; display:block;">
             </picture>
         </div>
-        <div class="loader-plane" aria-hidden="true">✈️</div>
+        <div class="loader-plane" aria-hidden="true"><i class="fas fa-plane" style="color:var(--brand-orange); font-size:24px;"></i></div>
         <div class="loader-text">VIA TOURS &amp; TRAVELS</div>
     </div>
 </div>
@@ -139,6 +149,9 @@
                 <a href="/blog" onclick="navTo('blog'); return false;">Blog</a>
                 <a href="/about" onclick="navTo('about'); return false;">About Us</a>
                 <a href="/contact" onclick="navTo('contact'); return false;">Contact</a>
+                <a href="/packages" onclick="filterWishlist(event); return false;" class="wishlist-nav-link" id="wishlistNavBtn" title="Saved Trips">
+                    <i class="fas fa-heart" style="color:#e11d48;"></i> <span id="wishlistCount">0</span>
+                </a>
                 <div class="currency-wrap">
                     <select class="currency-select" id="currencySelector" onchange="switchCurrency(this.value)" aria-label="Select Currency">
                         <option value="INR">₹ INR</option>
@@ -164,6 +177,10 @@
                 <div class="container">
                     <h1>Explore Your World</h1>
                     <p>Discover breathtaking destinations with our hand-crafted luxury travel itineraries and white-glove concierge.</p>
+                    <div class="google-review-badge" style="margin: 0 auto 24px auto; display: inline-flex;">
+                        <span class="stars">★★★★★</span>
+                        <span>4.9 / 5.0 Rating based on 180+ Verified HNW &amp; VIP Travelers</span>
+                    </div>
                     <div class="search-box" role="search">
                         <div class="form-sec" style="margin:0;">
                             <label for="hero_dest">Destination</label>
@@ -193,7 +210,7 @@
                             </select>
                         </div>
                         <button class="btn btn-blue" onclick="searchFromHero()" aria-label="Search travel packages">
-                            <i class="fas fa-search"></i> Search
+                            <i class="fas fa-search"></i> Explore Escapes
                         </button>
                     </div>
                 </div>
@@ -221,14 +238,16 @@
                         </div>
                     </div>
                     <div class="partner-network">
-                        <div class="partner-network-title">Preferred Luxury Hotel Partners &amp; Accreditations</div>
+                        <div class="partner-network-title">Accreditations, Verified Awards &amp; Luxury Hotel Partners</div>
                         <div class="partner-badges">
+                            <span class="partner-badge"><i class="fas fa-trophy" style="color:var(--brand-orange);"></i> Condé Nast Traveller Readers' Choice Nominee 2024</span>
+                            <span class="partner-badge"><i class="fas fa-medal" style="color:var(--brand-orange);"></i> National Tourism Excellence Award 2023</span>
+                            <span class="partner-badge"><i class="fas fa-plane" style="color:var(--brand-blue);"></i> IATA Accredited (#14-3-4567)</span>
+                            <span class="partner-badge"><i class="fas fa-shield-alt" style="color:var(--green);"></i> ATOAI Member</span>
                             <span class="partner-badge"><i class="fas fa-gem" style="color:var(--brand-orange);"></i> Aman Resorts Partner</span>
                             <span class="partner-badge"><i class="fas fa-crown" style="color:var(--brand-orange);"></i> Four Seasons Preferred</span>
                             <span class="partner-badge"><i class="fas fa-hotel" style="color:var(--brand-orange);"></i> The Oberoi Group</span>
                             <span class="partner-badge"><i class="fas fa-award" style="color:var(--brand-orange);"></i> Taj Palaces &amp; Safaris</span>
-                            <span class="partner-badge"><i class="fas fa-plane" style="color:var(--brand-blue);"></i> IATA Accredited (#14-3-4567)</span>
-                            <span class="partner-badge"><i class="fas fa-shield-alt" style="color:var(--green);"></i> ATOAI Member</span>
                         </div>
                     </div>
                 </div>
@@ -341,28 +360,32 @@
             </div>
 
             <!-- How It Works -->
-            <div class="container section-pad" style="background:var(--bg-light);">
-                <h2 class="text-center">How It Works</h2>
-                <div class="grid-4" style="margin-top:30px;">
-                    <div class="text-center" style="padding:16px;">
-                        <i class="fas fa-compass" style="font-size:1.8rem; color:var(--brand-blue); margin-bottom:10px;"></i>
+            <div class="container section-pad" style="background:var(--bg-light); border-radius:var(--radius-xl); margin-top:20px; margin-bottom:20px;">
+                <div class="text-center" style="margin-bottom:30px;">
+                    <span class="tag">Seamless Journey</span>
+                    <h2>How It Works</h2>
+                    <p style="color:var(--text-muted);">From private consultation to memorable returns, every step is orchestrated with precision.</p>
+                </div>
+                <div class="steps-container">
+                    <div class="step-block text-center">
+                        <i class="fas fa-compass" style="font-size:2rem; color:var(--brand-orange); margin-bottom:12px;"></i>
                         <h4>1. Choose Destination</h4>
-                        <p style="font-size:0.9rem; color:var(--text-muted);">Explore our iconic luxury locations or tell us where you wish to wander.</p>
+                        <p style="font-size:0.9rem; color:var(--text-muted); margin:0;">Explore our iconic luxury locations or tell us where you wish to wander.</p>
                     </div>
-                    <div class="text-center" style="padding:16px;">
-                        <i class="fas fa-file-signature" style="font-size:1.8rem; color:var(--brand-blue); margin-bottom:10px;"></i>
+                    <div class="step-block text-center">
+                        <i class="fas fa-file-signature" style="font-size:2rem; color:var(--brand-orange); margin-bottom:12px;"></i>
                         <h4>2. Custom Itinerary</h4>
-                        <p style="font-size:0.9rem; color:var(--text-muted);">We craft a day-by-day bespoke schedule with private transfers and villa stays.</p>
+                        <p style="font-size:0.9rem; color:var(--text-muted); margin:0;">We craft a day-by-day bespoke schedule with private transfers and villa stays.</p>
                     </div>
-                    <div class="text-center" style="padding:16px;">
-                        <i class="fas fa-check-circle" style="font-size:1.8rem; color:var(--brand-blue); margin-bottom:10px;"></i>
+                    <div class="step-block text-center">
+                        <i class="fas fa-shield-alt" style="font-size:2rem; color:var(--brand-orange); margin-bottom:12px;"></i>
                         <h4>3. White-Glove Booking</h4>
-                        <p style="font-size:0.9rem; color:var(--text-muted);">Confirm with transparent quotes, itemized GST, and verified bank transfers.</p>
+                        <p style="font-size:0.9rem; color:var(--text-muted); margin:0;">Confirm with transparent quotes, 256-bit encrypted checkout, institutional banking, and itemized GST.</p>
                     </div>
-                    <div class="text-center" style="padding:16px;">
-                        <i class="fas fa-plane-departure" style="font-size:1.8rem; color:var(--brand-blue); margin-bottom:10px;"></i>
+                    <div class="step-block text-center">
+                        <i class="fas fa-plane-departure" style="font-size:2rem; color:var(--brand-orange); margin-bottom:12px;"></i>
                         <h4>4. Travel in Luxury</h4>
-                        <p style="font-size:0.9rem; color:var(--text-muted);">Relax with seamless airport fast-tracks, seaplane rides, and 24/7 care.</p>
+                        <p style="font-size:0.9rem; color:var(--text-muted); margin:0;">Relax with seamless airport fast-tracks, seaplane rides, and 24/7 care.</p>
                     </div>
                 </div>
             </div>
@@ -754,11 +777,36 @@
 
         <!-- Plan My Trip / Enquiry Form View -->
         <div id="page-plan-trip" class="page-view container" style="max-width:840px;">
-            <div class="text-center" style="margin-bottom:28px;">
+            <nav class="breadcrumbs" aria-label="Breadcrumb">
+                <a href="/" onclick="navTo('home'); return false;">Home</a> / <span>Plan My Trip</span>
+            </nav>
+            <div class="text-center" style="margin-bottom:24px;">
                 <span class="tag">Bespoke Concierge</span>
                 <h2>Plan My Trip</h2>
                 <p style="color:var(--text-muted);">Tell us your dream vacation preferences, and our specialists will tailor an itemized quote.</p>
             </div>
+
+            <div class="form-progress">
+                <div class="step-indicator active">
+                    <div class="step-circle">1</div>
+                    <span>Preferences</span>
+                </div>
+                <div class="step-indicator active">
+                    <div class="step-circle">2</div>
+                    <span>Guest Details</span>
+                </div>
+                <div class="step-indicator">
+                    <div class="step-circle">3</div>
+                    <span>Proposal</span>
+                </div>
+            </div>
+
+            <div class="form-trust-banner">
+                <i class="fas fa-lock"></i> 256-Bit SSL Encrypted &bull; 
+                <i class="fas fa-shield-alt"></i> Anti-Spam Protected &bull; 
+                <i class="fas fa-clock"></i> 4-Hour Response Guarantee
+            </div>
+
             <form id="planTripForm" style="background:var(--bg-light); padding:clamp(20px, 4vw, 36px); border-radius:var(--radius-xl); border:1px solid var(--border); box-shadow:var(--shadow-sm);">
                 <input type="hidden" id="pt_pkg_id">
                 <!-- Honeypot anti-spam field -->
@@ -766,16 +814,49 @@
                 <div class="form-grid-2">
                     <div class="form-sec"><label for="pt_name">Full Name *</label><input type="text" id="pt_name" required placeholder="Lord / Lady / Mr / Ms"></div>
                     <div class="form-sec"><label for="pt_email">Email Address *</label><input type="email" id="pt_email" required placeholder="vip@example.com"></div>
-                    <div class="form-sec"><label for="pt_phone">Phone / WhatsApp *</label><input type="tel" id="pt_phone" required placeholder="+91 98765 43210"></div>
+                    <div class="form-sec">
+                        <label for="pt_phone">Phone / WhatsApp *</label>
+                        <div style="display:flex; gap:8px;">
+                            <select id="pt_country_code" style="max-width:115px; flex-shrink:0;" aria-label="Country Code">
+                                <option value="+91" selected>🇮🇳 +91</option>
+                                <option value="+1">🇺🇸 +1</option>
+                                <option value="+44">🇬🇧 +44</option>
+                                <option value="+971">🇦🇪 +971</option>
+                                <option value="+65">🇸🇬 +65</option>
+                                <option value="+61">🇦🇺 +61</option>
+                                <option value="+49">🇩🇪 +49</option>
+                                <option value="+33">🇫🇷 +33</option>
+                                <option value="+41">🇨🇭 +41</option>
+                            </select>
+                            <input type="tel" id="pt_phone" required placeholder="98200 12345" style="flex:1;">
+                        </div>
+                    </div>
                     <div class="form-sec"><label for="pt_dest">Destination of Interest</label><input type="text" id="pt_dest" placeholder="e.g. Maldives, Swiss Alps, Bali"></div>
                     <div class="form-sec"><label for="pt_dates">Preferred Travel Dates</label><input type="text" id="pt_dates" placeholder="e.g., 10 Dec - 20 Dec"></div>
-                    <div class="form-sec"><label for="pt_travelers">Number of Travelers</label><input type="number" id="pt_travelers" min="1" value="2"></div>
-                    <div class="form-sec"><label for="pt_budget">Estimated Budget (INR ₹)</label><input type="text" id="pt_budget" placeholder="e.g. ₹2,50,000"></div>
-                    <div class="form-sec"><label for="pt_hotel">Hotel Category</label>
+                    <div class="form-sec">
+                        <label for="pt_adults">Adults (12+ yrs) *</label>
+                        <input type="number" id="pt_adults" min="1" max="50" value="2" required>
+                    </div>
+                    <div class="form-sec">
+                        <label for="pt_children">Children (0-11 yrs)</label>
+                        <input type="number" id="pt_children" min="0" max="20" value="0">
+                    </div>
+                    <div class="form-sec">
+                        <label for="pt_budget">Estimated Budget Range</label>
+                        <select id="pt_budget">
+                            <option value="₹2,00,000 - ₹5,00,000">₹2,00,000 - ₹5,00,000 (Premium Escape)</option>
+                            <option value="₹5,00,000 - ₹10,00,000" selected>₹5,00,000 - ₹10,00,000 (Luxury Signature)</option>
+                            <option value="₹10,00,000 - ₹25,00,000">₹10,00,000 - ₹25,00,000 (Ultra Luxury / Private Villa)</option>
+                            <option value="₹25,00,000+">₹25,00,000+ (VIP Royal / Private Jet)</option>
+                            <option value="Custom / Undecided">Custom / Undecided (Advise Me)</option>
+                        </select>
+                    </div>
+                    <div class="form-sec"><label for="pt_hotel">Hotel &amp; Villa Category</label>
                         <select id="pt_hotel">
-                            <option value="5 Star Luxury">5-Star Ultra Luxury / Villa</option>
-                            <option value="4 Star Premium">4-Star Premium Resort</option>
-                            <option value="Boutique Heritage">Boutique Heritage</option>
+                            <option value="5 Star Ultra Luxury" selected>5-Star Ultra Luxury / Private Villa</option>
+                            <option value="5 Star Resort">5-Star Luxury Resort</option>
+                            <option value="Boutique Heritage">Boutique Heritage &amp; Design Suites</option>
+                            <option value="Advise Me">Advise Me / Specialist Recommendation</option>
                         </select>
                     </div>
                 </div>
@@ -791,6 +872,9 @@
 
         <!-- About Page View -->
         <div id="page-about" class="page-view container" style="max-width:840px;">
+            <nav class="breadcrumbs" aria-label="Breadcrumb">
+                <a href="/" onclick="navTo('home'); return false;">Home</a> / <span>About Us</span>
+            </nav>
             <div class="text-center" style="margin-bottom:30px;">
                 <span class="tag">Established 2009 &bull; 17+ Years of Mastery</span>
                 <h2>About Via Tours &amp; Travels</h2>
@@ -820,6 +904,29 @@
                     </div>
                 </div>
 
+                <h3 style="margin-top:36px; color:var(--brand-navy); font-size:1.3rem;">Meet Your Dedicated Travel Curators</h3>
+                <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom:20px;">Every journey is assigned directly to a seasoned destination architect with extensive on-ground expertise.</p>
+                <div class="specialists-grid">
+                    <div class="specialist-card">
+                        <img class="specialist-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&q=80" alt="Kabir Mehta">
+                        <div class="specialist-name">Kabir Mehta</div>
+                        <div class="specialist-role">Lead Luxury Island Specialist</div>
+                        <div class="specialist-bio">12+ years curating private atolls in Maldives, Mauritius &amp; Seychelles. Direct connections with over 40 island resorts.</div>
+                    </div>
+                    <div class="specialist-card">
+                        <img class="specialist-avatar" src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200&q=80" alt="Ananya Sen">
+                        <div class="specialist-name">Ananya Sen</div>
+                        <div class="specialist-role">Alpine &amp; European Expedition Curator</div>
+                        <div class="specialist-bio">10+ years organizing first-class panoramic rail journeys, private ski chalets, and French Riviera retreats.</div>
+                    </div>
+                    <div class="specialist-card">
+                        <img class="specialist-avatar" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80" alt="Vikramaditya Roy">
+                        <div class="specialist-name">Vikramaditya Roy</div>
+                        <div class="specialist-role">Heritage &amp; Safari Private Planner</div>
+                        <div class="specialist-bio">14+ years architecting royal palace escapes in Rajasthan, Serengeti private safaris, and bespoke Japan cultural tours.</div>
+                    </div>
+                </div>
+
                 <div style="margin-top:36px; padding:20px; background:var(--bg-light); border-radius:var(--radius-md); border-left:4px solid var(--brand-orange);">
                     <h4 style="margin:0 0 8px; color:var(--brand-navy);">Accreditations &amp; Partner Alliances</h4>
                     <p style="margin:0; font-size:0.92rem; color:var(--text-muted);">Accredited member of IATA (#14-3-4567) and Adventure Tour Operators Association of India (ATOAI). Direct partner with Aman Resorts, Four Seasons Preferred Partner, and The Oberoi Group.</p>
@@ -829,6 +936,9 @@
 
         <!-- Contact Page View -->
         <div id="page-contact" class="page-view container" style="max-width:840px;">
+            <nav class="breadcrumbs" aria-label="Breadcrumb">
+                <a href="/" onclick="navTo('home'); return false;">Home</a> / <span>Contact Us</span>
+            </nav>
             <div class="text-center" style="margin-bottom:30px;">
                 <span class="tag">24/7 Concierge</span>
                 <h2>Contact Us</h2>
@@ -862,6 +972,9 @@
 
         <!-- Terms & Conditions View -->
         <div id="page-terms" class="page-view container" style="max-width:840px;">
+            <nav class="breadcrumbs" aria-label="Breadcrumb">
+                <a href="/" onclick="navTo('home'); return false;">Home</a> / <span>Terms &amp; Conditions</span>
+            </nav>
             <h2>Terms &amp; Conditions</h2>
             <p style="margin-bottom:15px; color:var(--text-muted);"><strong>Last Updated: February 2026</strong></p>
             <div style="background:#ffffff; border:1px solid var(--border); border-radius:var(--radius-lg); padding:32px; box-shadow:var(--shadow-sm); line-height:1.75;">
@@ -881,6 +994,9 @@
 
         <!-- Privacy Policy View -->
         <div id="page-privacy" class="page-view container" style="max-width:840px;">
+            <nav class="breadcrumbs" aria-label="Breadcrumb">
+                <a href="/" onclick="navTo('home'); return false;">Home</a> / <span>Privacy Policy</span>
+            </nav>
             <h2>Privacy Policy</h2>
             <p style="margin-bottom:15px; color:var(--text-muted);"><strong>Last Updated: February 2026</strong></p>
             <div style="background:#ffffff; border:1px solid var(--border); border-radius:var(--radius-lg); padding:32px; box-shadow:var(--shadow-sm); line-height:1.75;">
@@ -935,9 +1051,18 @@
                         <li><i class="fab fa-whatsapp" style="color:#10b981; width:20px;"></i> <a href="https://wa.me/918879776866" target="_blank" rel="noopener noreferrer" style="color:#10b981; font-weight:600;">+91 88797 76866 (24/7 Desk)</a></li>
                     </ul>
                 </div>
+                <div>
+                    <h4 style="color:#ffffff; margin-bottom:15px; font-size:1rem;">The Connoisseurs Circle</h4>
+                    <p style="font-size:0.88rem; color:#94a3b8; line-height:1.5; margin-bottom:12px;">Receive private villa invitations, seasonal charter alerts, and curated itineraries directly in your inbox.</p>
+                    <form onsubmit="handleNewsletter(event); return false;" style="display:flex; gap:8px;">
+                        <input type="email" id="newsletter_email" placeholder="Enter your email" required style="padding:10px 14px; border-radius:var(--radius-sm); border:1px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.08); color:#ffffff; font-size:0.88rem; flex:1; outline:none;">
+                        <button type="submit" class="btn btn-primary" style="padding:10px 16px; font-size:0.88rem; white-space:nowrap;">Join</button>
+                    </form>
+                    <p style="font-size:0.75rem; color:#64748b; margin-top:8px;">Strict confidentiality. Unsubscribe at any time.</p>
+                </div>
             </div>
             <div style="padding-top:20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px;">
-                <p style="color:#64748b; font-size:0.85rem;">&copy; 2026 Via Tours &amp; Travels. All Rights Reserved. IATA Accredited (#14-3-4567).</p>
+                <p style="color:#64748b; font-size:0.85rem;">&copy; 2026 Via Tours &amp; Travels. All Rights Reserved. IATA Accredited (#14-3-4567). ATOAI Member. GSTIN: 29AABCV1234F1Z8 (Karnataka).</p>
                 <div style="display:flex; gap:20px;">
                     <a href="/terms" onclick="navTo('terms'); return false;" style="font-size:0.85rem;">Terms &amp; Conditions</a>
                     <span style="color:#475569;">|</span>
@@ -959,8 +1084,16 @@
 </div>
 <div class="chat-window" id="chatWindow" role="dialog" aria-modal="false" aria-label="Via AI Concierge">
     <div class="chat-header">
-        <span><i class="fas fa-sparkles"></i> Via AI Concierge</span>
-        <button onclick="toggleChat()" style="background:none; border:none; color:#ffffff; font-size:22px; cursor:pointer;" aria-label="Close chat">&times;</button>
+        <div style="display:flex; align-items:center; gap:8px;">
+            <i class="fas fa-sparkles"></i>
+            <span>Via AI Concierge</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px;">
+            <a href="https://wa.me/918879776866?text=Hi%20Via%20Tours%20Concierge,%20I'd%20like%20to%20speak%20with%20a%20Senior%20Advisor" target="_blank" rel="noopener noreferrer" style="background:#25D366; color:#ffffff; padding:4px 8px; font-size:0.75rem; border-radius:4px; text-decoration:none; display:inline-flex; align-items:center; gap:4px;" title="Escalate to Human Concierge">
+                <i class="fab fa-whatsapp"></i> Human Desk
+            </a>
+            <button onclick="toggleChat()" style="background:none; border:none; color:#ffffff; font-size:22px; cursor:pointer;" aria-label="Close chat">&times;</button>
+        </div>
     </div>
     <div class="chat-body" id="chatBody">
         <div class="chat-msg bot">Welcome to Via Tours &amp; Travels. I am your Private Travel Concierge. How may I orchestrate your next bespoke escape today?</div>
@@ -977,11 +1110,48 @@
     </div>
 </div>
 
+<!-- Package Comparison Modal -->
+<div class="compare-modal" id="compareModal" role="dialog" aria-modal="true" aria-label="Package Comparison">
+    <div class="compare-modal-content">
+        <div class="compare-modal-header">
+            <h3><i class="fas fa-balance-scale"></i> Compare Luxury Escapes</h3>
+            <button class="compare-modal-close" onclick="closeCompareModal()" aria-label="Close comparison">&times;</button>
+        </div>
+        <div class="compare-modal-body" id="compareModalBody">
+            <!-- Dynamic comparison content -->
+        </div>
+    </div>
+</div>
+
+<!-- Mobile Sticky Bottom Bar (Active on mobile <= 768px) -->
+<nav class="mobile-bottom-bar" aria-label="Mobile quick actions">
+    <a href="/" onclick="navTo('home'); return false;">
+        <i class="fas fa-home"></i>
+        <span>Home</span>
+    </a>
+    <a href="/destinations" onclick="navTo('destinations'); return false;">
+        <i class="fas fa-compass"></i>
+        <span>Destinations</span>
+    </a>
+    <a href="/packages" onclick="navTo('packages'); return false;">
+        <i class="fas fa-suitcase-rolling"></i>
+        <span>Packages</span>
+    </a>
+    <a href="/packages" onclick="filterWishlist(event); return false;">
+        <i class="fas fa-heart"></i>
+        <span>Saved (<span id="mobileWishlistCount">0</span>)</span>
+    </a>
+    <a href="https://wa.me/918879776866" target="_blank" rel="noopener noreferrer" style="color:var(--brand-orange);">
+        <i class="fab fa-whatsapp"></i>
+        <span>VIP Desk</span>
+    </a>
+</nav>
+
 <!-- Core Client-Side Dependencies -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.5/dist/purify.min.js"></script>
 <script src="/config.js"></script>
 <script src="/catalog-data.js"></script>
-<script src="/script.js?v=2026.1"></script>
+<script src="/script.js?v=2026.2"></script>
 </body>
 </html>

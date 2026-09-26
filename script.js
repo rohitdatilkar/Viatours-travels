@@ -116,8 +116,11 @@
         }, 3200);
     }
 
-    function updateSEO(title, desc) {
-        document.title = title ? `${title} — Via Tours & Travels` : 'Via Tours & Travels — Bespoke Luxury Escapes';
+    function updateSEO(title, desc, image = null, url = null) {
+        const fullTitle = title ? `${title} — Via Tours & Travels` : 'Via Tours & Travels — Bespoke Luxury Escapes & Curated Vacations';
+        document.title = fullTitle;
+
+        // Meta Description
         let metaDesc = document.querySelector('meta[name="description"]');
         if (!metaDesc) {
             metaDesc = document.createElement('meta');
@@ -125,6 +128,219 @@
             document.head.appendChild(metaDesc);
         }
         if (desc) metaDesc.content = desc;
+
+        // Helper for meta attributes
+        const setMeta = (attr, key, val) => {
+            if (!val) return;
+            let el = document.querySelector(`meta[${attr}="${key}"]`);
+            if (!el) {
+                el = document.createElement('meta');
+                el.setAttribute(attr, key);
+                document.head.appendChild(el);
+            }
+            el.setAttribute('content', val);
+        };
+
+        // OpenGraph
+        setMeta('property', 'og:title', fullTitle);
+        if (desc) setMeta('property', 'og:description', desc);
+        if (image) setMeta('property', 'og:image', image);
+        if (url) {
+            const canonicalUrl = url.startsWith('http') ? url : `https://viatours.com${url.startsWith('/') ? '' : '/'}${url}`;
+            setMeta('property', 'og:url', canonicalUrl);
+            let canon = document.querySelector('link[rel="canonical"]');
+            if (!canon) {
+                canon = document.createElement('link');
+                canon.rel = 'canonical';
+                document.head.appendChild(canon);
+            }
+            canon.href = canonicalUrl;
+        }
+
+        // Twitter
+        setMeta('name', 'twitter:title', fullTitle);
+        if (desc) setMeta('name', 'twitter:description', desc);
+        if (image) setMeta('name', 'twitter:image', image);
+    }
+
+    // --- WISHLIST ENGINE ---
+    function getWishlist() {
+        try {
+            return JSON.parse(localStorage.getItem('via_wishlist')) || [];
+        } catch (e) {
+            return [];
+        }
+    }
+
+    function saveWishlist(list) {
+        localStorage.setItem('via_wishlist', JSON.stringify(list));
+        updateWishlistUI();
+    }
+
+    function toggleWishlist(pkgId, evt) {
+        if (evt) {
+            evt.preventDefault();
+            evt.stopPropagation();
+        }
+        let list = getWishlist();
+        const index = list.indexOf(pkgId);
+        if (index > -1) {
+            list.splice(index, 1);
+            showToast('Package removed from your Wishlist.', 'info');
+        } else {
+            list.push(pkgId);
+            showToast('Saved to your Curated Wishlist!', 'success');
+        }
+        saveWishlist(list);
+    }
+
+    function updateWishlistUI() {
+        const list = getWishlist();
+        const count = list.length;
+        const countEl = document.getElementById('wishlistCount');
+        const mobileCountEl = document.getElementById('mobileWishlistCount');
+        if (countEl) countEl.textContent = count;
+        if (mobileCountEl) mobileCountEl.textContent = count;
+
+        document.querySelectorAll('.wishlist-btn[data-pkg-id]').forEach(btn => {
+            const id = btn.getAttribute('data-pkg-id');
+            const icon = btn.querySelector('i');
+            if (list.includes(id)) {
+                btn.classList.add('active');
+                if (icon) {
+                    icon.classList.remove('far');
+                    icon.classList.add('fas');
+                }
+            } else {
+                btn.classList.remove('active');
+                if (icon) {
+                    icon.classList.remove('fas');
+                    icon.classList.add('far');
+                }
+            }
+        });
+    }
+
+    function filterWishlist(evt) {
+        if (evt) evt.preventDefault();
+        navTo('packages');
+        setTimeout(() => {
+            const list = getWishlist();
+            const listEl = document.getElementById('list_packages');
+            if (!listEl) return;
+            if (!list.length) {
+                listEl.innerHTML = `
+                    <div style="grid-column:1/-1; text-align:center; padding:60px 20px; background:var(--bg-light); border-radius:var(--radius-xl); border:1px dashed var(--border);">
+                        <i class="fas fa-heart-broken" style="font-size:3rem; color:var(--text-muted); margin-bottom:16px;"></i>
+                        <h3>Your Wishlist is Empty</h3>
+                        <p style="color:var(--text-muted); max-width:400px; margin:0 auto 20px;">Explore our bespoke escapes and click the heart icon to save your favorite itineraries for later.</p>
+                        <button class="btn btn-primary" onclick="clearFilter()">Explore All Packages</button>
+                    </div>
+                `;
+                return;
+            }
+            const allPacks = (window.LUXURY_CATALOG && window.LUXURY_CATALOG.packages) ? window.LUXURY_CATALOG.packages : [];
+            const savedPacks = allPacks.filter(p => list.includes(p.id));
+            if (savedPacks.length) {
+                listEl.innerHTML = savedPacks.map(p => renderPackageCard(p)).join('');
+                updateWishlistUI();
+            }
+        }, 120);
+    }
+
+    // --- PACKAGE COMPARISON ENGINE ---
+    function openCompareModal(pkgId1, pkgId2) {
+        const modal = document.getElementById('compareModal');
+        const body = document.getElementById('compareModalBody');
+        if (!modal || !body) return;
+
+        const allPacks = (window.LUXURY_CATALOG && window.LUXURY_CATALOG.packages) ? window.LUXURY_CATALOG.packages : [];
+        const p1 = allPacks.find(p => p.id === pkgId1) || allPacks[0];
+        const p2 = allPacks.find(p => p.id === pkgId2) || allPacks[1] || allPacks[0];
+
+        if (!p1 || !p2) {
+            showToast('Comparison requires at least two packages.', 'error');
+            return;
+        }
+
+        body.innerHTML = `
+            <table class="compare-table">
+                <thead>
+                    <tr>
+                        <th style="width:25%;">Feature</th>
+                        <th style="width:37.5%; text-align:center;">
+                            <img src="${escapeHTML(p1.image_url)}" alt="${escapeHTML(p1.title)}" style="width:100%; height:130px; object-fit:cover; border-radius:var(--radius-md); margin-bottom:8px;">
+                            <strong>${escapeHTML(p1.title)}</strong>
+                        </th>
+                        <th style="width:37.5%; text-align:center;">
+                            <img src="${escapeHTML(p2.image_url)}" alt="${escapeHTML(p2.title)}" style="width:100%; height:130px; object-fit:cover; border-radius:var(--radius-md); margin-bottom:8px;">
+                            <strong>${escapeHTML(p2.title)}</strong>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Destination</strong></td>
+                        <td style="text-align:center;">${escapeHTML(p1.destination_name || p1.dest || 'Maldives')}</td>
+                        <td style="text-align:center;">${escapeHTML(p2.destination_name || p2.dest || 'Switzerland')}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Duration</strong></td>
+                        <td style="text-align:center;">${escapeHTML(p1.duration || 'N/A')}</td>
+                        <td style="text-align:center;">${escapeHTML(p2.duration || 'N/A')}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Starting Tariff</strong></td>
+                        <td style="text-align:center; font-weight:700; color:var(--brand-orange); font-size:1.15rem;">${formatPrice(p1.price)} / person</td>
+                        <td style="text-align:center; font-weight:700; color:var(--brand-orange); font-size:1.15rem;">${formatPrice(p2.price)} / person</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Experience Category</strong></td>
+                        <td style="text-align:center;"><span class="tag">${escapeHTML(p1.category || 'Luxury')}</span></td>
+                        <td style="text-align:center;"><span class="tag">${escapeHTML(p2.category || 'Luxury')}</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Accommodation Tier</strong></td>
+                        <td style="text-align:center;">5-Star Ultra Luxury Pool Villa</td>
+                        <td style="text-align:center;">5-Star Superior Alpine Resort</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Key Inclusions</strong></td>
+                        <td style="text-align:center; font-size:0.88rem;">${(p1.inclusions || []).slice(0, 3).join(', ') || 'VIP Airport Seaplane, All-Inclusive Dining'}</td>
+                        <td style="text-align:center; font-size:0.88rem;">${(p2.inclusions || []).slice(0, 3).join(', ') || '1st-Class Glacier Express Rail, 5★ Chalets'}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Action</strong></td>
+                        <td style="text-align:center;">
+                            <button class="btn btn-primary" style="padding:6px 14px; font-size:0.85rem;" onclick="closeCompareModal(); navTo('package', '${escapeHTML(p1.id)}')">View Itinerary</button>
+                        </td>
+                        <td style="text-align:center;">
+                            <button class="btn btn-primary" style="padding:6px 14px; font-size:0.85rem;" onclick="closeCompareModal(); navTo('package', '${escapeHTML(p2.id)}')">View Itinerary</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        `;
+        modal.classList.add('show', 'active');
+    }
+
+    function closeCompareModal() {
+        const modal = document.getElementById('compareModal');
+        if (modal) modal.classList.remove('show', 'active');
+    }
+
+    // Newsletter Handler
+    function handleNewsletter(e) {
+        if (e && e.preventDefault) e.preventDefault();
+        const input = document.getElementById('newsletter_email');
+        if (!input) return;
+        const email = (input.value || '').trim();
+        if (!email || !email.includes('@')) {
+            showToast('Please provide a valid email address.', 'error');
+            return;
+        }
+        showToast('Welcome to The Connoisseurs Circle! Your private welcome invitation is on its way.', 'success');
+        input.value = '';
     }
 
     // --- MOBILE MENU & NAVIGATION ---
@@ -409,6 +625,36 @@
         if (addressEl) addressEl.textContent = appSettings.address;
     }
 
+    // Common Package Card Template (Wishlist, Compare & Currency Aware)
+    function renderPackageCard(p) {
+        const list = getWishlist();
+        const isSaved = list.includes(p.id);
+        const destName = p.destinations?.name || p.destination_name || (p.dest ? p.dest.toUpperCase() : 'Iconic Destination');
+        const compareTarget = (p.id === 'pkg-maldives-sanctuary') ? 'pkg-switzerland-panoramic' : 'pkg-maldives-sanctuary';
+
+        return `
+            <div class="card" onclick="navTo('package', '${escapeHTML(p.id)}')" role="button" tabindex="0" onkeydown="if(event.key==='Enter') navTo('package', '${escapeHTML(p.id)}')">
+                <div style="position:relative;">
+                    <img src="${escapeHTML(p.image_url || 'assets/agency-logo-emblem.webp')}" alt="${escapeHTML(p.title)}" loading="lazy" width="400" height="220">
+                    <button type="button" class="wishlist-btn ${isSaved ? 'active' : ''}" data-pkg-id="${escapeHTML(p.id)}" onclick="toggleWishlist('${escapeHTML(p.id)}', event)" aria-label="Save ${escapeHTML(p.title)} to Wishlist" title="Save to Wishlist">
+                        <i class="${isSaved ? 'fas' : 'far'} fa-heart"></i>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                        <span class="tag">${escapeHTML(p.category || 'Luxury')}</span>
+                        <button type="button" class="btn btn-outline" style="padding:2px 8px; font-size:0.75rem;" onclick="event.stopPropagation(); openCompareModal('${escapeHTML(p.id)}', '${compareTarget}')" title="Compare with another package">
+                            <i class="fas fa-balance-scale"></i> Compare
+                        </button>
+                    </div>
+                    <h3>${escapeHTML(p.title)}</h3>
+                    <p style="color:var(--text-muted); font-size:14px;"><i class="far fa-clock" style="color:var(--brand-orange);"></i> ${escapeHTML(p.duration || 'N/A')} &bull; <i class="fas fa-map-marker-alt" style="color:var(--brand-orange);"></i> ${escapeHTML(destName)}</p>
+                    <span class="price-tag" data-inr-price="${p.price}" data-price-prefix="Starting from ">Starting from ${formatPrice(p.price)}</span>
+                </div>
+            </div>
+        `;
+    }
+
     // 2. Home Page Showcase Data
     async function loadHomeData() {
         // A. Destinations
@@ -454,20 +700,8 @@
         }
         const homePackEl = document.getElementById('home_packages');
         if (homePackEl) {
-            homePackEl.innerHTML = packs.length ? packs.map(p => {
-                const destName = p.destinations?.name || p.destination_name || (p.dest ? p.dest.toUpperCase() : 'Iconic Destination');
-                return `
-                    <div class="card" onclick="navTo('package', '${escapeHTML(p.id)}')" role="button" tabindex="0" onkeydown="if(event.key==='Enter') navTo('package', '${escapeHTML(p.id)}')">
-                        <img src="${escapeHTML(p.image_url || 'assets/agency-logo-emblem.webp')}" alt="${escapeHTML(p.title)}" loading="lazy" width="400" height="220">
-                        <div class="card-body">
-                            <span class="tag">${escapeHTML(p.category || 'Luxury')}</span>
-                            <h3>${escapeHTML(p.title)}</h3>
-                            <p style="color:var(--text-muted); font-size:14px;"><i class="far fa-clock" style="color:var(--brand-orange);"></i> ${escapeHTML(p.duration || 'N/A')} &bull; <i class="fas fa-map-marker-alt" style="color:var(--brand-orange);"></i> ${escapeHTML(destName)}</p>
-                            <span class="price-tag" data-inr-price="${p.price}" data-price-prefix="Starting from ">Starting from ${formatPrice(p.price)}</span>
-                        </div>
-                    </div>
-                `;
-            }).join('') : '<p class="text-center" style="grid-column:1/-1;">No featured packages available.</p>';
+            homePackEl.innerHTML = packs.length ? packs.map(p => renderPackageCard(p)).join('') : '<p class="text-center" style="grid-column:1/-1;">No featured packages available.</p>';
+            updateWishlistUI();
         }
 
         // C. Blog Posts
@@ -750,20 +984,8 @@
             return;
         }
 
-        listEl.innerHTML = filtered.map(p => {
-            const destName = p.destinations?.name || p.destination_name || (p.dest ? p.dest.toUpperCase() : 'Bespoke Retreat');
-            return `
-                <div class="card" onclick="navTo('package', '${escapeHTML(p.id)}')" role="button" tabindex="0" onkeydown="if(event.key==='Enter') navTo('package', '${escapeHTML(p.id)}')">
-                    <img src="${escapeHTML(p.image_url || 'assets/agency-logo-emblem.webp')}" alt="${escapeHTML(p.title)}" loading="lazy">
-                    <div class="card-body">
-                        <span class="tag">${escapeHTML(p.category || 'Luxury')}</span>
-                        <h3>${escapeHTML(p.title)}</h3>
-                        <p style="color:var(--text-muted); font-size:14px;"><i class="far fa-clock"></i> ${escapeHTML(p.duration || 'N/A')} &bull; <i class="fas fa-map-marker-alt"></i> ${escapeHTML(destName)}</p>
-                        <span class="price-tag" data-inr-price="${p.price}" data-price-prefix="Starting from ">Starting from ${formatPrice(p.price)}</span>
-                    </div>
-                </div>
-            `;
-        }).join('');
+        listEl.innerHTML = filtered.map(p => renderPackageCard(p)).join('');
+        updateWishlistUI();
     }
 
     const debounceSearch = debounce(loadPackages, 350);
@@ -790,7 +1012,20 @@
     async function loadPackageDetails(id) {
         const container = document.getElementById('pkg_details_container');
         if (!container) return;
-        container.innerHTML = '<p class="text-center" style="padding:60px 0;">Loading package itinerary and details...</p>';
+        container.innerHTML = `
+            <div class="skeleton" style="width:250px; height:20px; border-radius:var(--radius-sm); margin-bottom:16px;"></div>
+            <div class="pkg-gallery">
+                <div>
+                    <div class="skeleton" style="width:100%; height:400px; border-radius:var(--radius-xl); margin-bottom:16px;"></div>
+                    <div class="skeleton" style="width:70%; height:32px; border-radius:var(--radius-sm); margin-bottom:12px;"></div>
+                    <div class="skeleton" style="width:40%; height:20px; border-radius:var(--radius-sm); margin-bottom:20px;"></div>
+                    <div class="skeleton" style="width:100%; height:160px; border-radius:var(--radius-lg);"></div>
+                </div>
+                <div>
+                    <div class="skeleton" style="width:100%; height:340px; border-radius:var(--radius-xl);"></div>
+                </div>
+            </div>
+        `;
 
         let p = null;
         const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(id || ''));
@@ -812,7 +1047,7 @@
         }
 
         currentPackage = p;
-        updateSEO(p.title, p.short_description || p.description || p.overview);
+        updateSEO(p.title, p.short_description || p.description || p.overview, p.image_url, '/package/' + p.id);
 
         const allImages = [p.image_url, ...(p.gallery_images || [])].filter(Boolean);
         const galleryHTML = allImages.length > 0 ? `
@@ -825,8 +1060,14 @@
         ` : '';
 
         const destName = p.destinations?.name || p.destination_name || (p.dest ? p.dest.toUpperCase() : 'Bespoke Retreat');
+        const isSaved = getWishlist().includes(p.id);
 
         container.innerHTML = `
+            <nav class="breadcrumbs" aria-label="Breadcrumb">
+                <a href="/" onclick="navTo('home'); return false;">Home</a> / 
+                <a href="/packages" onclick="navTo('packages'); return false;">Curated Packages</a> / 
+                <span>${escapeHTML(p.title)}</span>
+            </nav>
             <div class="pkg-gallery">
                 <div>
                     ${galleryHTML}
@@ -853,6 +1094,9 @@
                         </a>
                         <button class="btn btn-primary" style="width:100%;" onclick="navTo('plan-trip', '${escapeHTML(p.id)}')">
                             <i class="fas fa-calendar-check"></i> Request Custom Quote
+                        </button>
+                        <button type="button" class="btn btn-outline" style="width:100%; margin-top:10px;" onclick="toggleWishlist('${escapeHTML(p.id)}', event); this.innerHTML = '<i class=\\'fas fa-heart\\' style=\\'color:#e11d48;\\'></i> ' + (getWishlist().includes('${escapeHTML(p.id)}') ? 'Saved in Wishlist' : 'Save to Curated Wishlist');">
+                            <i class="${isSaved ? 'fas' : 'far'} fa-heart" style="color:#e11d48;"></i> ${isSaved ? 'Saved in Wishlist' : 'Save to Curated Wishlist'}
                         </button>
                         <div style="margin-top:20px; font-size:0.8rem; color:var(--text-muted); text-align:left; line-height:1.6;">
                             <div><i class="fas fa-shield-alt" style="color:var(--green);"></i> 100% Verified Luxury Partners</div>
@@ -976,10 +1220,14 @@
                 const sanitize = security.sanitizeInput || ((v) => String(v || '').trim());
                 const name = sanitize(document.getElementById('pt_name')?.value);
                 const email = sanitize(document.getElementById('pt_email')?.value);
-                const phone = sanitize(document.getElementById('pt_phone')?.value);
+                const countryCode = sanitize(document.getElementById('pt_country_code')?.value || '+91');
+                const rawPhone = sanitize(document.getElementById('pt_phone')?.value);
+                const phone = rawPhone ? (rawPhone.startsWith('+') ? rawPhone : `${countryCode} ${rawPhone}`) : '';
                 const destination = sanitize(document.getElementById('pt_dest')?.value);
                 const travelDates = sanitize(document.getElementById('pt_dates')?.value);
-                const travelers = sanitize(document.getElementById('pt_travelers')?.value);
+                const adults = sanitize(document.getElementById('pt_adults')?.value || '2');
+                const children = sanitize(document.getElementById('pt_children')?.value || '0');
+                const travelers = `${adults} Adults${Number(children) > 0 ? `, ${children} Children` : ''}`;
                 const budget = sanitize(document.getElementById('pt_budget')?.value);
                 const hotelPref = sanitize(document.getElementById('pt_hotel')?.value);
                 const requirements = sanitize(document.getElementById('pt_req')?.value);
@@ -996,7 +1244,7 @@
                     phone,
                     destination: destination || 'Bespoke Inquiry',
                     travel_dates: travelDates || 'Flexible',
-                    travelers: travelers || '2',
+                    travelers: travelers || '2 Adults',
                     budget: budget || 'On Quote',
                     hotel_pref: hotelPref || '5 Star Luxury',
                     requirements,
@@ -1042,7 +1290,7 @@
                 }
 
                 // 3. Success feedback & redirection
-                showToast('Thank you! Your luxury inquiry has been received. Our concierge will contact you within 2 business hours.', 'success');
+                showToast('Thank you! Your luxury inquiry has been received. A dedicated specialist will provide an itemized proposal within 4 hours.', 'success');
                 planTripForm.reset();
                 if (security.resetFormTimer) security.resetFormTimer('planTripForm');
                 setTimeout(() => navTo('home'), 1800);
@@ -1096,7 +1344,13 @@
     async function loadBlogPost(slugOrId) {
         const container = document.getElementById('blog_details_container');
         if (!container) return;
-        container.innerHTML = '<p class="text-center" style="padding:40px 0;">Loading article...</p>';
+        container.innerHTML = `
+            <div class="skeleton" style="width:250px; height:20px; border-radius:var(--radius-sm); margin-bottom:16px;"></div>
+            <div class="skeleton" style="width:100%; height:380px; border-radius:var(--radius-xl); margin-bottom:24px;"></div>
+            <div class="skeleton" style="width:180px; height:24px; border-radius:var(--radius-sm); margin-bottom:14px;"></div>
+            <div class="skeleton" style="width:85%; height:40px; border-radius:var(--radius-md); margin-bottom:24px;"></div>
+            <div class="skeleton" style="width:100%; height:200px; border-radius:var(--radius-lg);"></div>
+        `;
 
         let b = null;
         if (sb) {
@@ -1124,11 +1378,16 @@
             return;
         }
 
-        updateSEO(b.title, b.excerpt || 'Via Tours & Travels Travel Journal');
+        updateSEO(b.title, b.excerpt || 'Via Tours & Travels Travel Journal', b.image_url, '/blog-post/' + (b.slug || b.id));
 
         const cleanHTML = window.DOMPurify ? window.DOMPurify.sanitize(b.content || '') : escapeHTML(b.content || '');
 
         container.innerHTML = `
+            <nav class="breadcrumbs" aria-label="Breadcrumb">
+                <a href="/" onclick="navTo('home'); return false;">Home</a> / 
+                <a href="/blog" onclick="navTo('blog'); return false;">Travel Journal</a> / 
+                <span>${escapeHTML(b.title)}</span>
+            </nav>
             <img src="${escapeHTML(b.image_url || 'assets/agency-logo-emblem.webp')}" style="width:100%; height:420px; object-fit:cover; border-radius:var(--radius-xl); margin-bottom:28px;" alt="${escapeHTML(b.title)}">
             <span class="tag">${new Date(b.created_at || Date.now()).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
             <h1 style="margin:12px 0 24px; color:var(--brand-navy); font-size:clamp(1.8rem, 4vw, 2.6rem);">${escapeHTML(b.title)}</h1>
@@ -1294,6 +1553,7 @@
     window.addEventListener('DOMContentLoaded', () => {
         loadSettings();
         populateCountryFilter();
+        updateWishlistUI();
         // Sync currency selector with stored preference
         if (currentCurrency) {
             document.querySelectorAll('.currency-select').forEach(sel => sel.value = currentCurrency);
@@ -1318,5 +1578,11 @@
     window.handleChat = handleChat;
     window.switchCurrency = switchCurrency;
     window.sendQuickPrompt = sendQuickPrompt;
+    window.toggleWishlist = toggleWishlist;
+    window.getWishlist = getWishlist;
+    window.filterWishlist = filterWishlist;
+    window.openCompareModal = openCompareModal;
+    window.closeCompareModal = closeCompareModal;
+    window.handleNewsletter = handleNewsletter;
 
 })(window, document);

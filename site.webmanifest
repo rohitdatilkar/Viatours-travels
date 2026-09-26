@@ -1,20 +1,24 @@
 {
   "name": "Via Tours & Travels",
   "short_name": "Via Tours",
-  "description": "Bespoke Luxury Holidays & Curated Journeys",
+  "description": "Bespoke Luxury Holidays, Private Atolls & Curated Journeys",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0c1a3d",
+  "theme_color": "#0c1a3d",
   "icons": [
     {
-      "src": "assets/android-chrome-192x192.png",
-      "sizes": "192x192",
-      "type": "image/png"
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
-      "src": "assets/android-chrome-512x512.png",
-      "sizes": "512x512",
-      "type": "image/png"
+      "src": "/favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png",
+      "purpose": "any"
     }
-  ],
-  "theme_color": "#061029",
-  "background_color": "#061029",
-  "display": "standalone"
+  ]
 }

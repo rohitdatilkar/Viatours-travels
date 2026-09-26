@@ -31,8 +31,9 @@ class SPARequestHandler(http.server.SimpleHTTPRequestHandler):
 if __name__ == '__main__':
     port = int(sys.argv[1]) if len(sys.argv) > 1 else PORT
     handler = partial(SPARequestHandler, directory=DIRECTORY)
-    httpd = http.server.ThreadingHTTPServer(("", port), handler)
-    print(f"Via Tours SPA Dev Server running at http://localhost:{port}/", flush=True)
+    http.server.ThreadingHTTPServer.allow_reuse_address = True
+    httpd = http.server.ThreadingHTTPServer(("127.0.0.1", port), handler)
+    print(f"Via Tours SPA Dev Server running at http://127.0.0.1:{port}/", flush=True)
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:
