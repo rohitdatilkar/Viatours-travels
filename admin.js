@@ -289,19 +289,28 @@ async function forgotPassword() {
 }
 
 async function logout() {
-    if (sb) await sb.auth.signOut();
+    if (sb) {
+        try { await sb.auth.signOut(); } catch (e) {}
+    }
     const loginBox = document.getElementById('admin-login');
     const dashBox = document.getElementById('admin-dashboard');
     if (loginBox) loginBox.style.display = 'block';
     if (dashBox) dashBox.style.display = 'none';
-    navTo('home');
     showToast('Signed out of staff portal successfully.');
+    setTimeout(() => {
+        window.location.href = 'index.html#/home';
+    }, 700);
 }
 
 function toggleSidebar() {
     const side = document.getElementById('adminSide');
-    if (side) {
+    const main = document.getElementById('adminMain');
+    if (!side) return;
+    if (window.innerWidth <= 992) {
+        side.classList.toggle('mobile-open');
+    } else {
         side.classList.toggle('collapsed');
+        if (main) main.classList.toggle('expanded');
         isSidebarCollapsed = side.classList.contains('collapsed');
         localStorage.setItem('sidebarCollapsed', isSidebarCollapsed);
     }
@@ -728,27 +737,94 @@ async function loadAdminEnquiries() {
     const { data } = await sb.from('enquiries').select('*').order('created_at', { ascending: false });
     table.innerHTML = (data || []).map(e => `
         <tr>
-            <td><strong>${escapeHTML(e.name || e.customer_name || 'Guest')}</strong><br>${escapeHTML(e.email || '')}<br>${escapeHTML(e.phone || '')}</td>
-            <td>Dest: ${escapeHTML(e.destination || 'N/A')}<br>Dates: ${escapeHTML(e.travel_dates || 'N/A')}<br>Budget: ${escapeHTML(e.budget || 'N/A')}</td>
             <td>
-                <select class="status-dropdown" onchange="changeStatus('enquiries', '${escapeHTML(e.id)}', this.value)" style="background:#081535; color:#fff; padding:4px 8px; border-radius:4px;">
+                <strong>${escapeHTML(e.name || e.customer_name || 'Guest')}</strong><br>
+                <small style="color:#64748b;">${escapeHTML(e.email || '')}<br>${escapeHTML(e.phone || '')}</small>
+            </td>
+            <td>
+                <strong>${escapeHTML(e.destination || 'N/A')}</strong><br>
+                <small style="color:#64748b;">Dates: ${escapeHTML(e.travel_dates || 'Flexible')}<br>Budget: ${escapeHTML(e.budget || 'On Quote')}</small>
+            </td>
+            <td>
+                <select class="status-dropdown" onchange="changeStatus('enquiries', '${escapeHTML(e.id)}', this.value)" style="background:#f8fafc; color:#0c1a3d; border:1px solid #cbd5e1; border-radius:6px; padding:6px 10px; font-size:13px; font-weight:600; cursor:pointer;">
                     <option ${e.status === 'New' ? 'selected' : ''}>New</option>
                     <option ${e.status === 'Contacted' ? 'selected' : ''}>Contacted</option>
                     <option ${e.status === 'Quotation Sent' ? 'selected' : ''}>Quotation Sent</option>
                     <option ${e.status === 'Confirmed' ? 'selected' : ''}>Confirmed</option>
                     <option ${e.status === 'Completed' ? 'selected' : ''}>Completed</option>
                 </select>
-                <textarea placeholder="VIP internal notes" onchange="saveNote('${escapeHTML(e.id)}', this.value)" style="width:100%; margin-top:6px; font-size:12px; background:#081535; color:#fff;">${escapeHTML(e.internal_notes || '')}</textarea>
+                <textarea placeholder="VIP internal notes" onchange="saveNote('${escapeHTML(e.id)}', this.value)" style="width:100%; margin-top:6px; font-size:12px; background:#f8fafc; color:#0c1a3d; border:1px solid #cbd5e1; border-radius:6px; padding:6px; font-family:inherit;">${escapeHTML(e.internal_notes || '')}</textarea>
             </td>
             <td>
-                <button class="btn btn-danger btn-sm" onclick="delItem('enquiries', '${escapeHTML(e.id)}')"><i class="fas fa-trash"></i></button>
+                <div style="display:flex; gap:6px; align-items:center;">
+                    <button class="btn btn-outline btn-sm" onclick="createBookingFromEnquiry('${escapeHTML(e.id)}')" title="Convert to Booking"><i class="fas fa-calendar-plus"></i></button>
+                    <button class="btn btn-danger btn-sm" onclick="delItem('enquiries', '${escapeHTML(e.id)}')" title="Delete Enquiry"><i class="fas fa-trash"></i></button>
+                </div>
             </td>
         </tr>
     `).join('');
 }
 
+async function changeStatus(table, id, status) {
+    if (!sb) return;
+    try {
+        const { error } = await sb.from(table).update({ status: status }).eq('id', id);
+        if (error) {
+            showToast('Failed to update status.', 'error');
+        } else {
+            showToast(`Status updated to ${status}.`, 'success');
+            loadAdminStats();
+            if (table === 'enquiries') loadAdminEnquiries();
+            if (table === 'bookings') loadAdminBookings();
+        }
+    } catch (e) {
+        showToast('Error updating status.', 'error');
+    }
+}
 
+async function saveNote(id, text) {
+    if (!sb) return;
+    try {
+        const { error } = await sb.from('enquiries').update({ internal_notes: text }).eq('id', id);
+        if (error) {
+            showToast('Failed to save notes.', 'error');
+        } else {
+            showToast('Internal notes saved.', 'success');
+        }
+    } catch (e) {
+        showToast('Error saving note.', 'error');
+    }
+}
 
+async function createBookingFromEnquiry(enqId) {
+    if (!sb) return;
+    try {
+        const { data: enq, error } = await sb.from('enquiries')
+            .select('id, name, customer_name, email, phone, destination, package_id, travel_dates, travelers, budget')
+            .eq('id', enqId)
+            .single();
+        if (error || !enq) {
+            showToast('Enquiry not found.', 'error');
+            return;
+        }
+        openBookModal();
+        const dateInput = document.getElementById('m_book_date');
+        const nameInput = document.getElementById('m_book_customer_name');
+        const travInput = document.getElementById('m_book_travelers');
+        const pkgInput = document.getElementById('m_book_package_name');
+        if (dateInput) dateInput.value = enq.travel_dates || '';
+        if (nameInput) nameInput.value = enq.name || enq.customer_name || '';
+        if (travInput) travInput.value = parseInt(enq.travelers) > 0 ? parseInt(enq.travelers) : 2;
+        if (enq.package_id) {
+            const { data: pkg } = await sb.from('packages').select('id, title').eq('id', enq.package_id).maybeSingle();
+            if (pkg && pkgInput) pkgInput.value = pkg.title;
+        } else if (enq.destination && pkgInput) {
+            pkgInput.value = 'Custom Journey — ' + enq.destination;
+        }
+    } catch (e) {
+        showToast('Error loading enquiry details.', 'error');
+    }
+}
 
 // Customers & Bookings Admin
 async function loadAdminCustomers() {
@@ -759,9 +835,23 @@ async function loadAdminCustomers() {
         <tr>
             <td><strong>${escapeHTML(c.name)}</strong></td>
             <td>${escapeHTML(c.email)}<br>${escapeHTML(c.phone)}</td>
-            <td><textarea style="background:#f8fafc; color:#0c1a3d; border:1px solid #cbd5e1; border-radius:6px; padding:6px; width:100%; font-size:12px;">${escapeHTML(c.notes || '')}</textarea></td>
+            <td><textarea placeholder="Customer VIP notes" onchange="saveCustNote('${escapeHTML(c.id)}', this.value)" style="background:#f8fafc; color:#0c1a3d; border:1px solid #cbd5e1; border-radius:6px; padding:6px; width:100%; font-size:12px; font-family:inherit;">${escapeHTML(c.notes || '')}</textarea></td>
         </tr>
     `).join('');
+}
+
+async function saveCustNote(id, text) {
+    if (!sb) return;
+    try {
+        const { error } = await sb.from('customers').update({ notes: text }).eq('id', id);
+        if (error) {
+            showToast('Failed to save customer notes.', 'error');
+        } else {
+            showToast('Customer notes saved.', 'success');
+        }
+    } catch (e) {
+        showToast('Error saving customer note.', 'error');
+    }
 }
 
 async function loadAdminBookings() {
@@ -1258,6 +1348,10 @@ window.saveTestimonial = saveTestimonial;
 window.saveFaq = saveFaq;
 window.saveSettings = saveSettings;
 window.delItem = delItem;
+window.changeStatus = changeStatus;
+window.saveNote = saveNote;
+window.saveCustNote = saveCustNote;
+window.createBookingFromEnquiry = createBookingFromEnquiry;
 window.adminLogin = adminLogin;
 window.forgotPassword = forgotPassword;
 window.logout = logout;
