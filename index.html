@@ -15,20 +15,85 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:image" content="assets/social-preview-1200.webp">
     <title>Via Tours &amp; Travels — Bespoke Luxury Escapes &amp; World-Class Journeys</title>
+    <base href="/">
 
     <!-- Favicons -->
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
-    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 
     <!-- Preconnect & Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
+    <link rel="canonical" href="https://viatours-travels.vercel.app/">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <!-- Luxury Design System Stylesheet -->
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/style.css?v=2026.1">
+
+    <!-- JSON-LD SEO Structured Data (TravelAgency & FAQ) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "TravelAgency",
+          "@id": "https://viatours-travels.vercel.app/#agency",
+          "name": "Via Tours & Travels",
+          "url": "https://viatours-travels.vercel.app/",
+          "logo": "https://viatours-travels.vercel.app/logo.svg",
+          "image": "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=1200&q=80&fm=webp",
+          "description": "Bespoke luxury travel agency specializing in private overwater atolls, alpine retreats, and white-glove VIP itineraries.",
+          "telephone": "+91-88797-76866",
+          "email": "reservations@viatours.com",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "Level 6, Prestige Meridian, 29 MG Road",
+            "addressLocality": "Bengaluru",
+            "addressRegion": "Karnataka",
+            "postalCode": "560001",
+            "addressCountry": "IN"
+          },
+          "priceRange": "₹₹₹₹",
+          "currenciesAccepted": "INR, USD, EUR, AED",
+          "paymentAccepted": "Bank Transfer, Credit Card, Payment Link",
+          "openingHours": "Mo-Su 00:00-23:59"
+        },
+        {
+          "@type": "FAQPage",
+          "@id": "https://viatours-travels.vercel.app/#faq",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "How does Via Tours & Travels customize our travel itinerary?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Every journey begins with understanding your preferences. A dedicated senior destination architect crafts a bespoke day-by-day itinerary including flights, 5-star resort options, private transfers, and handpicked local experiences."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Do you provide Visa documentation and appointment assistance?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes! We provide complete end-to-end visa assistance for Schengen (Europe), UK, USA, UAE, Vietnam, Singapore, Japan, and 80+ destinations, including document prep and appointments."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What is your Flexible Date Change policy?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "We provide 100% Free Date Changes up to 21 days prior to your departure date across all our customized private tour packages with zero administrative penalties."
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
 </head>
 <body>
 
@@ -39,8 +104,8 @@
     <div style="text-align:center;">
         <div class="brand-logo-badge" style="background:#ffffff; padding:12px; border-radius:18px; box-shadow:0 10px 30px rgba(0,0,0,0.1); margin-bottom:14px; display:inline-block;">
             <picture>
-                <source type="image/svg+xml" srcset="logo.svg">
-                <img src="apple-touch-icon.png" onerror="this.onerror=null; this.src='logo.svg';" alt="Via Tours Logo" width="64" height="64" style="height:64px; width:auto; display:block;">
+                <source type="image/svg+xml" srcset="/logo.svg">
+                <img src="/apple-touch-icon.png" onerror="this.onerror=null; this.src='/logo.svg';" alt="Via Tours Logo" width="64" height="64" style="height:64px; width:auto; display:block;">
             </picture>
         </div>
         <div class="loader-plane" aria-hidden="true">✈️</div>
@@ -52,11 +117,11 @@
     <!-- Header & Navigation -->
     <header class="header" role="banner">
         <div class="container header-in">
-            <a href="#/home" class="logo-wrap" onclick="navTo('home'); return false;" title="Via Tours &amp; Travels — Bespoke Luxury Escapes">
+            <a href="/" class="logo-wrap" onclick="navTo('home'); return false;" title="Via Tours &amp; Travels — Bespoke Luxury Escapes">
                 <div class="brand-logo-badge">
                     <picture>
-                        <source type="image/svg+xml" srcset="logo.svg">
-                        <img src="apple-touch-icon.png" onerror="this.onerror=null; this.src='logo.svg';" alt="Via Tours Logo" width="52" height="52">
+                        <source type="image/svg+xml" srcset="/logo.svg">
+                        <img src="/apple-touch-icon.png" onerror="this.onerror=null; this.src='/logo.svg';" alt="Via Tours Logo" width="52" height="52">
                     </picture>
                 </div>
                 <div class="logo-txt">
@@ -68,13 +133,21 @@
                 <i class="fas fa-bars"></i>
             </button>
             <nav class="nav-menu" id="navMenu" role="navigation" aria-label="Main Navigation">
-                <a href="#/home" onclick="navTo('home'); return false;">Home</a>
-                <a href="#/destinations" onclick="navTo('destinations'); return false;">Destinations</a>
-                <a href="#/packages" onclick="navTo('packages'); return false;">Packages</a>
-                <a href="#/blog" onclick="navTo('blog'); return false;">Blog</a>
-                <a href="#/about" onclick="navTo('about'); return false;">About Us</a>
-                <a href="#/contact" onclick="navTo('contact'); return false;">Contact</a>
-                <a href="#/plan-trip" onclick="navTo('plan-trip'); return false;" class="btn btn-primary" style="padding:8px 20px;">Plan My Trip</a>
+                <a href="/" onclick="navTo('home'); return false;">Home</a>
+                <a href="/destinations" onclick="navTo('destinations'); return false;">Destinations</a>
+                <a href="/packages" onclick="navTo('packages'); return false;">Packages</a>
+                <a href="/blog" onclick="navTo('blog'); return false;">Blog</a>
+                <a href="/about" onclick="navTo('about'); return false;">About Us</a>
+                <a href="/contact" onclick="navTo('contact'); return false;">Contact</a>
+                <div class="currency-wrap">
+                    <select class="currency-select" id="currencySelector" onchange="switchCurrency(this.value)" aria-label="Select Currency">
+                        <option value="INR">₹ INR</option>
+                        <option value="USD">$ USD</option>
+                        <option value="EUR">€ EUR</option>
+                        <option value="AED">AED</option>
+                    </select>
+                </div>
+                <a href="/plan-trip" onclick="navTo('plan-trip'); return false;" class="btn btn-primary" style="padding:8px 20px;">Plan My Trip</a>
             </nav>
         </div>
     </header>
@@ -101,11 +174,22 @@
                             <input type="date" id="hero_date">
                         </div>
                         <div class="form-sec" style="margin:0;">
-                            <label for="hero_travellers">Travelers</label>
-                            <select id="hero_travellers">
-                                <option value="2 Adults">2 Adults</option>
-                                <option value="Family">Family / Group</option>
-                                <option value="Solo">Solo Traveler</option>
+                            <label for="hero_travelers">Guests</label>
+                            <select id="hero_travelers">
+                                <option value="2 Adults">2 Adults (Couple)</option>
+                                <option value="1 Adult">1 Solo Traveler</option>
+                                <option value="3 Adults">3 Adults</option>
+                                <option value="Family">Family / Group (4+)</option>
+                            </select>
+                        </div>
+                        <div class="form-sec" style="margin:0;">
+                            <label for="hero_style">Experience</label>
+                            <select id="hero_style">
+                                <option value="">All Experiences</option>
+                                <option value="Luxury">Ultra-Luxury Villa</option>
+                                <option value="Honeymoon">Honeymoon &amp; Romance</option>
+                                <option value="Family">Family Sanctuary</option>
+                                <option value="Adventure">Alpine &amp; Expedition</option>
                             </select>
                         </div>
                         <button class="btn btn-blue" onclick="searchFromHero()" aria-label="Search travel packages">
@@ -115,6 +199,41 @@
                 </div>
             </div>
 
+            <!-- Social Proof & Trust Credentials Banner -->
+            <section class="trust-strip" aria-label="Agency Credentials and Achievements">
+                <div class="container">
+                    <div class="trust-grid">
+                        <div>
+                            <div class="trust-num">17+</div>
+                            <div class="trust-label">Years of Heritage (Est. 2009)</div>
+                        </div>
+                        <div>
+                            <div class="trust-num">1,400+</div>
+                            <div class="trust-label">Bespoke VIP Escapes Curated</div>
+                        </div>
+                        <div>
+                            <div class="trust-num">99.6%</div>
+                            <div class="trust-label">Client Satisfaction Rating</div>
+                        </div>
+                        <div>
+                            <div class="trust-num">35+</div>
+                            <div class="trust-label">Hand-Explored Global Destinations</div>
+                        </div>
+                    </div>
+                    <div class="partner-network">
+                        <div class="partner-network-title">Preferred Luxury Hotel Partners &amp; Accreditations</div>
+                        <div class="partner-badges">
+                            <span class="partner-badge"><i class="fas fa-gem" style="color:var(--brand-orange);"></i> Aman Resorts Partner</span>
+                            <span class="partner-badge"><i class="fas fa-crown" style="color:var(--brand-orange);"></i> Four Seasons Preferred</span>
+                            <span class="partner-badge"><i class="fas fa-hotel" style="color:var(--brand-orange);"></i> The Oberoi Group</span>
+                            <span class="partner-badge"><i class="fas fa-award" style="color:var(--brand-orange);"></i> Taj Palaces &amp; Safaris</span>
+                            <span class="partner-badge"><i class="fas fa-plane" style="color:var(--brand-blue);"></i> IATA Accredited (#14-3-4567)</span>
+                            <span class="partner-badge"><i class="fas fa-shield-alt" style="color:var(--green);"></i> ATOAI Member</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <!-- Featured Destinations -->
             <div class="container section-pad">
                 <div class="text-center" style="margin-bottom:40px;">
@@ -123,7 +242,42 @@
                     <p>Handpicked places curated for unforgettable luxury memories.</p>
                 </div>
                 <div class="grid-4" id="home_destinations">
-                    <p class="text-center" style="grid-column:1/-1;">Loading destinations...</p>
+                    <div class="card" onclick="navTo('packages', 'dest-maldives')" role="button" tabindex="0">
+                        <img src="https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=800&q=80&fm=webp" alt="Maldives Overwater Luxury" loading="lazy" width="400" height="220">
+                        <div class="card-body">
+                            <span class="tag">Bespoke Escape</span>
+                            <h3>Maldives</h3>
+                            <p style="color:var(--text-muted); font-size:14px; margin-bottom:8px;"><i class="fas fa-map-marker-alt" style="color:var(--brand-orange);"></i> South Asia / Indian Ocean</p>
+                            <span class="price-tag" data-inr-price="185000" data-price-prefix="From " data-price-suffix=" / person">From ₹1,85,000 / person</span>
+                        </div>
+                    </div>
+                    <div class="card" onclick="navTo('packages', 'dest-switzerland')" role="button" tabindex="0">
+                        <img src="https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?w=800&q=80&fm=webp" alt="Switzerland Alpine Retreat" loading="lazy" width="400" height="220">
+                        <div class="card-body">
+                            <span class="tag">Bespoke Escape</span>
+                            <h3>Switzerland</h3>
+                            <p style="color:var(--text-muted); font-size:14px; margin-bottom:8px;"><i class="fas fa-map-marker-alt" style="color:var(--brand-orange);"></i> Europe / Swiss Alps</p>
+                            <span class="price-tag" data-inr-price="245000" data-price-prefix="From " data-price-suffix=" / person">From ₹2,45,000 / person</span>
+                        </div>
+                    </div>
+                    <div class="card" onclick="navTo('packages', 'dest-bali')" role="button" tabindex="0">
+                        <img src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800&q=80&fm=webp" alt="Bali Rainforest Pool Villas" loading="lazy" width="400" height="220">
+                        <div class="card-body">
+                            <span class="tag">Bespoke Escape</span>
+                            <h3>Bali</h3>
+                            <p style="color:var(--text-muted); font-size:14px; margin-bottom:8px;"><i class="fas fa-map-marker-alt" style="color:var(--brand-orange);"></i> Southeast Asia / Indonesia</p>
+                            <span class="price-tag" data-inr-price="95000" data-price-prefix="From " data-price-suffix=" / person">From ₹95,000 / person</span>
+                        </div>
+                    </div>
+                    <div class="card" onclick="navTo('packages', 'dest-dubai')" role="button" tabindex="0">
+                        <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800&q=80&fm=webp" alt="Dubai 7-Star Skyline & Desert" loading="lazy" width="400" height="220">
+                        <div class="card-body">
+                            <span class="tag">Bespoke Escape</span>
+                            <h3>Dubai</h3>
+                            <p style="color:var(--text-muted); font-size:14px; margin-bottom:8px;"><i class="fas fa-map-marker-alt" style="color:var(--brand-orange);"></i> Middle East / UAE</p>
+                            <span class="price-tag" data-inr-price="145000" data-price-prefix="From " data-price-suffix=" / person">From ₹1,45,000 / person</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -135,7 +289,33 @@
                     <p>Exclusive deals and bespoke voyages crafted just for you.</p>
                 </div>
                 <div class="grid-3" id="home_packages">
-                    <p class="text-center" style="grid-column:1/-1;">Loading luxury packages...</p>
+                    <div class="card" onclick="navTo('package', 'pkg-maldives-sanctuary')" role="button" tabindex="0">
+                        <img src="https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=800&q=80&fm=webp" alt="Maldives Overwater Luxury Sanctuary 5★" loading="lazy" width="400" height="220">
+                        <div class="card-body">
+                            <span class="tag">Luxury</span>
+                            <h3>Maldives Overwater Luxury Sanctuary 5★</h3>
+                            <p style="color:var(--text-muted); font-size:14px;"><i class="far fa-clock" style="color:var(--brand-orange);"></i> 5 Days / 4 Nights &bull; <i class="fas fa-map-marker-alt" style="color:var(--brand-orange);"></i> Maldives</p>
+                            <span class="price-tag" data-inr-price="185000" data-price-prefix="Starting from ">Starting from ₹1,85,000</span>
+                        </div>
+                    </div>
+                    <div class="card" onclick="navTo('package', 'pkg-switzerland-panoramic')" role="button" tabindex="0">
+                        <img src="https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?w=800&q=80&fm=webp" alt="Grand Swiss Alpine & Panoramic Rail Odyssey 5★" loading="lazy" width="400" height="220">
+                        <div class="card-body">
+                            <span class="tag">Scenic Rail</span>
+                            <h3>Grand Swiss Alpine &amp; Panoramic Rail Odyssey 5★</h3>
+                            <p style="color:var(--text-muted); font-size:14px;"><i class="far fa-clock" style="color:var(--brand-orange);"></i> 8 Days / 7 Nights &bull; <i class="fas fa-map-marker-alt" style="color:var(--brand-orange);"></i> Switzerland</p>
+                            <span class="price-tag" data-inr-price="245000" data-price-prefix="Starting from ">Starting from ₹2,45,000</span>
+                        </div>
+                    </div>
+                    <div class="card" onclick="navTo('package', 'pkg-vietnam-charm')" role="button" tabindex="0">
+                        <img src="https://images.unsplash.com/photo-1528127269322-539801943592?w=800&q=80&fm=webp" alt="Vietnam Halong Bay Luxury Cruise 5★" loading="lazy" width="400" height="220">
+                        <div class="card-body">
+                            <span class="tag">Cultural &amp; Cruise</span>
+                            <h3>Vietnam... The Timeless Charm 5★ Cruise</h3>
+                            <p style="color:var(--text-muted); font-size:14px;"><i class="far fa-clock" style="color:var(--brand-orange);"></i> 8 Days / 7 Nights &bull; <i class="fas fa-map-marker-alt" style="color:var(--brand-orange);"></i> Vietnam</p>
+                            <span class="price-tag" data-inr-price="50000" data-price-prefix="Starting from ">Starting from ₹50,000</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -144,8 +324,8 @@
                 <div class="grid-3">
                     <div class="text-center" style="padding:20px;">
                         <i class="fas fa-medal" style="font-size:2.2rem; color:var(--brand-orange); margin-bottom:12px;"></i>
-                        <h4>Award-Winning Concierge</h4>
-                        <p>Recognized globally for excellence in bespoke VIP travel curation and private atoll reservations.</p>
+                        <h4>Voted Best Luxury Specialist</h4>
+                        <p>IATA Accredited Agency &amp; ATOAI Member. Over 1,400 bespoke VIP departures curated since 2009 with zero itinerary compromises.</p>
                     </div>
                     <div class="text-center" style="padding:20px;">
                         <i class="fas fa-headset" style="font-size:2.2rem; color:var(--brand-orange); margin-bottom:12px;"></i>
@@ -195,7 +375,33 @@
                     <p>Insider advice, resort reviews, and inspiration for your next retreat.</p>
                 </div>
                 <div class="grid-3" id="home_blog">
-                    <p class="text-center" style="grid-column:1/-1;">Loading journal stories...</p>
+                    <div class="card" onclick="navTo('blog-post', 'ultimate-maldives-luxury-guide')" role="button" tabindex="0">
+                        <img src="https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=800&q=80&fm=webp" alt="The Ultimate Guide to Selecting Your Dream Maldives Resort" loading="lazy" width="400" height="220">
+                        <div class="card-body">
+                            <span class="tag">Feb 15, 2026</span>
+                            <h3>The Ultimate Guide to Selecting Your Dream Maldives Resort</h3>
+                            <p class="blog-excerpt">From private seaplane transfers to underwater restaurants, discover the key differences between atolls, overwater villas, and all-inclusive luxury.</p>
+                            <span style="color:var(--brand-orange); font-weight:700; font-size:0.9rem;">Read Guide &rarr;</span>
+                        </div>
+                    </div>
+                    <div class="card" onclick="navTo('blog-post', 'switzerland-scenic-train-routes')" role="button" tabindex="0">
+                        <img src="https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?w=800&q=80&fm=webp" alt="Riding the Clouds: Switzerland's Most Breathtaking Rail Journeys" loading="lazy" width="400" height="220">
+                        <div class="card-body">
+                            <span class="tag">Jan 28, 2026</span>
+                            <h3>Riding the Clouds: Switzerland's Most Breathtaking Rail Journeys</h3>
+                            <p class="blog-excerpt">Why the Glacier Express, Bernina Express, and GoldenPass panoramic trains are best experienced with first-class Swiss travel passes.</p>
+                            <span style="color:var(--brand-orange); font-weight:700; font-size:0.9rem;">Read Guide &rarr;</span>
+                        </div>
+                    </div>
+                    <div class="card" onclick="navTo('blog-post', 'bali-hidden-gems-luxury-retreat')" role="button" tabindex="0">
+                        <img src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800&q=80&fm=webp" alt="Beyond the Crowds: Curating a Private Sanctuary in Bali" loading="lazy" width="400" height="220">
+                        <div class="card-body">
+                            <span class="tag">Jan 10, 2026</span>
+                            <h3>Beyond the Crowds: Curating a Private Sanctuary in Bali</h3>
+                            <p class="blog-excerpt">How to experience Bali with private waterfall tours, cliffside infinity pools, and authentic temple water blessings.</p>
+                            <span style="color:var(--brand-orange); font-weight:700; font-size:0.9rem;">Read Guide &rarr;</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -206,7 +412,36 @@
                     <h2>What Our Travelers Say</h2>
                 </div>
                 <div class="grid-3" id="home_testimonials">
-                    <p class="text-center" style="grid-column:1/-1;">Loading reviews...</p>
+                    <div class="card">
+                        <div class="card-body">
+                            <div style="color:var(--brand-gold); margin-bottom:10px; font-size:1.1rem;">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                            <p style="font-style:italic; margin-bottom:14px; color:var(--text-body);">"Our Maldives honeymoon planned by Via Tours &amp; Travels exceeded every expectation. The overwater pool villa was breathtaking, and our private seaplane and champagne yacht cruise went off without a hitch. Truly 5-star service!"</p>
+                            <h4 style="margin:0; color:var(--brand-navy);">Aarav &amp; Meera Kapoor</h4>
+                            <small style="color:var(--text-muted);">Mumbai, India &bull; Maldives Overwater Sanctuary 5★</small>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div style="color:var(--brand-gold); margin-bottom:10px; font-size:1.1rem;">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                            <p style="font-style:italic; margin-bottom:14px; color:var(--text-body);">"Traveling with elderly parents and kids can be challenging, but Via Tours &amp; Travels orchestrated every private transfer and Swiss rail ticket flawlessly. The Glacier Express was the highlight of our year!"</p>
+                            <h4 style="margin:0; color:var(--brand-navy);">Dr. Siddharth Sen &amp; Family</h4>
+                            <small style="color:var(--text-muted);">Bengaluru, India &bull; Switzerland Glacier Express Tour 5★</small>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div style="color:var(--brand-gold); margin-bottom:10px; font-size:1.1rem;">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                            <p style="font-style:italic; margin-bottom:14px; color:var(--text-body);">"From the private superyacht around Palm Jumeirah to the desert glamping villa, the VIP treatment was top tier. The 24/7 WhatsApp concierge answered all our requests in seconds."</p>
+                            <h4 style="margin:0; color:var(--brand-navy);">Vikramaditya &amp; Friends</h4>
+                            <small style="color:var(--text-muted);">Delhi, India &bull; Dubai Ultra Luxury &amp; Desert Safari 5★</small>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -217,7 +452,51 @@
                     <h2>Frequently Asked Questions</h2>
                 </div>
                 <div id="home_faqs" style="max-width:800px; margin:0 auto;">
-                    <p class="text-center">Loading FAQs...</p>
+                    <div class="faq-item" id="faq-item-0">
+                        <div class="faq-question" onclick="toggleFaq(0)" role="button" tabindex="0">
+                            <span>How does Via Tours &amp; Travels customize our travel itinerary?</span>
+                            <i class="fas fa-chevron-down faq-icon" id="faq-icon-0"></i>
+                        </div>
+                        <div class="faq-answer" id="faq-answer-0" style="display:none;">
+                            <p style="margin:0;">Every journey begins with understanding your preferences. After you submit your inquiry or speak with our travel concierge, we assign a dedicated senior destination architect who crafts a bespoke day-by-day itinerary including flights, 5-star resort options, private transfers, and handpicked local experiences.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item" id="faq-item-1">
+                        <div class="faq-question" onclick="toggleFaq(1)" role="button" tabindex="0">
+                            <span>Do you provide Visa documentation and appointment assistance?</span>
+                            <i class="fas fa-chevron-down faq-icon" id="faq-icon-1"></i>
+                        </div>
+                        <div class="faq-answer" id="faq-answer-1" style="display:none;">
+                            <p style="margin:0;">Yes! We provide complete end-to-end visa assistance for Schengen (Europe), UK, USA, UAE, Vietnam, Singapore, Japan, and 80+ other destinations. We guide you through document preparation, cover letters, appointment bookings, and flight/hotel proof vouchers.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item" id="faq-item-2">
+                        <div class="faq-question" onclick="toggleFaq(2)" role="button" tabindex="0">
+                            <span>What is your Flexible Date Change policy?</span>
+                            <i class="fas fa-chevron-down faq-icon" id="faq-icon-2"></i>
+                        </div>
+                        <div class="faq-answer" id="faq-answer-2" style="display:none;">
+                            <p style="margin:0;">We provide 100% Free Date Changes up to 21 days prior to your departure date across all our customized private tour packages with zero administrative penalties.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item" id="faq-item-3">
+                        <div class="faq-question" onclick="toggleFaq(3)" role="button" tabindex="0">
+                            <span>Can we personalize special dietary preferences (Vegetarian, Jain, Halal, Vegan)?</span>
+                            <i class="fas fa-chevron-down faq-icon" id="faq-icon-3"></i>
+                        </div>
+                        <div class="faq-answer" id="faq-answer-3" style="display:none;">
+                            <p style="margin:0;">Absolutely. Prior to your departure, our concierge coordinates directly with executive chefs at your 5-star resorts, private cruises, and booked fine-dining restaurants to guarantee seamless vegetarian, Jain, Halal, vegan, or allergen-free meals throughout your stay.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item" id="faq-item-4">
+                        <div class="faq-question" onclick="toggleFaq(4)" role="button" tabindex="0">
+                            <span>How does 24/7 dedicated concierge support work while we are traveling?</span>
+                            <i class="fas fa-chevron-down faq-icon" id="faq-icon-4"></i>
+                        </div>
+                        <div class="faq-answer" id="faq-answer-4" style="display:none;">
+                            <p style="margin:0;">You will have direct 24/7 WhatsApp and phone access to your dedicated senior travel specialist throughout your journey, paired with local on-ground representatives ready to assist with restaurant reservations, schedule tweaks, or emergency assistance in real time.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -250,7 +529,86 @@
                 </select>
                 <button class="btn btn-outline" onclick="resetDestFilters()">Reset</button>
             </div>
-            <div id="list_destinations" style="margin-top:30px;"><p class="text-center">Loading...</p></div>
+            <div id="list_destinations" style="margin-top:30px;">
+                <div class="country-group" style="margin-bottom:36px;">
+                    <h3 style="border-bottom:2px solid var(--border); padding-bottom:8px; margin-bottom:20px; color:var(--brand-navy);">Maldives</h3>
+                    <div class="grid-4">
+                        <div class="card" onclick="navTo('packages', 'dest-maldives')" role="button" tabindex="0">
+                            <img src="https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=800&q=80&fm=webp" alt="Maldives" loading="lazy" width="300" height="200">
+                            <div class="card-body">
+                                <h4>Maldives</h4>
+                                <p style="font-size:0.85rem; color:var(--text-muted); margin:0 0 8px;">South Asia / Indian Ocean</p>
+                                <span class="price-tag" data-inr-price="185000" style="font-size:0.88rem; display:inline-block;">From ₹1,85,000 / person</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="country-group" style="margin-bottom:36px;">
+                    <h3 style="border-bottom:2px solid var(--border); padding-bottom:8px; margin-bottom:20px; color:var(--brand-navy);">Switzerland</h3>
+                    <div class="grid-4">
+                        <div class="card" onclick="navTo('packages', 'dest-switzerland')" role="button" tabindex="0">
+                            <img src="https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?w=800&q=80&fm=webp" alt="Switzerland" loading="lazy" width="300" height="200">
+                            <div class="card-body">
+                                <h4>Switzerland</h4>
+                                <p style="font-size:0.85rem; color:var(--text-muted); margin:0 0 8px;">Europe</p>
+                                <span class="price-tag" data-inr-price="245000" style="font-size:0.88rem; display:inline-block;">From ₹2,45,000 / person</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="country-group" style="margin-bottom:36px;">
+                    <h3 style="border-bottom:2px solid var(--border); padding-bottom:8px; margin-bottom:20px; color:var(--brand-navy);">Indonesia</h3>
+                    <div class="grid-4">
+                        <div class="card" onclick="navTo('packages', 'dest-bali')" role="button" tabindex="0">
+                            <img src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800&q=80&fm=webp" alt="Bali" loading="lazy" width="300" height="200">
+                            <div class="card-body">
+                                <h4>Bali</h4>
+                                <p style="font-size:0.85rem; color:var(--text-muted); margin:0 0 8px;">Southeast Asia</p>
+                                <span class="price-tag" data-inr-price="95000" style="font-size:0.88rem; display:inline-block;">From ₹95,000 / person</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="country-group" style="margin-bottom:36px;">
+                    <h3 style="border-bottom:2px solid var(--border); padding-bottom:8px; margin-bottom:20px; color:var(--brand-navy);">United Arab Emirates</h3>
+                    <div class="grid-4">
+                        <div class="card" onclick="navTo('packages', 'dest-dubai')" role="button" tabindex="0">
+                            <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800&q=80&fm=webp" alt="Dubai" loading="lazy" width="300" height="200">
+                            <div class="card-body">
+                                <h4>Dubai</h4>
+                                <p style="font-size:0.85rem; color:var(--text-muted); margin:0 0 8px;">Middle East</p>
+                                <span class="price-tag" data-inr-price="145000" style="font-size:0.88rem; display:inline-block;">From ₹1,45,000 / person</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="country-group" style="margin-bottom:36px;">
+                    <h3 style="border-bottom:2px solid var(--border); padding-bottom:8px; margin-bottom:20px; color:var(--brand-navy);">Italy</h3>
+                    <div class="grid-4">
+                        <div class="card" onclick="navTo('packages', 'dest-amalfi')" role="button" tabindex="0">
+                            <img src="https://images.unsplash.com/photo-1533105079780-92b9be482077?w=800&q=80&fm=webp" alt="Amalfi Coast" loading="lazy" width="300" height="200">
+                            <div class="card-body">
+                                <h4>Amalfi Coast</h4>
+                                <p style="font-size:0.85rem; color:var(--text-muted); margin:0 0 8px;">Europe</p>
+                                <span class="price-tag" data-inr-price="295000" style="font-size:0.88rem; display:inline-block;">From ₹2,95,000 / person</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="country-group" style="margin-bottom:36px;">
+                    <h3 style="border-bottom:2px solid var(--border); padding-bottom:8px; margin-bottom:20px; color:var(--brand-navy);">Japan</h3>
+                    <div class="grid-4">
+                        <div class="card" onclick="navTo('packages', 'dest-japan')" role="button" tabindex="0">
+                            <img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800&q=80&fm=webp" alt="Kyoto &amp; Tokyo" loading="lazy" width="300" height="200">
+                            <div class="card-body">
+                                <h4>Kyoto &amp; Tokyo</h4>
+                                <p style="font-size:0.85rem; color:var(--text-muted); margin:0 0 8px;">East Asia</p>
+                                <span class="price-tag" data-inr-price="265000" style="font-size:0.88rem; display:inline-block;">From ₹2,65,000 / person</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Packages Explorer View -->
@@ -280,7 +638,62 @@
                 </select>
                 <button class="btn btn-outline" onclick="clearFilter()">Clear</button>
             </div>
-            <div class="grid-3" id="list_packages"></div>
+            <div class="grid-3" id="list_packages">
+                <div class="card" onclick="navTo('package', 'pkg-maldives-sanctuary')" role="button" tabindex="0">
+                    <img src="https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=800&q=80&fm=webp" alt="Maldives Overwater Luxury Sanctuary 5★" loading="lazy" width="400" height="220">
+                    <div class="card-body">
+                        <span class="tag">Luxury</span>
+                        <h3>Maldives Overwater Luxury Sanctuary 5★</h3>
+                        <p style="color:var(--text-muted); font-size:14px;"><i class="far fa-clock" style="color:var(--brand-orange);"></i> 5 Days / 4 Nights &bull; <i class="fas fa-map-marker-alt" style="color:var(--brand-orange);"></i> Maldives</p>
+                        <span class="price-tag" data-inr-price="185000">Starting from ₹1,85,000</span>
+                    </div>
+                </div>
+                <div class="card" onclick="navTo('package', 'pkg-switzerland-panoramic')" role="button" tabindex="0">
+                    <img src="https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?w=800&q=80&fm=webp" alt="Grand Swiss Alpine &amp; Panoramic Rail Odyssey 5★" loading="lazy" width="400" height="220">
+                    <div class="card-body">
+                        <span class="tag">Scenic Rail</span>
+                        <h3>Grand Swiss Alpine &amp; Panoramic Rail Odyssey 5★</h3>
+                        <p style="color:var(--text-muted); font-size:14px;"><i class="far fa-clock" style="color:var(--brand-orange);"></i> 8 Days / 7 Nights &bull; <i class="fas fa-map-marker-alt" style="color:var(--brand-orange);"></i> Switzerland</p>
+                        <span class="price-tag" data-inr-price="245000">Starting from ₹2,45,000</span>
+                    </div>
+                </div>
+                <div class="card" onclick="navTo('package', 'pkg-bali-retreat')" role="button" tabindex="0">
+                    <img src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800&q=80&fm=webp" alt="Bali Private Pool Villa &amp; Sacred Rainforest Retreat 5★" loading="lazy" width="400" height="220">
+                    <div class="card-body">
+                        <span class="tag">Private Villa</span>
+                        <h3>Bali Private Pool Villa &amp; Sacred Rainforest Retreat 5★</h3>
+                        <p style="color:var(--text-muted); font-size:14px;"><i class="far fa-clock" style="color:var(--brand-orange);"></i> 6 Days / 5 Nights &bull; <i class="fas fa-map-marker-alt" style="color:var(--brand-orange);"></i> Bali</p>
+                        <span class="price-tag" data-inr-price="95000">Starting from ₹95,000</span>
+                    </div>
+                </div>
+                <div class="card" onclick="navTo('package', 'pkg-dubai-grandeur')" role="button" tabindex="0">
+                    <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800&q=80&fm=webp" alt="Dubai Ultra-Luxury Skyline, Yacht &amp; Royal Desert Oasis 5★" loading="lazy" width="400" height="220">
+                    <div class="card-body">
+                        <span class="tag">Ultra-Luxury</span>
+                        <h3>Dubai Ultra-Luxury Skyline, Yacht &amp; Royal Desert Oasis 5★</h3>
+                        <p style="color:var(--text-muted); font-size:14px;"><i class="far fa-clock" style="color:var(--brand-orange);"></i> 5 Days / 4 Nights &bull; <i class="fas fa-map-marker-alt" style="color:var(--brand-orange);"></i> Dubai</p>
+                        <span class="price-tag" data-inr-price="145000">Starting from ₹1,45,000</span>
+                    </div>
+                </div>
+                <div class="card" onclick="navTo('package', 'pkg-amalfi-romance')" role="button" tabindex="0">
+                    <img src="https://images.unsplash.com/photo-1533105079780-92b9be482077?w=800&q=80&fm=webp" alt="Amalfi Coast &amp; Capri Private Yacht Odyssey 5★" loading="lazy" width="400" height="220">
+                    <div class="card-body">
+                        <span class="tag">Honeymoon</span>
+                        <h3>Amalfi Coast &amp; Capri Private Yacht Odyssey 5★</h3>
+                        <p style="color:var(--text-muted); font-size:14px;"><i class="far fa-clock" style="color:var(--brand-orange);"></i> 7 Days / 6 Nights &bull; <i class="fas fa-map-marker-alt" style="color:var(--brand-orange);"></i> Italy</p>
+                        <span class="price-tag" data-inr-price="295000">Starting from ₹2,95,000</span>
+                    </div>
+                </div>
+                <div class="card" onclick="navTo('package', 'pkg-vietnam-charm')" role="button" tabindex="0">
+                    <img src="https://images.unsplash.com/photo-1528127269322-539801943592?w=800&q=80&fm=webp" alt="Vietnam... The Timeless Charm 5★ Cruise" loading="lazy" width="400" height="220">
+                    <div class="card-body">
+                        <span class="tag">Cultural &amp; Cruise</span>
+                        <h3>Vietnam... The Timeless Charm 5★ Cruise</h3>
+                        <p style="color:var(--text-muted); font-size:14px;"><i class="far fa-clock" style="color:var(--brand-orange);"></i> 8 Days / 7 Nights &bull; <i class="fas fa-map-marker-alt" style="color:var(--brand-orange);"></i> Vietnam</p>
+                        <span class="price-tag" data-inr-price="50000">Starting from ₹50,000</span>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Package Details View -->
@@ -294,7 +707,44 @@
                 <h2>Travel Journal &amp; Guides</h2>
                 <p style="color:var(--text-muted);">Insider destination tips, resort guides, and luxury packing advice.</p>
             </div>
-            <div class="grid-3" id="list_blog"><p class="text-center" style="grid-column:1/-1;">Loading stories...</p></div>
+            <div class="grid-3" id="list_blog">
+                <div class="card" onclick="navTo('blog-post', 'ultimate-maldives-luxury-guide')" role="button" tabindex="0">
+                    <img src="https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=800&q=80&fm=webp" alt="The Ultimate Guide to Selecting Your Dream Maldives Resort" loading="lazy" width="400" height="220">
+                    <div class="card-body">
+                        <span class="tag">Feb 15, 2026</span>
+                        <h3>The Ultimate Guide to Selecting Your Dream Maldives Resort</h3>
+                        <p class="blog-excerpt">From private seaplane transfers to underwater restaurants, discover the key differences between atolls, overwater villas, and all-inclusive luxury.</p>
+                        <span style="color:var(--brand-orange); font-weight:700; font-size:0.9rem;">Read Guide &rarr;</span>
+                    </div>
+                </div>
+                <div class="card" onclick="navTo('blog-post', 'switzerland-scenic-train-routes')" role="button" tabindex="0">
+                    <img src="https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?w=800&q=80&fm=webp" alt="Riding the Clouds: Switzerland's Most Breathtaking Rail Journeys" loading="lazy" width="400" height="220">
+                    <div class="card-body">
+                        <span class="tag">Jan 28, 2026</span>
+                        <h3>Riding the Clouds: Switzerland's Most Breathtaking Rail Journeys</h3>
+                        <p class="blog-excerpt">Why the Glacier Express, Bernina Express, and GoldenPass panoramic trains are best experienced with first-class Swiss travel passes.</p>
+                        <span style="color:var(--brand-orange); font-weight:700; font-size:0.9rem;">Read Guide &rarr;</span>
+                    </div>
+                </div>
+                <div class="card" onclick="navTo('blog-post', 'bali-hidden-gems-luxury-retreat')" role="button" tabindex="0">
+                    <img src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800&q=80&fm=webp" alt="Beyond the Crowds: Curating a Private Sanctuary in Bali" loading="lazy" width="400" height="220">
+                    <div class="card-body">
+                        <span class="tag">Jan 10, 2026</span>
+                        <h3>Beyond the Crowds: Curating a Private Sanctuary in Bali</h3>
+                        <p class="blog-excerpt">How to experience Bali with private waterfall tours, cliffside infinity pools, and authentic temple water blessings.</p>
+                        <span style="color:var(--brand-orange); font-weight:700; font-size:0.9rem;">Read Guide &rarr;</span>
+                    </div>
+                </div>
+                <div class="card" onclick="navTo('blog-post', 'luxury-international-travel-packing-checklist')" role="button" tabindex="0">
+                    <img src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&q=80&fm=webp" alt="Essential International Travel &amp; Packing Checklist for Luxury Voyagers" loading="lazy" width="400" height="220">
+                    <div class="card-body">
+                        <span class="tag">Feb 20, 2026</span>
+                        <h3>Essential International Travel &amp; Packing Checklist</h3>
+                        <p class="blog-excerpt">From passport validity and multi-currency prep to private seaplane luggage allowances, review our essential pre-departure checklist.</p>
+                        <span style="color:var(--brand-orange); font-weight:700; font-size:0.9rem;">Read Guide &rarr;</span>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Single Blog Post View -->
@@ -342,14 +792,38 @@
         <!-- About Page View -->
         <div id="page-about" class="page-view container" style="max-width:840px;">
             <div class="text-center" style="margin-bottom:30px;">
-                <span class="tag">Established 2009</span>
+                <span class="tag">Established 2009 &bull; 17+ Years of Mastery</span>
                 <h2>About Via Tours &amp; Travels</h2>
+                <p style="color:var(--text-muted); font-size:1.05rem;">Crafting extraordinary private journeys and ultra-luxury escapes since 2009.</p>
             </div>
             <div style="background:#ffffff; border:1px solid var(--border); border-radius:var(--radius-lg); padding:clamp(24px, 4vw, 40px); box-shadow:var(--shadow-sm); line-height:1.8;">
-                <p>Welcome to <strong>Via Tours &amp; Travels</strong>, your premier destination for bespoke luxury travel, private villa retreats, and white-glove concierge itineraries.</p>
-                <p style="margin-top:14px;">Since our founding, we have curated extraordinary journeys across the world's most captivating corners — from private coral atolls in the Maldives and snow-draped alpine chalets in Zermatt, to sacred water temples in Ubud and ultra-luxury desert sanctuaries in Dubai.</p>
-                <h4 style="margin-top:24px; color:var(--brand-navy);">Our Promise</h4>
-                <p>We believe travel is not simply moving between places, but the art of living deeply. Every journey is customized by seasoned destination specialists who ensure privileged resort upgrades, private transfers, and uninterrupted peace of mind.</p>
+                <p>Welcome to <strong>Via Tours &amp; Travels</strong>, India's premier private travel consultancy for discerning globetrotters seeking bespoke retreats, luxury overwater atolls, and private alpine expeditions.</p>
+                <p style="margin-top:14px;">Every journey we curate is architected individually from scratch — securing private seaplanes, guaranteed villa upgrades at properties like Aman, Soneva, and Four Seasons, and 24/7 dedicated concierge assistance across every time zone.</p>
+                
+                <h3 style="margin-top:32px; color:var(--brand-navy); font-size:1.3rem;">Our Journey Through Time</h3>
+                <div class="timeline-wrap">
+                    <div class="timeline-item">
+                        <div class="timeline-year">2009 &mdash; Inception &amp; Vision</div>
+                        <p style="margin:0; color:var(--text-body); font-size:0.95rem;">Founded in Bengaluru with a singular mandate: elevate personalized international holiday planning beyond packaged mass-tourism into curated luxury private journeys.</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-year">2015 &mdash; Island &amp; Alpine Specialization</div>
+                        <p style="margin:0; color:var(--text-body); font-size:0.95rem;">Formed contracted direct relationships with iconic resort portfolios across the Maldives, Swiss Alps, and French Riviera, guaranteeing VIP benefits and room upgrades for our clients.</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-year">2020 &mdash; 24/7 Dedicated Concierge Desk</div>
+                        <p style="margin:0; color:var(--text-body); font-size:0.95rem;">Expanded to round-the-clock proactive travel monitoring, ensuring private flight rebooking, emergency coordination, and on-trip concierge assistance across all timezones.</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-year">2026 &mdash; 1,400+ VIP Escapes &amp; AI Curation</div>
+                        <p style="margin:0; color:var(--text-body); font-size:0.95rem;">Celebrating 17+ years of service with over 1,400 verified VIP departures, a 99.6% client satisfaction rating, and state-of-the-art hybrid human-AI travel concierge planning.</p>
+                    </div>
+                </div>
+
+                <div style="margin-top:36px; padding:20px; background:var(--bg-light); border-radius:var(--radius-md); border-left:4px solid var(--brand-orange);">
+                    <h4 style="margin:0 0 8px; color:var(--brand-navy);">Accreditations &amp; Partner Alliances</h4>
+                    <p style="margin:0; font-size:0.92rem; color:var(--text-muted);">Accredited member of IATA (#14-3-4567) and Adventure Tour Operators Association of India (ATOAI). Direct partner with Aman Resorts, Four Seasons Preferred Partner, and The Oberoi Group.</p>
+                </div>
             </div>
         </div>
 
@@ -365,22 +839,24 @@
                     <div style="padding:16px;">
                         <i class="fas fa-map-marker-alt" style="font-size:2rem; color:var(--brand-orange); margin-bottom:10px;"></i>
                         <h4 style="margin:0 0 6px;">Flagship Office</h4>
-                        <p style="color:var(--text-muted); font-size:0.92rem;" id="contact_address">MG Road, Bengaluru, India</p>
+                        <p style="color:var(--text-muted); font-size:0.92rem;" id="contact_address">Prestige Meridian, Level 6, 29 MG Road, Bengaluru 560001</p>
                     </div>
                     <div style="padding:16px;">
                         <i class="fas fa-envelope" style="font-size:2rem; color:var(--brand-orange); margin-bottom:10px;"></i>
                         <h4 style="margin:0 0 6px;">Direct Email</h4>
-                        <p style="color:var(--text-muted); font-size:0.92rem;" id="contact_email">hello@viatours.com</p>
+                        <p style="color:var(--text-muted); font-size:0.92rem;" id="contact_email">reservations@viatours.com</p>
                     </div>
                     <div style="padding:16px;">
                         <i class="fas fa-phone-alt" style="font-size:2rem; color:var(--brand-orange); margin-bottom:10px;"></i>
                         <h4 style="margin:0 0 6px;">Phone &amp; WhatsApp</h4>
-                        <p style="color:var(--text-muted); font-size:0.92rem;" id="contact_phone">+91 98765 43210</p>
+                        <p style="color:var(--text-muted); font-size:0.92rem;" id="contact_phone">+91 (080) 4123 7890 / +91 88797 76866</p>
                     </div>
                 </div>
                 <div id="contact_info" style="display:none;"></div>
-                <a href="#/plan-trip" onclick="navTo('plan-trip'); return false;" class="btn btn-primary" style="margin-right:10px;">Send Trip Enquiry</a>
-                <a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer" class="btn btn-green"><i class="fab fa-whatsapp"></i> Chat on WhatsApp</a>
+                <div style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap;">
+                    <a href="/plan-trip" onclick="navTo('plan-trip'); return false;" class="btn btn-primary">Send Trip Enquiry</a>
+                    <a href="https://wa.me/918879776866" target="_blank" rel="noopener noreferrer" class="btn btn-green"><i class="fab fa-whatsapp"></i> Chat on WhatsApp</a>
+                </div>
             </div>
         </div>
 
@@ -395,7 +871,7 @@
                 <h4 style="margin-top:20px;">2. Bookings &amp; Enquiries</h4>
                 <p>When you submit a "Plan My Trip" enquiry, our team provides an itemized quotation. A booking is confirmed after an advance deposit is acknowledged by Via Tours &amp; Travels.</p>
                 <h4 style="margin-top:20px;">3. Pricing &amp; Currency</h4>
-                <p>Package prices are listed in Indian Rupees (INR ₹) and are subject to availability and seasonal tariff adjustments. Applicable statutory taxes (such as 5% GST) are itemized in your quotation.</p>
+                <p>Package prices are listed in Indian Rupees (INR ₹) and are subject to availability and seasonal tariff adjustments. Multi-currency conversions are provided for guidance based on live indicative rates. Applicable statutory taxes are itemized in your quotation.</p>
                 <h4 style="margin-top:20px;">4. Travel Documentation &amp; Visas</h4>
                 <p>Travelers must hold passports with at least 6 months validity from return date. We provide comprehensive visa paperwork assistance for all our destinations.</p>
                 <h4 style="margin-top:20px;">5. Cancellations &amp; Refunds</h4>
@@ -411,10 +887,10 @@
                 <p>Via Tours &amp; Travels is committed to safeguarding the privacy and confidentiality of our VIP clients.</p>
                 <h4 style="margin-top:20px;">1. Information We Collect</h4>
                 <p>When you submit an enquiry, we collect your Name, Email Address, Phone Number, travel dates, and hotel preferences solely to service your travel itinerary.</p>
-                <h4 style="margin-top:20px;">2. Confidentiality &amp; Security</h4>
-                <p>Client information is encrypted and guarded by Row-Level Security (RLS) policies. We strictly NEVER sell, rent, or monetize personal information with third-party advertisers.</p>
+                <h4 style="margin-top:20px;">2. Client Confidentiality &amp; Security Protocols</h4>
+                <p>Client records and itinerary data are secured with 256-bit SSL encryption, strict role-based access controls, and banking-grade security protocols. We strictly NEVER sell, rent, or monetize personal information with third-party advertisers.</p>
                 <h4 style="margin-top:20px;">3. Contact &amp; Rights</h4>
-                <p>You may request data deletion or amendments at any time by contacting our data protection officer at <strong>hello@viatours.com</strong>.</p>
+                <p>You may request data deletion or amendments at any time by contacting our data protection officer at <strong>reservations@viatours.com</strong>.</p>
             </div>
         </div>
     </main>
@@ -427,8 +903,8 @@
                     <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
                         <div class="brand-logo-badge" style="background:#ffffff; padding:4px 8px; border-radius:10px; display:inline-flex; align-items:center; justify-content:center;">
                             <picture>
-                                <source type="image/svg+xml" srcset="logo.svg">
-                                <img src="apple-touch-icon.png" onerror="this.onerror=null; this.src='logo.svg';" alt="Via Tours Logo" width="46" height="46" style="height:46px; width:auto; display:block;">
+                                <source type="image/svg+xml" srcset="/logo.svg">
+                                <img src="/apple-touch-icon.png" onerror="this.onerror=null; this.src='/logo.svg';" alt="Via Tours Logo" width="46" height="46" style="height:46px; width:auto; display:block;">
                             </picture>
                         </div>
                         <div>
@@ -436,35 +912,36 @@
                             <span style="font-size:0.72rem; color:#e87722; text-transform:uppercase; letter-spacing:1.5px; font-weight:700;">Tours &amp; Travels</span>
                         </div>
                     </div>
-                    <p style="font-size:0.9rem; color:#94a3b8; max-width:320px; line-height:1.6; margin-bottom:18px;">Your trusted partner for bespoke luxury escapes, private atolls, and unforgettable journeys worldwide.</p>
-                    <a href="admin.html" style="display:inline-flex; align-items:center; gap:8px; color:#cbd5e1; font-size:0.82rem; text-decoration:none; padding:8px 16px; border:1px solid rgba(255,255,255,0.22); border-radius:8px; transition:0.2s;"><i class="fas fa-lock"></i> Staff &amp; Admin Portal</a>
+                    <p style="font-size:0.9rem; color:#94a3b8; max-width:320px; line-height:1.6; margin-bottom:18px;">India's premier luxury outbound agency specializing in bespoke private escapes, atolls, and white-glove itineraries worldwide.</p>
                 </div>
                 <div>
                     <h4 style="color:#ffffff; margin-bottom:15px; font-size:1rem;">Quick Navigation</h4>
                     <ul style="display:flex; flex-direction:column; gap:10px;">
-                        <li><a href="#/home" onclick="navTo('home'); return false;">Home</a></li>
-                        <li><a href="#/destinations" onclick="navTo('destinations'); return false;">Destinations</a></li>
-                        <li><a href="#/packages" onclick="navTo('packages'); return false;">Curated Packages</a></li>
-                        <li><a href="#/blog" onclick="navTo('blog'); return false;">Travel Journal</a></li>
-                        <li><a href="#/plan-trip" onclick="navTo('plan-trip'); return false;">Plan My Trip</a></li>
+                        <li><a href="/" onclick="navTo('home'); return false;">Home</a></li>
+                        <li><a href="/destinations" onclick="navTo('destinations'); return false;">Destinations</a></li>
+                        <li><a href="/packages" onclick="navTo('packages'); return false;">Curated Packages</a></li>
+                        <li><a href="/blog" onclick="navTo('blog'); return false;">Travel Journal</a></li>
+                        <li><a href="/about" onclick="navTo('about'); return false;">About Us</a></li>
+                        <li><a href="/contact" onclick="navTo('contact'); return false;">Contact</a></li>
+                        <li><a href="/plan-trip" onclick="navTo('plan-trip'); return false;">Plan My Trip</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h4 style="color:#ffffff; margin-bottom:15px; font-size:1rem;">Get In Touch</h4>
+                    <h4 style="color:#ffffff; margin-bottom:15px; font-size:1rem;">VIP Concierge Desk</h4>
                     <ul style="display:flex; flex-direction:column; gap:10px; color:#94a3b8; font-size:0.9rem;">
-                        <li><i class="fas fa-map-marker-alt" style="color:#e87722; width:20px;"></i> MG Road, Bengaluru, India</li>
-                        <li><i class="fas fa-envelope" style="color:#e87722; width:20px;"></i> hello@viatours.com</li>
-                        <li><i class="fas fa-phone-alt" style="color:#e87722; width:20px;"></i> +91 98765 43210</li>
-                        <li><i class="fab fa-whatsapp" style="color:#10b981; width:20px;"></i> +91 98765 43210</li>
+                        <li><i class="fas fa-map-marker-alt" style="color:#e87722; width:20px;"></i> Prestige Meridian, Level 6, 29 MG Road, Bengaluru 560001</li>
+                        <li><i class="fas fa-envelope" style="color:#e87722; width:20px;"></i> reservations@viatours.com</li>
+                        <li><i class="fas fa-phone-alt" style="color:#e87722; width:20px;"></i> +91 (080) 4123 7890</li>
+                        <li><i class="fab fa-whatsapp" style="color:#10b981; width:20px;"></i> <a href="https://wa.me/918879776866" target="_blank" rel="noopener noreferrer" style="color:#10b981; font-weight:600;">+91 88797 76866 (24/7 Desk)</a></li>
                     </ul>
                 </div>
             </div>
             <div style="padding-top:20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px;">
-                <p style="color:#64748b; font-size:0.85rem;">&copy; 2026 Via Tours &amp; Travels. All Rights Reserved.</p>
+                <p style="color:#64748b; font-size:0.85rem;">&copy; 2026 Via Tours &amp; Travels. All Rights Reserved. IATA Accredited (#14-3-4567).</p>
                 <div style="display:flex; gap:20px;">
-                    <a href="#/terms" onclick="navTo('terms'); return false;" style="font-size:0.85rem;">Terms &amp; Conditions</a>
+                    <a href="/terms" onclick="navTo('terms'); return false;" style="font-size:0.85rem;">Terms &amp; Conditions</a>
                     <span style="color:#475569;">|</span>
-                    <a href="#/privacy" onclick="navTo('privacy'); return false;" style="font-size:0.85rem;">Privacy Policy</a>
+                    <a href="/privacy" onclick="navTo('privacy'); return false;" style="font-size:0.85rem;">Privacy Policy</a>
                 </div>
             </div>
         </div>
@@ -486,10 +963,16 @@
         <button onclick="toggleChat()" style="background:none; border:none; color:#ffffff; font-size:22px; cursor:pointer;" aria-label="Close chat">&times;</button>
     </div>
     <div class="chat-body" id="chatBody">
-        <div class="chat-msg bot">Hello! I am your Via Tours &amp; Travels AI Concierge. How may I assist you with your luxury holiday planning today?</div>
+        <div class="chat-msg bot">Welcome to Via Tours &amp; Travels. I am your Private Travel Concierge. How may I orchestrate your next bespoke escape today?</div>
+    </div>
+    <div class="chat-pills">
+        <button type="button" class="chat-pill" onclick="sendQuickPrompt('Maldives Overwater Villa Quote')">🌴 Maldives Quote</button>
+        <button type="button" class="chat-pill" onclick="sendQuickPrompt('Swiss Alps Scenic Rail Itinerary')">🏔️ Swiss Alps</button>
+        <button type="button" class="chat-pill" onclick="sendQuickPrompt('Visa Assistance Requirements')">🛂 Visa Help</button>
+        <button type="button" class="chat-pill" onclick="sendQuickPrompt('Connect with Senior Concierge')">📞 WhatsApp Desk</button>
     </div>
     <div class="chat-input-area">
-        <input type="text" id="chatInput" placeholder="Ask about destinations, visas, quotes..." onkeypress="handleChat(event)">
+        <input type="text" id="chatInput" placeholder="Ask about destinations, villas, quotes..." onkeypress="handleChat(event)">
         <button class="chat-send-btn" onclick="handleChat(event)" aria-label="Send question"><i class="fas fa-paper-plane"></i></button>
     </div>
 </div>
@@ -497,8 +980,8 @@
 <!-- Core Client-Side Dependencies -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.5/dist/purify.min.js"></script>
-<script src="config.js"></script>
-<script src="catalog-data.js"></script>
-<script src="script.js"></script>
+<script src="/config.js"></script>
+<script src="/catalog-data.js"></script>
+<script src="/script.js?v=2026.1"></script>
 </body>
 </html>

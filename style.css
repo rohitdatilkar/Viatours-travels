@@ -482,11 +482,11 @@ button, input, select, textarea {
     border-radius: var(--radius-xl);
     box-shadow: var(--shadow-xl);
     display: grid;
-    grid-template-columns: 1.5fr 1fr 1fr auto;
-    gap: 16px;
+    grid-template-columns: 1.3fr 1fr 1fr 1.1fr auto;
+    gap: 14px;
     text-align: left;
     color: var(--text-dark);
-    max-width: 960px;
+    max-width: 1060px;
     margin: 0 auto;
     align-items: flex-end;
 }
@@ -1373,6 +1373,221 @@ footer a:hover {
     .stat-card {
         padding: 16px;
     }
+}
+
+/* --- CURRENCY SWITCHER --- */
+.currency-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.currency-select {
+    background: rgba(12, 26, 61, 0.05);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 6px 10px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--brand-navy);
+    cursor: pointer;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.currency-select:hover, .currency-select:focus {
+    border-color: var(--brand-orange);
+    background: #ffffff;
+}
+
+/* --- TRUST & SOCIAL PROOF STRIP --- */
+.trust-strip {
+    background: #ffffff;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 36px 0;
+}
+
+.trust-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 24px;
+    text-align: center;
+}
+
+.trust-num {
+    font-family: var(--font-heading);
+    font-size: clamp(2rem, 3.5vw, 2.5rem);
+    font-weight: 800;
+    color: var(--brand-orange);
+    line-height: 1.1;
+    margin-bottom: 6px;
+}
+
+.trust-label {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+
+.partner-network {
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid #f1f5f9;
+    text-align: center;
+}
+
+.partner-network-title {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 700;
+    color: #64748b;
+    margin-bottom: 16px;
+}
+
+.partner-badges {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: clamp(16px, 3vw, 36px);
+    color: #475569;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.partner-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: var(--radius-sm);
+    padding: 8px 16px;
+    transition: all 0.2s ease;
+}
+
+.partner-badge:hover {
+    border-color: var(--brand-orange);
+    color: var(--brand-navy);
+    transform: translateY(-2px);
+}
+
+/* --- CHAT QUICK-ACTION PILLS --- */
+.chat-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 10px 14px;
+    background: #f8fafc;
+    border-top: 1px solid var(--border);
+}
+
+.chat-pill {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: var(--radius-full);
+    padding: 5px 12px;
+    font-size: 0.76rem;
+    color: var(--brand-navy);
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.chat-pill:hover {
+    background: var(--brand-orange);
+    color: #ffffff;
+    border-color: var(--brand-orange);
+}
+
+/* --- FAQ ACCORDION --- */
+.faq-item {
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    margin-bottom: 12px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+}
+
+.faq-item.active {
+    border-color: var(--brand-orange);
+    box-shadow: 0 4px 12px rgba(232, 119, 34, 0.08);
+}
+
+.faq-question {
+    padding: 18px 22px;
+    font-weight: 700;
+    color: var(--brand-navy);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    user-select: none;
+    font-size: 1.02rem;
+    background: transparent;
+    border: none;
+    width: 100%;
+    text-align: left;
+}
+
+.faq-question:hover {
+    color: var(--brand-orange);
+}
+
+.faq-icon {
+    transition: transform 0.25s ease;
+    color: var(--brand-orange);
+    font-size: 0.88rem;
+    margin-left: 12px;
+}
+
+.faq-answer {
+    padding: 0 22px 20px;
+    color: var(--text-body);
+    font-size: 0.95rem;
+    line-height: 1.7;
+}
+
+/* --- MILESTONE TIMELINE (ABOUT PAGE) --- */
+.timeline-wrap {
+    margin-top: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    border-left: 3px solid var(--brand-orange);
+    padding-left: 24px;
+    margin-left: 10px;
+}
+
+.timeline-item {
+    position: relative;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -31px;
+    top: 4px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--brand-orange);
+    border: 2px solid #ffffff;
+    box-shadow: 0 0 0 2px var(--brand-orange);
+}
+
+.timeline-year {
+    font-weight: 800;
+    font-size: 1.15rem;
+    color: var(--brand-navy);
+    margin-bottom: 4px;
 }
 
 /* --- ACCESSIBILITY: REDUCED MOTION --- */

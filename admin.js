@@ -298,7 +298,7 @@ async function logout() {
     if (dashBox) dashBox.style.display = 'none';
     showToast('Signed out of staff portal successfully.');
     setTimeout(() => {
-        window.location.href = 'index.html#/home';
+        window.location.href = '/';
     }, 700);
 }
 

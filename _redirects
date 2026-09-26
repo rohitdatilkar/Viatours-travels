@@ -1,5 +1,9 @@
 # Force HTTPS Redirects for Netlify / Cloudflare Pages
 http://* https://:splat 301!
 
-# Custom 404 Error Page
-/* /404.html 404
+# Admin portal clean routing
+/admin /admin.html 200
+/admin/* /admin.html 200
+
+# SPA fallback routing for clean URLs
+/* /index.html 200

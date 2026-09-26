@@ -29,14 +29,24 @@
     // --- APPLICATION STATE ---
     let appSettings = {
         name: 'Via Tours & Travels',
-        email: 'hello@viatours.com',
-        phone: '+91 98765 43210',
-        whatsapp: '919876543210',
-        address: 'MG Road, Bengaluru, India'
+        email: 'reservations@viatours.com',
+        conciergeEmail: 'concierge@viatours.com',
+        phone: '+91 (080) 4123 7890',
+        whatsapp: '918879776866',
+        address: 'Prestige Meridian, Level 6, 29 MG Road, Bengaluru 560001, India'
     };
     let activeDestFilter = null;
     let currentPackage = null;
     let isDarkMode = localStorage.getItem('darkMode') === 'true';
+
+    // Multi-Currency Engine
+    const CURRENCY_CONFIG = {
+        INR: { symbol: '₹', rate: 1, locale: 'en-IN' },
+        USD: { symbol: '$', rate: 1 / 86.5, locale: 'en-US' },
+        EUR: { symbol: '€', rate: 1 / 93.0, locale: 'de-DE' },
+        AED: { symbol: 'AED ', rate: 1 / 23.55, locale: 'en-AE' }
+    };
+    let currentCurrency = localStorage.getItem('via_currency') || 'INR';
 
     // Apply dark mode preference on load
     if (isDarkMode) {
@@ -54,9 +64,34 @@
             .replace(/'/g, '&#039;');
     }
 
-    function formatPrice(amount) {
+    function formatPrice(amount, targetCurr = currentCurrency) {
         const num = Number(amount) || 0;
-        return '₹' + num.toLocaleString('en-IN');
+        const cfg = CURRENCY_CONFIG[targetCurr] || CURRENCY_CONFIG.INR;
+        const converted = Math.round(num * cfg.rate);
+        return cfg.symbol + converted.toLocaleString(cfg.locale);
+    }
+
+    function switchCurrency(code) {
+        if (!CURRENCY_CONFIG[code]) return;
+        currentCurrency = code;
+        localStorage.setItem('via_currency', code);
+        document.querySelectorAll('.currency-select').forEach(sel => sel.value = code);
+
+        // Update all elements with data-inr-price
+        document.querySelectorAll('[data-inr-price]').forEach(el => {
+            const inr = el.getAttribute('data-inr-price');
+            if (inr) {
+                const prefix = el.getAttribute('data-price-prefix') || '';
+                const suffix = el.getAttribute('data-price-suffix') || '';
+                el.textContent = `${prefix}${formatPrice(inr)}${suffix}`;
+            }
+        });
+
+        // If package details open, update detail pricing
+        const detailPrice = document.querySelector('#pkg_details_container .price-tag');
+        if (detailPrice && currentPackage && currentPackage.price) {
+            detailPrice.textContent = formatPrice(currentPackage.price);
+        }
     }
 
     function debounce(fn, delay = 350) {
@@ -141,32 +176,74 @@
         }
     }
 
+    // --- CLEAN URL ROUTING (HTML5 HISTORY API) ---
+    function getCleanRoute() {
+        // 1. Check for legacy hash route (e.g. #/packages or #/package/id)
+        if (window.location.hash && window.location.hash.startsWith('#/')) {
+            const hashParts = window.location.hash.replace(/^#\/?/, '').split('/');
+            return {
+                page: hashParts[0] || 'home',
+                id: hashParts[1] || null,
+                fromHash: true
+            };
+        }
+
+        // 2. Parse clean pathname (e.g. /packages or /package/id)
+        const cleanPath = window.location.pathname
+            .replace(/^\/+/, '')
+            .replace(/^index\.html\/?/, '')
+            .replace(/\/+$/, '');
+
+        if (!cleanPath) {
+            return { page: 'home', id: null, fromHash: false };
+        }
+
+        const parts = cleanPath.split('/');
+        return {
+            page: parts[0] || 'home',
+            id: parts[1] || null,
+            fromHash: false
+        };
+    }
+
     function navTo(page, id = null) {
         closeMenu();
         if (page === 'admin') {
             window.location.href = 'admin.html';
             return;
         }
-        if (id) {
-            window.location.hash = '#/' + page + '/' + id;
+
+        const isLocalFile = window.location.protocol === 'file:';
+        const cleanPage = (!page || page === 'home') ? '' : page;
+        const targetPath = cleanPage ? (id ? '/' + cleanPage + '/' + id : '/' + cleanPage) : '/';
+
+        if (!isLocalFile && window.history && window.history.pushState) {
+            window.history.pushState({ page: page || 'home', id: id || null }, '', targetPath);
+            router();
         } else {
-            window.location.hash = '#/' + page;
+            window.location.hash = '#/' + (page || 'home') + (id ? '/' + id : '');
         }
     }
 
     // --- HERO SEARCH BAR CONTROLLER ---
     function searchFromHero() {
         const destInput = document.getElementById('hero_dest');
+        const styleSelect = document.getElementById('hero_style');
         const query = destInput ? destInput.value.trim() : '';
+        const style = styleSelect ? styleSelect.value : '';
 
         // Navigate to packages view
         navTo('packages');
 
-        // Apply search query after view renders
+        // Apply search query and style filter after view renders
         setTimeout(() => {
             const pkgSearch = document.getElementById('pkg_search');
-            if (pkgSearch) {
+            const catSelect = document.getElementById('filter-category');
+            if (pkgSearch && query) {
                 pkgSearch.value = query;
+            }
+            if (catSelect && style) {
+                catSelect.value = style;
             }
             loadPackages();
             const packagesSection = document.getElementById('page-packages');
@@ -178,15 +255,18 @@
 
     // --- CLIENT-SIDE SINGLE PAGE ROUTER ---
     async function router() {
-        const hash = window.location.hash || '#/home';
-        const parts = hash.replace(/^#\/?/, '').split('/');
-        const page = parts[0] || 'home';
-        const id = parts[1] || null;
+        const { page, id, fromHash } = getCleanRoute();
 
         // Redirect admin route to dedicated admin portal
         if (page === 'admin') {
             window.location.href = 'admin.html';
             return;
+        }
+
+        // If arrived via legacy hash on live web, clean the address bar seamlessly
+        if (fromHash && window.location.protocol !== 'file:' && window.history && window.history.replaceState) {
+            const cleanTarget = (!page || page === 'home') ? '/' : (id ? '/' + page + '/' + id : '/' + page);
+            window.history.replaceState({ page, id }, '', cleanTarget);
         }
 
         // Hide all views
@@ -196,6 +276,17 @@
         const view = document.getElementById('page-' + page) || document.getElementById('page-home');
         view.style.display = 'block';
         window.scrollTo({ top: 0, behavior: 'instant' });
+
+        // Update active class on navigation links
+        document.querySelectorAll('.nav-menu a').forEach(a => {
+            const href = a.getAttribute('href') || '';
+            const linkPage = href.replace(/^\/?#?\/?/, '').replace(/\/.*$/, '') || 'home';
+            if (linkPage === page || (linkPage === 'home' && (!page || page === 'home'))) {
+                a.classList.add('active');
+            } else {
+                a.classList.remove('active');
+            }
+        });
 
         // Route dispatcher
         switch (page) {
@@ -267,6 +358,30 @@
     }
 
     // --- DATA LOADERS (WITH RESILIENT CATALOG FALLBACKS) ---
+    const DEST_STARTING_PRICES = {
+        'maldives': 185000,
+        'switzerland': 245000,
+        'bali': 95000,
+        'indonesia': 95000,
+        'dubai': 145000,
+        'united arab emirates': 145000,
+        'uae': 145000,
+        'france': 220000,
+        'italy': 210000,
+        'japan': 260000,
+        'iceland': 230000,
+        'vietnam': 50000,
+        'kashmir': 45000,
+        'kerala': 42000
+    };
+
+    function getDestStartingPrice(dest) {
+        if (!dest) return 145000;
+        if (dest.starting_price && Number(dest.starting_price) > 0) return Number(dest.starting_price);
+        const nameKey = (dest.name || '').toLowerCase().trim();
+        const countryKey = (dest.country || '').toLowerCase().trim();
+        return DEST_STARTING_PRICES[nameKey] || DEST_STARTING_PRICES[countryKey] || 145000;
+    }
 
     // 1. Settings & Agency Metadata
     async function loadSettings() {
@@ -274,7 +389,11 @@
             try {
                 const { data } = await sb.from('website_settings').select('*').eq('id', 1).maybeSingle();
                 if (data) {
-                    appSettings = Object.assign({}, appSettings, data);
+                    if (data.business_name && data.business_name.trim()) appSettings.name = data.business_name.trim();
+                    if (data.email && data.email.trim()) appSettings.email = data.email.trim();
+                    if (data.phone && data.phone.trim()) appSettings.phone = data.phone.trim();
+                    if (data.whatsapp && data.whatsapp.trim()) appSettings.whatsapp = data.whatsapp.trim();
+                    if (data.address && data.address.trim()) appSettings.address = data.address.trim();
                 }
             } catch (err) {
                 console.warn('[Via] Using default agency contact settings.');
@@ -309,10 +428,12 @@
         if (homeDestEl) {
             homeDestEl.innerHTML = dests.length ? dests.map(d => `
                 <div class="card" onclick="navTo('packages', '${escapeHTML(d.id)}')" role="button" tabindex="0" onkeydown="if(event.key==='Enter') navTo('packages', '${escapeHTML(d.id)}')">
-                    <img src="${escapeHTML(d.image_url || 'assets/agency-logo-emblem.webp')}" alt="${escapeHTML(d.name)}" loading="lazy">
+                    <img src="${escapeHTML(d.image_url || 'assets/agency-logo-emblem.webp')}" alt="${escapeHTML(d.name)}" loading="lazy" width="400" height="220">
                     <div class="card-body">
+                        <span class="tag">Bespoke Escape</span>
                         <h3>${escapeHTML(d.name)}</h3>
-                        <p>${escapeHTML(d.country || '')}</p>
+                        <p style="color:var(--text-muted); font-size:14px; margin-bottom:8px;"><i class="fas fa-map-marker-alt" style="color:var(--brand-orange);"></i> ${escapeHTML(d.region || d.country || '')}</p>
+                        <span class="price-tag" data-inr-price="${getDestStartingPrice(d)}" data-price-prefix="From " data-price-suffix=" / person">From ${formatPrice(getDestStartingPrice(d))} / person</span>
                     </div>
                 </div>
             `).join('') : '<p class="text-center" style="grid-column:1/-1;">No destinations available.</p>';
@@ -337,12 +458,12 @@
                 const destName = p.destinations?.name || p.destination_name || (p.dest ? p.dest.toUpperCase() : 'Iconic Destination');
                 return `
                     <div class="card" onclick="navTo('package', '${escapeHTML(p.id)}')" role="button" tabindex="0" onkeydown="if(event.key==='Enter') navTo('package', '${escapeHTML(p.id)}')">
-                        <img src="${escapeHTML(p.image_url || 'assets/agency-logo-emblem.webp')}" alt="${escapeHTML(p.title)}" loading="lazy">
+                        <img src="${escapeHTML(p.image_url || 'assets/agency-logo-emblem.webp')}" alt="${escapeHTML(p.title)}" loading="lazy" width="400" height="220">
                         <div class="card-body">
                             <span class="tag">${escapeHTML(p.category || 'Luxury')}</span>
                             <h3>${escapeHTML(p.title)}</h3>
-                            <p style="color:var(--text-muted); font-size:14px;"><i class="far fa-clock"></i> ${escapeHTML(p.duration || 'N/A')} &bull; <i class="fas fa-map-marker-alt"></i> ${escapeHTML(destName)}</p>
-                            <span class="price-tag">${formatPrice(p.price)}</span>
+                            <p style="color:var(--text-muted); font-size:14px;"><i class="far fa-clock" style="color:var(--brand-orange);"></i> ${escapeHTML(p.duration || 'N/A')} &bull; <i class="fas fa-map-marker-alt" style="color:var(--brand-orange);"></i> ${escapeHTML(destName)}</p>
+                            <span class="price-tag" data-inr-price="${p.price}" data-price-prefix="Starting from ">Starting from ${formatPrice(p.price)}</span>
                         </div>
                     </div>
                 `;
@@ -476,7 +597,8 @@
                         <img src="${escapeHTML(d.image_url || 'assets/agency-logo-emblem.webp')}" alt="${escapeHTML(d.name)}" loading="lazy">
                         <div class="card-body">
                             <h4>${escapeHTML(d.name)}</h4>
-                            <p style="font-size:0.85rem; color:var(--text-muted); margin:0;">${escapeHTML(d.region || '')}</p>
+                            <p style="font-size:0.85rem; color:var(--text-muted); margin:0 0 8px;">${escapeHTML(d.region || '')}</p>
+                            <span class="price-tag" data-inr-price="${getDestStartingPrice(d)}" data-price-prefix="From " data-price-suffix=" / person" style="font-size:0.88rem; display:inline-block;">From ${formatPrice(getDestStartingPrice(d))} / person</span>
                         </div>
                     </div>
                 `;
@@ -637,7 +759,7 @@
                         <span class="tag">${escapeHTML(p.category || 'Luxury')}</span>
                         <h3>${escapeHTML(p.title)}</h3>
                         <p style="color:var(--text-muted); font-size:14px;"><i class="far fa-clock"></i> ${escapeHTML(p.duration || 'N/A')} &bull; <i class="fas fa-map-marker-alt"></i> ${escapeHTML(destName)}</p>
-                        <span class="price-tag">${formatPrice(p.price)}</span>
+                        <span class="price-tag" data-inr-price="${p.price}" data-price-prefix="Starting from ">Starting from ${formatPrice(p.price)}</span>
                     </div>
                 </div>
             `;
@@ -660,7 +782,7 @@
         if (minP) minP.value = '';
         if (maxP) maxP.value = '';
         if (srt) srt.value = 'new';
-        window.location.hash = '#/packages';
+        navTo('packages');
         loadPackages();
     }
 
@@ -671,7 +793,8 @@
         container.innerHTML = '<p class="text-center" style="padding:60px 0;">Loading package itinerary and details...</p>';
 
         let p = null;
-        if (sb) {
+        const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(id || ''));
+        if (sb && isUUID) {
             try {
                 const res = await sb.from('packages').select('*, destinations(name, country)').eq('id', id).maybeSingle();
                 if (res.data) p = res.data;
@@ -684,7 +807,7 @@
         }
 
         if (!p) {
-            container.innerHTML = '<div class="text-center" style="padding:60px 0;"><h3>Package not found</h3><p>The requested journey may be unavailable or archived.</p><a href="#/packages" onclick="navTo(\'packages\'); return false;" class="btn btn-outline" style="margin-top:16px;">View All Packages</a></div>';
+            container.innerHTML = '<div class="text-center" style="padding:60px 0;"><h3>Package not found</h3><p>The requested journey may be unavailable or archived.</p><a href="/packages" onclick="navTo(\'packages\'); return false;" class="btn btn-outline" style="margin-top:16px;">View All Packages</a></div>';
             return;
         }
 
@@ -723,7 +846,7 @@
                 <div>
                     <div style="background:var(--bg-light); border:1px solid var(--border); padding:32px 24px; border-radius:var(--radius-xl); position:sticky; top:104px; text-align:center; box-shadow:var(--shadow-md);">
                         <span style="font-size:0.85rem; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted); font-weight:700;">Starting From</span>
-                        <h2 class="price-tag" style="font-size:2.4rem; margin:6px 0 2px; color:var(--brand-navy);">${formatPrice(p.price)}</h2>
+                        <h2 class="price-tag" data-inr-price="${p.price}" style="font-size:2.4rem; margin:6px 0 2px; color:var(--brand-navy);">${formatPrice(p.price)}</h2>
                         <p style="margin-bottom:24px; color:var(--text-muted); font-size:0.88rem;">Per person on twin sharing</p>
                         <a href="https://wa.me/${escapeHTML(appSettings.whatsapp)}?text=${encodeURIComponent('Hello Via Tours Concierge, I am interested in booking: ' + p.title)}" target="_blank" rel="noopener noreferrer" class="btn btn-green" style="width:100%; margin-bottom:12px;">
                             <i class="fab fa-whatsapp"></i> Instant WhatsApp Concierge
@@ -1072,6 +1195,14 @@
     }
 
     // 9. AI Concierge Chatbot
+    function sendQuickPrompt(promptText) {
+        const input = document.getElementById('chatInput');
+        if (input) {
+            input.value = promptText;
+            handleChat({ type: 'keypress', key: 'Enter' });
+        }
+    }
+
     function handleChat(e) {
         if (e.type === 'keypress' && e.key !== 'Enter') return;
         const input = document.getElementById('chatInput');
@@ -1093,34 +1224,38 @@
         // Generate Context-Aware Luxury Concierge Response
         setTimeout(() => {
             const m = msg.toLowerCase();
-            let res = "I am at your service. Would you like to explore our bespoke packages for the Maldives, Swiss Alps, Bali, or Dubai?";
+            let res = "I am at your service. Would you like to explore bespoke private itineraries for the Maldives, Swiss Alps, Bali, Amalfi Coast, or Dubai?";
 
             if (m.includes('maldives') || m.includes('atoll') || m.includes('overwater')) {
-                res = "The Maldives offers pristine private coral atolls and overwater villas with 24/7 butler service. Explore our 5N Maldives Bliss package under 'Packages' or click 'Plan My Trip'!";
+                res = "Our 5★ Maldives Overwater Sanctuary features a private pool villa, roundtrip scenic seaplane transfers, gourmet all-inclusive dining, and a sunset dolphin yacht cruise (from " + formatPrice(185000) + "/person). Would you like to view the itinerary or customize your travel dates?";
             } else if (m.includes('swiss') || m.includes('switzerland') || m.includes('alps') || m.includes('zermatt')) {
-                res = "Switzerland features panoramic Glacier Express first-class rail journeys and luxury chalets in Zermatt facing the Matterhorn. Would you like a personalized Swiss alpine quote?";
+                res = "Our Grand Swiss Alpine Odyssey includes 1st-Class Glacier Express panoramic rail, 5★ Matterhorn-facing chalets in Zermatt, and Jungfraujoch summit access (from " + formatPrice(245000) + "/person).";
             } else if (m.includes('bali') || m.includes('ubud') || m.includes('indonesia')) {
-                res = "Our Bali retreats feature private infinity pool villas in Ubud and cliffside sunsets in Uluwatu. Check our 'Bali Tropical Escape' package!";
+                res = "Our Bali Sanctuary features private rainforest pool villas in Ubud, private chauffeur, and cliffside sunsets in Uluwatu (from " + formatPrice(95000) + "/person).";
+            } else if (m.includes('amalfi') || m.includes('capri') || m.includes('italy')) {
+                res = "Our Amalfi Coast & Capri Odyssey features cliffside 5★ suites in Positano, a private skippered Riva yacht to Capri & the Blue Grotto, and Michelin dining (from " + formatPrice(295000) + "/person).";
             } else if (m.includes('dubai') || m.includes('emirates') || m.includes('burj')) {
-                res = "Dubai showcases 7-star luxury hospitality, private desert oasis glamping, and superyacht charters. Available year-round with VIP transfers.";
-            } else if (m.includes('book') || m.includes('plan') || m.includes('quote') || m.includes('custom') || m.includes('enquiry')) {
-                res = "You can submit an inquiry anytime via 'Plan My Trip', or chat with a senior destination specialist immediately on WhatsApp at +91 98765 43210!";
+                res = "Our Dubai Ultra-Luxury showcases 7★ Burj Al Arab hospitality, private desert oasis glamping, and private yacht charters around Palm Jumeirah (from " + formatPrice(145000) + "/person).";
             } else if (m.includes('visa') || m.includes('passport')) {
-                res = "Via Tours provides white-glove visa assistance for 80+ global destinations. We handle appointments, documentation, and expedited processing.";
-            } else if (m.includes('price') || m.includes('cost') || m.includes('gst') || m.includes('tax')) {
-                res = "Our package pricing is transparent and itemized with 5% statutory GST and no hidden surcharges. Customized quotes vary by traveler count and hotel tier.";
+                res = "Via Tours provides 100% white-glove visa concierge assistance for Schengen (Europe), UK, USA, UAE, Vietnam, Singapore, and 80+ destinations. We handle paperwork preparation, appointment scheduling, and itinerary vouchers.";
+            } else if (m.includes('whatsapp') || m.includes('senior') || m.includes('advisor') || m.includes('call') || m.includes('connect')) {
+                res = `You can connect directly with our Senior Travel Specialist on our 24/7 dedicated WhatsApp line: +91 88797 76866 or by calling ${appSettings.phone}.`;
+            } else if (m.includes('book') || m.includes('plan') || m.includes('quote') || m.includes('custom') || m.includes('enquiry')) {
+                res = "You can submit an inquiry anytime via 'Plan My Trip' for an itemized quotation, or message our VIP Concierge on WhatsApp at +91 88797 76866!";
+            } else if (m.includes('price') || m.includes('cost') || m.includes('currency') || m.includes('tax') || m.includes('gst')) {
+                res = "All prices are itemized with statutory 5% GST and no hidden charges. You can also switch between INR (₹), USD ($), EUR (€), and AED (AED) using the currency selector in the header.";
             } else if (m.includes('contact') || m.includes('phone') || m.includes('office') || m.includes('address')) {
-                res = `Our flagship concierge is located on MG Road, Bengaluru. Reach us anytime at ${appSettings.phone} or hello@viatours.com.`;
+                res = `Our flagship concierge is located at ${appSettings.address}. Reach us directly at ${appSettings.phone} or ${appSettings.email}.`;
             } else if (m.includes('hi') || m.includes('hello') || m.includes('hey')) {
                 res = "Greetings! Welcome to Via Tours & Travels. Which dream destination may I help you curate today?";
             }
 
             const botDiv = document.createElement('div');
             botDiv.className = 'chat-msg bot';
-            botDiv.textContent = res;
+            botDiv.innerHTML = escapeHTML(res).replace(/(\+91 88797 76866)/g, '<a href="https://wa.me/918879776866" target="_blank" rel="noopener noreferrer" style="color:var(--brand-orange); text-decoration:underline;">$1</a>');
             chatBody.appendChild(botDiv);
             chatBody.scrollTop = chatBody.scrollHeight;
-        }, 500);
+        }, 400);
     }
 
     // --- SCROLL PROGRESS & SCROLL-TO-TOP OBSERVER ---
@@ -1154,10 +1289,15 @@
     setTimeout(dismissPreloader, 3000);
 
     // --- INITIALIZE APPLICATION ---
+    window.addEventListener('popstate', router);
     window.addEventListener('hashchange', router);
     window.addEventListener('DOMContentLoaded', () => {
         loadSettings();
         populateCountryFilter();
+        // Sync currency selector with stored preference
+        if (currentCurrency) {
+            document.querySelectorAll('.currency-select').forEach(sel => sel.value = currentCurrency);
+        }
         router();
     });
 
@@ -1176,5 +1316,7 @@
     window.switchTab = switchTab;
     window.toggleFaq = toggleFaq;
     window.handleChat = handleChat;
+    window.switchCurrency = switchCurrency;
+    window.sendQuickPrompt = sendQuickPrompt;
 
 })(window, document);

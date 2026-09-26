@@ -1,5 +1,5 @@
 # ==============================================================================
-# VIA TOURS & TRAVELS — FORCE HTTPS & SECURITY ENFORCEMENT
+# VIA TOURS & TRAVELS — FORCE HTTPS, SECURITY ENFORCEMENT & CLEAN URL ROUTING
 # ==============================================================================
 
 <IfModule mod_rewrite.c>
@@ -10,6 +10,18 @@
     RewriteCond %{HTTPS} off [OR]
     RewriteCond %{HTTP:X-Forwarded-Proto} =http
     RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+    # Admin Portal clean routing
+    RewriteRule ^admin/?$ /admin.html [L]
+    RewriteRule ^admin/(.*)$ /admin.html [L]
+
+    # Don't rewrite real files or directories
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Rewrite all clean URLs to index.html for SPA History API routing
+    RewriteRule ^ index.html [L]
 </IfModule>
 
 <IfModule mod_headers.c>

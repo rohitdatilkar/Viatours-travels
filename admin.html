@@ -21,11 +21,13 @@
     <meta property="og:image" content="https://viatoursandtravels.com/assets/social-preview.jpg">
     <meta name="twitter:image" content="https://viatoursandtravels.com/assets/social-preview.jpg">
 
+    <base href="/">
+
     <!-- Favicons (Official Agency Logo) -->
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
-    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
     <title>Via Tours &amp; Travels — Executive Staff &amp; Admin Portal</title>
 
     <!-- Critical Resource Hints & DNS Pre-warming -->
@@ -46,7 +48,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <!-- Custom Luxury Stylesheet -->
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/style.css">
     <style>
         body { background: #f8fafc; color: #0c1a3d; font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif); margin: 0; }
         .admin-layout { background: #f8fafc; color: #0c1a3d; }
@@ -91,7 +93,7 @@
                     </div>
                     <div style="display:flex; flex-direction:column; gap:2px;">
                         <h3 style="margin:0; font-size:1.15rem; color:#0c1a3d; font-family:var(--font-heading); font-weight:700;">Via Admin</h3>
-                        <a href="index.html#/home" class="admin-back-link" style="color:#64748b; font-size:0.75rem; text-decoration:none;"><i class="fas fa-arrow-left"></i> View Live Site</a>
+                        <a href="/" class="admin-back-link" style="color:#64748b; font-size:0.75rem; text-decoration:none;"><i class="fas fa-arrow-left"></i> View Live Site</a>
                     </div>
                 </div>
                 <button onclick="toggleSidebar()" style="background:#f1f5f9; border:1px solid #e2e8f0; color:#0c1a3d; width:34px; height:34px; border-radius:8px; font-size:16px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center;" aria-label="Toggle sidebar"><i class="fas fa-bars"></i></button>
@@ -107,7 +109,7 @@
                 <li onclick="showAdminTab('testimonials', event)"><i class="fas fa-comment-dots"></i><span class="nav-text"> Testimonials</span></li>
                 <li onclick="showAdminTab('faqs', event)"><i class="fas fa-question-circle"></i><span class="nav-text"> FAQs</span></li>
                 <li onclick="showAdminTab('settings', event)"><i class="fas fa-cog"></i><span class="nav-text"> Settings</span></li>
-                <li onclick="window.location.href='index.html#/home'" style="margin-top:10px;"><i class="fas fa-globe"></i><span class="nav-text"> Return to Site</span></li>
+                <li onclick="window.location.href='/'" style="margin-top:10px;"><i class="fas fa-globe"></i><span class="nav-text"> Return to Site</span></li>
                 <li onclick="logout()" style="margin-top:15px; color:#ef4444;"><i class="fas fa-sign-out-alt"></i><span class="nav-text"> Logout</span></li>
             </ul>
         </div>
@@ -499,8 +501,8 @@
 <!-- SCRIPTS (Deferred for Non-Blocking Initial Paint) -->
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/dompurify@3.0.5/dist/purify.min.js"></script>
-<script defer src="config.js"></script>
-<script defer src="catalog-data.js"></script>
-<script defer src="admin.js"></script>
+<script defer src="/config.js"></script>
+<script defer src="/catalog-data.js"></script>
+<script defer src="/admin.js"></script>
 </body>
 </html>
