@@ -2478,3 +2478,507 @@ footer a:hover {
     font-weight: 700;
 }
 
+/* --- SPECIALIST LUXURY CURATOR EMBLEMS --- */
+.specialist-emblem {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: var(--brand-orange);
+    background: linear-gradient(135deg, rgba(232, 119, 34, 0.12) 0%, rgba(12, 26, 61, 0.05) 100%);
+    border: 2px solid rgba(232, 119, 34, 0.35);
+    box-shadow: 0 4px 16px rgba(12, 26, 61, 0.06);
+}
+
+/* --- DPDP ACT 2023 COOKIE & DATA CONSENT BANNER --- */
+.cookie-banner {
+    position: fixed;
+    bottom: 24px;
+    left: 24px;
+    right: 24px;
+    max-width: 960px;
+    margin: 0 auto;
+    background: rgba(10, 22, 40, 0.97);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    color: #ffffff;
+    padding: 20px 28px;
+    border-radius: var(--radius-lg);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    z-index: 100002;
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    animation: slideUpConsent 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUpConsent {
+    from { transform: translateY(40px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.cookie-text {
+    font-size: 0.88rem;
+    line-height: 1.55;
+    color: #cbd5e1;
+    margin: 0;
+}
+
+.cookie-text strong {
+    color: #ffffff;
+}
+
+.cookie-text a {
+    color: #fbbf24;
+    text-decoration: underline;
+}
+
+.cookie-actions {
+    display: flex;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+    .cookie-banner {
+        flex-direction: column;
+        align-items: stretch;
+        bottom: calc(76px + var(--safe-bottom));
+        left: 12px;
+        right: 12px;
+        padding: 16px 18px;
+        gap: 14px;
+    }
+    .cookie-actions {
+        width: 100%;
+    }
+    .cookie-actions .btn {
+        flex: 1;
+        min-height: 40px;
+        padding: 8px 12px;
+        font-size: 0.85rem;
+    }
+}
+
+/* --- TRAVEL INSURANCE & LEGAL DISCLAIMER BOXES --- */
+.insurance-disclaimer-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-left: 4px solid var(--brand-orange);
+    border-radius: var(--radius-md);
+    padding: 18px 22px;
+    margin-top: 24px;
+    font-size: 0.88rem;
+    color: #475569;
+    line-height: 1.6;
+}
+
+.insurance-disclaimer-box strong {
+    color: var(--brand-navy);
+}
+
+.policy-card {
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: clamp(24px, 4vw, 40px);
+    box-shadow: var(--shadow-sm);
+    line-height: 1.8;
+    margin-top: 20px;
+}
+
+.policy-card h3, .policy-card h4 {
+    color: var(--brand-navy);
+    margin-top: 24px;
+    margin-bottom: 8px;
+}
+
+.policy-card p, .policy-card li {
+    font-size: 0.94rem;
+    color: var(--text-body);
+}
+
+.policy-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 18px 0;
+    font-size: 0.9rem;
+}
+
+.policy-table th, .policy-table td {
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    text-align: left;
+}
+
+.policy-table th {
+    background: #f8fafc;
+    color: var(--brand-navy);
+    font-weight: 700;
+}
+
+/* --- RICH PACKAGE DETAIL COMPONENTS --- */
+.pkg-key-specs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
+    margin: 20px 0 28px;
+}
+.pkg-spec-card {
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.pkg-spec-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: var(--radius-sm);
+    background: rgba(232, 119, 34, 0.12);
+    color: var(--brand-orange);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+.pkg-spec-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 700;
+}
+.pkg-spec-val {
+    font-size: 0.92rem;
+    color: var(--brand-navy);
+    font-weight: 600;
+    margin-top: 2px;
+}
+
+/* Route Timeline */
+.route-timeline {
+    position: relative;
+    padding-left: 28px;
+    margin: 24px 0;
+}
+.route-timeline::before {
+    content: '';
+    position: absolute;
+    left: 9px;
+    top: 6px;
+    bottom: 6px;
+    width: 2px;
+    background: linear-gradient(180deg, var(--brand-orange) 0%, var(--brand-blue) 100%);
+}
+.route-stop-item {
+    position: relative;
+    margin-bottom: 20px;
+}
+.route-stop-dot {
+    position: absolute;
+    left: -28px;
+    top: 3px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 3px solid var(--brand-orange);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.route-stop-name {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--brand-navy);
+}
+
+/* Resort Cards */
+.resort-card {
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow-sm);
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 0;
+}
+@media (max-width: 768px) {
+    .resort-card {
+        grid-template-columns: 1fr;
+    }
+}
+.resort-card-img {
+    width: 100%;
+    height: 100%;
+    min-height: 200px;
+    object-fit: cover;
+}
+.resort-card-body {
+    padding: 24px;
+}
+.amenity-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
+}
+.amenity-pill {
+    background: #f1f5f9;
+    color: #334155;
+    padding: 5px 12px;
+    border-radius: var(--radius-full);
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+/* Inclusions & Exclusions Split */
+.inc-exc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 18px;
+}
+@media (max-width: 768px) {
+    .inc-exc-grid {
+        grid-template-columns: 1fr;
+    }
+}
+.inc-box {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: var(--radius-md);
+    padding: 20px;
+}
+.exc-box {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: var(--radius-md);
+    padding: 20px;
+}
+.inc-list, .exc-list {
+    list-style: none;
+    padding: 0;
+    margin: 12px 0 0;
+}
+.inc-list li {
+    position: relative;
+    padding-left: 26px;
+    margin-bottom: 10px;
+    font-size: 0.92rem;
+    color: #166534;
+    line-height: 1.5;
+}
+.inc-list li::before {
+    content: '✔';
+    position: absolute;
+    left: 0;
+    color: #16a34a;
+    font-weight: 800;
+}
+.exc-list li {
+    position: relative;
+    padding-left: 26px;
+    margin-bottom: 10px;
+    font-size: 0.92rem;
+    color: #991b1b;
+    line-height: 1.5;
+}
+.exc-list li::before {
+    content: '✖';
+    position: absolute;
+    left: 0;
+    color: #dc2626;
+    font-weight: 800;
+}
+
+/* Mobile Sticky Action Bar for Packages */
+.mobile-pkg-sticky-bar {
+    display: none;
+    position: fixed;
+    bottom: calc(64px + var(--safe-bottom));
+    left: 0;
+    right: 0;
+    background: rgba(12, 26, 61, 0.95);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 12px 16px;
+    z-index: 997;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+@media (max-width: 768px) {
+    .mobile-pkg-sticky-bar.visible {
+        display: flex;
+    }
+}
+
+/* Services Grid */
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+    margin: 30px 0;
+}
+.service-card {
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 30px;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+.service-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--brand-orange);
+}
+.service-icon-wrap {
+    width: 54px;
+    height: 54px;
+    border-radius: var(--radius-md);
+    background: rgba(232, 119, 34, 0.1);
+    color: var(--brand-orange);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+}
+
+/* Experiences / Theme Grid */
+.experiences-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin: 30px 0;
+}
+.exp-card {
+    position: relative;
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    height: 380px;
+    box-shadow: var(--shadow-md);
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+.exp-card:hover {
+    transform: translateY(-5px);
+}
+.exp-card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+}
+.exp-card:hover .exp-card-img {
+    transform: scale(1.05);
+}
+.exp-card-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(12, 26, 61, 0.1) 0%, rgba(12, 26, 61, 0.9) 100%);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    color: #ffffff;
+}
+
+/* Offers Grid */
+.offers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+    margin: 30px 0;
+}
+.offer-card {
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+}
+.promo-code-pill {
+    background: #f8fafc;
+    border: 1px dashed var(--brand-orange);
+    color: var(--brand-orange);
+    font-family: monospace;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: var(--radius-sm);
+    display: inline-block;
+    letter-spacing: 1px;
+}
+
+/* Destination Travel Intelligence Grid */
+.dest-intel-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin: 24px 0;
+}
+.dest-intel-card {
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+}
+
+/* Plan Form Confirmation Card */
+.plan-success-card {
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-top: 5px solid #10b981;
+    border-radius: var(--radius-xl);
+    padding: clamp(24px, 5vw, 48px);
+    text-align: center;
+    box-shadow: var(--shadow-md);
+}
+
+/* Print Media Styles for Itinerary PDF */
+@media print {
+    body {
+        background: #ffffff !important;
+        color: #000000 !important;
+    }
+    .header, .footer, .chat-bubble, .chat-window, .scroll-top, .mobile-bottom-bar, .mobile-pkg-sticky-bar, .cookie-banner, .btn-group, .info-tabs {
+        display: none !important;
+    }
+    .page-view {
+        display: block !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    .pkg-gallery {
+        display: block !important;
+    }
+    .thumbnail-container {
+        display: none !important;
+    }
+    .main-image {
+        max-height: 250px !important;
+    }
+    #tab-content {
+        display: block !important;
+    }
+    .resort-card {
+        page-break-inside: avoid;
+    }
+}
+
+
