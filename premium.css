@@ -876,7 +876,7 @@ footer p, .footer p {
   width: 52px !important;
   height: 52px !important;
   border-radius: 50% !important;
-  display: flex !important;
+  display: flex;
   align-items: center !important;
   justify-content: center !important;
   color: #ffffff !important;
@@ -896,6 +896,13 @@ footer p, .footer p {
   border: 1px solid var(--border) !important;
   box-shadow: 0 20px 60px rgba(10,22,40,0.18) !important;
   overflow: hidden !important;
+}
+
+@media (max-width: 768px) {
+  .chat-bubble,
+  .chat-window {
+    display: none !important;
+  }
 }
 
 /* ─── RESPONSIVE ─── */

@@ -5,7 +5,7 @@ window.LUXURY_CATALOG = {
       "name": "Maldives",
       "country": "Maldives",
       "region": "South Asia / Indian Ocean",
-      "image_url": "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=800&q=80",
+      "image_url": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80&fm=webp",
       "description": "Idyllic turquoise atolls, pristine overwater villas, private coral reefs, and world-class underwater dining.",
       "best_time": "November to April (Dry Season / Azure Waters)",
       "flight_time_from_india": "BOM: 2h 45m | DEL: 4h 15m | BLR: 2h 10m (Direct flights to Male)",
@@ -36,14 +36,20 @@ window.LUXURY_CATALOG = {
       "linked_blog_slugs": [
         "ultimate-maldives-luxury-guide"
       ],
-      "is_published": true
+      "is_published": true,
+      "slug": "maldives",
+      "aliases": [
+        "dest-maldives",
+        "maldives"
+      ],
+      "curated_tag": "Honeymoon & Atolls · 5 Nights"
     },
     {
       "id": "dest-switzerland",
       "name": "Switzerland",
       "country": "Switzerland",
       "region": "Central Europe",
-      "image_url": "https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?w=800&q=80",
+      "image_url": "https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?w=800&q=80&fm=webp",
       "description": "Majestic Alpine peaks, panoramic Glacier Express rail journeys, luxury chalets in Zermatt, and crystal lakes.",
       "best_time": "Year-round (Skiing: Dec–Mar | Alpine Scenic & Hiking: May–Oct)",
       "flight_time_from_india": "BOM: 8h 45m | DEL: 8h 30m | BLR: 10h 15m (Direct & 1-stop to Zurich/Geneva)",
@@ -74,14 +80,20 @@ window.LUXURY_CATALOG = {
       "linked_blog_slugs": [
         "switzerland-scenic-train-routes"
       ],
-      "is_published": true
+      "is_published": true,
+      "slug": "switzerland",
+      "aliases": [
+        "dest-switzerland",
+        "switzerland"
+      ],
+      "curated_tag": "Scenic Rail & Alps · 7 Nights"
     },
     {
       "id": "dest-bali",
       "name": "Bali",
       "country": "Indonesia",
       "region": "Southeast Asia",
-      "image_url": "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800&q=80",
+      "image_url": "https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?w=800&q=80&fm=webp",
       "description": "Lush terraced rice fields, sacred cliffside temples, private pool villas in Ubud, and breathtaking sunset beach clubs.",
       "best_time": "April to October (Dry season, gentle sea breezes, sunny skies)",
       "flight_time_from_india": "BOM: 7h 30m | DEL: 8h 15m | BLR: 7h 00m (Direct & 1-stop to Denpasar DPS)",
@@ -112,14 +124,20 @@ window.LUXURY_CATALOG = {
       "linked_blog_slugs": [
         "bali-hidden-gems-luxury-retreat"
       ],
-      "is_published": true
+      "is_published": true,
+      "slug": "bali",
+      "aliases": [
+        "dest-bali",
+        "bali"
+      ],
+      "curated_tag": "Pool Villas & Culture · 6 Nights"
     },
     {
       "id": "dest-dubai",
       "name": "Dubai",
       "country": "United Arab Emirates",
       "region": "Middle East",
-      "image_url": "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800&q=80",
+      "image_url": "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800&q=80&fm=webp",
       "description": "Iconic architectural marvels, 7-star hospitality, luxury desert oasis glamping, and private superyacht charters.",
       "best_time": "October to April (Pleasant 24°C–28°C temperatures, perfect for outdoor dining)",
       "flight_time_from_india": "BOM: 3h 15m | DEL: 3h 45m | BLR: 3h 30m (Multiple daily non-stop flights)",
@@ -150,14 +168,20 @@ window.LUXURY_CATALOG = {
       "linked_blog_slugs": [
         "luxury-international-travel-packing-checklist"
       ],
-      "is_published": true
+      "is_published": true,
+      "slug": "dubai",
+      "aliases": [
+        "dest-dubai",
+        "dubai"
+      ],
+      "curated_tag": "Desert & Skyline · 5 Nights"
     },
     {
       "id": "dest-kashmir",
       "name": "Kashmir",
       "country": "India",
       "region": "North India / Himalayas",
-      "image_url": "https://images.unsplash.com/photo-1595815771614-ade9d652a65d?w=800&q=80",
+      "image_url": "https://images.unsplash.com/photo-1595815771614-ade9d652a65d?w=800&q=80&fm=webp",
       "description": "The Paradise on Earth. Royal carved-cedar houseboats on Dal Lake, high-altitude Gulmarg gondola, and pine valleys of Pahalgam.",
       "best_time": "March to October (Spring Blossoms & Greenery) | December to February (Snow & Skiing)",
       "flight_time_from_india": "DEL: 1h 25m | BOM: 2h 45m | BLR: 3h 15m (Direct & connecting flights to Srinagar SXR)",
@@ -188,14 +212,20 @@ window.LUXURY_CATALOG = {
       "linked_blog_slugs": [
         "luxury-international-travel-packing-checklist"
       ],
-      "is_published": true
+      "is_published": true,
+      "slug": "kashmir",
+      "aliases": [
+        "dest-kashmir",
+        "kashmir"
+      ],
+      "curated_tag": "Valleys & Houseboats · 5 Nights"
     },
     {
       "id": "dest-amalfi",
       "name": "Amalfi Coast & Capri",
       "country": "Italy",
       "region": "Southern Europe / Mediterranean",
-      "image_url": "https://images.unsplash.com/photo-1533105079780-92b9be482077?w=800&q=80",
+      "image_url": "https://images.unsplash.com/photo-1533105079780-92b9be482077?w=800&q=80&fm=webp",
       "description": "Dramatic pastel cliffside villages, azure Mediterranean yachting, cliff-edge infinity pools, and Michelin dining.",
       "best_time": "May to October (Sun-drenched coastal days, beach clubs, and yachting season)",
       "flight_time_from_india": "DEL: 9h 30m | BOM: 9h 45m (Fly into Rome FCO or Naples NAP with 1 stop)",
@@ -226,14 +256,22 @@ window.LUXURY_CATALOG = {
       "linked_blog_slugs": [
         "luxury-international-travel-packing-checklist"
       ],
-      "is_published": true
+      "is_published": true,
+      "slug": "amalfi-coast",
+      "aliases": [
+        "dest-amalfi",
+        "amalfi-coast",
+        "amalfi-coast-&-capri",
+        "amalfi"
+      ],
+      "curated_tag": "Yachting & Coastal · 6 Nights"
     },
     {
       "id": "dest-vietnam",
       "name": "Vietnam",
       "country": "Vietnam",
       "region": "Southeast Asia",
-      "image_url": "https://images.unsplash.com/photo-1528127269322-539801943592?w=800&q=80",
+      "image_url": "https://images.unsplash.com/photo-1528127269322-539801943592?w=800&q=80&fm=webp",
       "description": "Emerald waters of Halong Bay, ancient lantern-lit streets of Hoi An, vibrant street cuisine, and breathtaking karst limestone mountains.",
       "best_time": "November to April (Pleasant dry weather, ideal for cruising and walking tours)",
       "flight_time_from_india": "DEL: 4h 30m | BOM: 5h 00m | BLR: 5h 15m (Direct non-stop flights to Hanoi & Ho Chi Minh)",
@@ -264,14 +302,20 @@ window.LUXURY_CATALOG = {
       "linked_blog_slugs": [
         "luxury-international-travel-packing-checklist"
       ],
-      "is_published": true
+      "is_published": true,
+      "slug": "vietnam",
+      "aliases": [
+        "dest-vietnam",
+        "vietnam"
+      ],
+      "curated_tag": "Heritage Cruise & Culture · 6 Nights"
     },
     {
       "id": "dest-rajasthan",
       "name": "Rajasthan (Udaipur & Jaipur)",
       "country": "India",
       "region": "North India",
-      "image_url": "https://images.unsplash.com/photo-1599661046289-e31897846e41?w=800&q=80",
+      "image_url": "https://images.unsplash.com/photo-1599661046289-e31897846e41?w=800&q=80&fm=webp",
       "description": "Regal Rajput palaces, floating lake pavilions, private desert sundowners, and royal courtyard banquets.",
       "best_time": "October to March (Crisp sunny winter days, perfect for palace courtyards and heritage tours)",
       "flight_time_from_india": "BOM: 1h 20m | DEL: 1h 00m | BLR: 2h 15m (Direct daily flights to Udaipur & Jaipur)",
@@ -302,14 +346,21 @@ window.LUXURY_CATALOG = {
       "linked_blog_slugs": [
         "luxury-international-travel-packing-checklist"
       ],
-      "is_published": true
+      "is_published": true,
+      "slug": "rajasthan",
+      "aliases": [
+        "dest-rajasthan",
+        "rajasthan",
+        "rajasthan-(udaipur-&-jaipur)"
+      ],
+      "curated_tag": "Royal Palaces & Forts · 6 Nights"
     },
     {
       "id": "dest-kerala",
       "name": "Kerala (Kumarakom & Munnar)",
       "country": "India",
       "region": "South India",
-      "image_url": "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?w=800&q=80",
+      "image_url": "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?w=800&q=80&fm=webp",
       "description": "Emerald palm-fringed backwaters, traditional luxury houseboats, misty tea plantations, and authentic Ayurvedic wellness.",
       "best_time": "September to March (Pleasant tropical warmth, low humidity, ideal for backwater cruising)",
       "flight_time_from_india": "BOM: 1h 50m | DEL: 3h 15m | BLR: 1h 05m (Direct flights to Kochi COK)",
@@ -340,14 +391,21 @@ window.LUXURY_CATALOG = {
       "linked_blog_slugs": [
         "luxury-international-travel-packing-checklist"
       ],
-      "is_published": true
+      "is_published": true,
+      "slug": "kerala",
+      "aliases": [
+        "dest-kerala",
+        "kerala",
+        "kerala-(kumarakom-&-munnar)"
+      ],
+      "curated_tag": "Ayurveda & Backwaters · 5 Nights"
     },
     {
       "id": "dest-ladakh",
       "name": "Ladakh (Leh, Nubra & Pangong)",
       "country": "India",
       "region": "Trans-Himalayas",
-      "image_url": "https://images.unsplash.com/photo-1581793745862-99fde7fa73d2?w=800&q=80",
+      "image_url": "https://images.unsplash.com/photo-1581793745862-99fde7fa73d2?w=800&q=80&fm=webp",
       "description": "High-altitude desert moonscapes, ancient Tibetan monasteries, luxury glamping domes under milky way skies, and sapphire lakes.",
       "best_time": "May to September (Warm sunny days, clear mountain passes, and stunning high-altitude lake colors)",
       "flight_time_from_india": "DEL: 1h 15m | BOM: 2h 45m (Direct and 1-stop flights to Leh IXL)",
@@ -378,7 +436,14 @@ window.LUXURY_CATALOG = {
       "linked_blog_slugs": [
         "luxury-international-travel-packing-checklist"
       ],
-      "is_published": true
+      "is_published": true,
+      "slug": "ladakh",
+      "aliases": [
+        "dest-ladakh",
+        "ladakh",
+        "ladakh-(leh,-nubra-&-pangong)"
+      ],
+      "curated_tag": "High-Altitude Glamping · 6 Nights"
     }
   ],
   "packages": [
@@ -386,9 +451,12 @@ window.LUXURY_CATALOG = {
       "id": "pkg-maldives-sanctuary",
       "aliases": [
         "pkg-maldives-overwater",
-        "pkg-maldives-luxury"
+        "pkg-maldives-luxury",
+        "pkg-maldives-sanctuary",
+        "maldives-overwater-sanctuary",
+        "maldives-sanctuary"
       ],
-      "title": "Maldives Overwater Luxury Sanctuary 5★",
+      "title": "Maldives Overwater Luxury Sanctuary",
       "price": 185000,
       "duration": "5 Days / 4 Nights",
       "category": "Luxury",
@@ -397,7 +465,7 @@ window.LUXURY_CATALOG = {
         "name": "Maldives",
         "country": "Maldives"
       },
-      "image_url": "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=800&q=80",
+      "image_url": "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=800&q=80&fm=webp",
       "gallery_images": [
         "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80",
         "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=800&q=80",
@@ -534,15 +602,27 @@ window.LUXURY_CATALOG = {
         "pkg-bali-luxe-villas",
         "pkg-amalfi-romance"
       ],
-      "is_published": true
+      "is_published": true,
+      "slug": "maldives-overwater-sanctuary",
+      "price_breakdown": {
+        "pricing_basis": "Per person on twin-sharing basis (2 adults sharing 5★ suite/villa)",
+        "single_supplement": "Solo occupancy supplement of +55% on land package tariff applies",
+        "child_policy": "Child (2-11 yrs) sharing existing bedding: 50% tariff; with extra rollaway bed: 70%",
+        "tax_details": "Itemized with statutory 5% GST without input credit. Statutory TCS under Section 206C(1G) applies at 5% (up to ₹7,00,000 per financial year) / 20% (above ₹7L) and is fully creditable in Form 26AS/AIS against your income tax return.",
+        "assumptions": "Starting tariff assumes departure during regular shoulder season. Peak dates (Christmas/New Year, regional festivals) are subject to seasonal resort surcharges."
+      },
+      "luxury_tier": "5★ Luxury Villa"
     },
     {
       "id": "pkg-swiss-alps-express",
       "aliases": [
         "pkg-switzerland-panoramic",
-        "pkg-swiss-grand-tour"
+        "pkg-swiss-grand-tour",
+        "pkg-swiss-alps-express",
+        "swiss-alps-glacier-express",
+        "swiss-alps-express"
       ],
-      "title": "Swiss Alps & Glacier Express Grand Tour 5★",
+      "title": "Swiss Alps & Glacier Express Panoramic Tour",
       "price": 245000,
       "duration": "7 Days / 6 Nights",
       "category": "Luxury",
@@ -551,7 +631,7 @@ window.LUXURY_CATALOG = {
         "name": "Switzerland",
         "country": "Switzerland"
       },
-      "image_url": "https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?w=800&q=80",
+      "image_url": "https://images.unsplash.com/photo-1527668752968-14dc70a27c95?w=800&q=80&fm=webp",
       "gallery_images": [
         "https://images.unsplash.com/photo-1502784444187-359ac186c5bb?w=800&q=80",
         "https://images.unsplash.com/photo-1491557345352-5929e343eb89?w=800&q=80",
@@ -701,15 +781,27 @@ window.LUXURY_CATALOG = {
         "pkg-amalfi-romance",
         "pkg-kashmir-paradise"
       ],
-      "is_published": true
+      "is_published": true,
+      "slug": "swiss-alps-glacier-express",
+      "price_breakdown": {
+        "pricing_basis": "Per person on twin-sharing basis (2 adults sharing 5★ suite/villa)",
+        "single_supplement": "Solo occupancy supplement of +55% on land package tariff applies",
+        "child_policy": "Child (2-11 yrs) sharing existing bedding: 50% tariff; with extra rollaway bed: 70%",
+        "tax_details": "Itemized with statutory 5% GST without input credit. Statutory TCS under Section 206C(1G) applies at 5% (up to ₹7,00,000 per financial year) / 20% (above ₹7L) and is fully creditable in Form 26AS/AIS against your income tax return.",
+        "assumptions": "Starting tariff assumes departure during regular shoulder season. Peak dates (Christmas/New Year, regional festivals) are subject to seasonal resort surcharges."
+      },
+      "luxury_tier": "5★ Excellence Rail"
     },
     {
       "id": "pkg-bali-luxe-villas",
       "aliases": [
         "pkg-bali-retreat",
-        "pkg-bali-luxury"
+        "pkg-bali-luxury",
+        "pkg-bali-luxe-villas",
+        "bali-luxe-retreat-pool-villas",
+        "bali-luxe-villas"
       ],
-      "title": "Bali Luxe Retreat: Private Pool Villas & Ubud 5★",
+      "title": "Bali Private Pool Villas & Cultural Ubud Retreat",
       "price": 115000,
       "duration": "6 Days / 5 Nights",
       "category": "Honeymoon",
@@ -718,7 +810,7 @@ window.LUXURY_CATALOG = {
         "name": "Bali",
         "country": "Indonesia"
       },
-      "image_url": "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800&q=80",
+      "image_url": "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800&q=80&fm=webp",
       "gallery_images": [
         "https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?w=800&q=80",
         "https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=800&q=80",
@@ -855,15 +947,27 @@ window.LUXURY_CATALOG = {
         "pkg-maldives-sanctuary",
         "pkg-vietnam-charm"
       ],
-      "is_published": true
+      "is_published": true,
+      "slug": "bali-luxe-retreat-pool-villas",
+      "price_breakdown": {
+        "pricing_basis": "Per person on twin-sharing basis (2 adults sharing 5★ suite/villa)",
+        "single_supplement": "Solo occupancy supplement of +55% on land package tariff applies",
+        "child_policy": "Child (2-11 yrs) sharing existing bedding: 50% tariff; with extra rollaway bed: 70%",
+        "tax_details": "Itemized with statutory 5% GST without input credit. Statutory TCS under Section 206C(1G) applies at 5% (up to ₹7,00,000 per financial year) / 20% (above ₹7L) and is fully creditable in Form 26AS/AIS against your income tax return.",
+        "assumptions": "Starting tariff assumes departure during regular shoulder season. Peak dates (Christmas/New Year, regional festivals) are subject to seasonal resort surcharges."
+      },
+      "luxury_tier": "5★ Private Villa"
     },
     {
       "id": "pkg-dubai-ultra-luxury",
       "aliases": [
         "pkg-dubai-grandeur",
-        "pkg-dubai-skyline"
+        "pkg-dubai-skyline",
+        "pkg-dubai-ultra-luxury",
+        "dubai-ultra-luxury-skyline",
+        "dubai-ultra-luxury"
       ],
-      "title": "Dubai Ultra-Luxury Skyline & Royal Desert Oasis 5★",
+      "title": "Dubai Skyline Glamour & Royal Desert Oasis",
       "price": 145000,
       "duration": "5 Days / 4 Nights",
       "category": "Luxury",
@@ -872,7 +976,7 @@ window.LUXURY_CATALOG = {
         "name": "Dubai",
         "country": "United Arab Emirates"
       },
-      "image_url": "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800&q=80",
+      "image_url": "https://images.unsplash.com/photo-1580674684081-7617fbf3d745?w=800&q=80&fm=webp",
       "gallery_images": [
         "https://images.unsplash.com/photo-1580674684081-7617fbf3d745?w=800&q=80",
         "https://images.unsplash.com/photo-1518684079-3c830dcef090?w=800&q=80",
@@ -1001,14 +1105,26 @@ window.LUXURY_CATALOG = {
         "pkg-maldives-sanctuary",
         "pkg-swiss-alps-express"
       ],
-      "is_published": true
+      "is_published": true,
+      "slug": "dubai-ultra-luxury-skyline",
+      "price_breakdown": {
+        "pricing_basis": "Per person on twin-sharing basis (2 adults sharing 5★ suite/villa)",
+        "single_supplement": "Solo occupancy supplement of +55% on land package tariff applies",
+        "child_policy": "Child (2-11 yrs) sharing existing bedding: 50% tariff; with extra rollaway bed: 70%",
+        "tax_details": "Itemized with statutory 5% GST without input credit. Statutory TCS under Section 206C(1G) applies at 5% (up to ₹7,00,000 per financial year) / 20% (above ₹7L) and is fully creditable in Form 26AS/AIS against your income tax return.",
+        "assumptions": "Starting tariff assumes departure during regular shoulder season. Peak dates (Christmas/New Year, regional festivals) are subject to seasonal resort surcharges."
+      },
+      "luxury_tier": "5★ Desert Resort"
     },
     {
       "id": "pkg-kashmir-paradise",
       "aliases": [
-        "pkg-kashmir-grandeur"
+        "pkg-kashmir-grandeur",
+        "pkg-kashmir-paradise",
+        "kashmir-paradise-valleys-gulmarg",
+        "kashmir-paradise"
       ],
-      "title": "Kashmir Paradise: Heritage Houseboat & Gulmarg 5★",
+      "title": "Kashmir Valley: Heritage Houseboat & Gulmarg Chalet",
       "price": 78000,
       "duration": "6 Days / 5 Nights",
       "category": "Family",
@@ -1017,7 +1133,7 @@ window.LUXURY_CATALOG = {
         "name": "Kashmir",
         "country": "India"
       },
-      "image_url": "https://images.unsplash.com/photo-1595815771614-ade9d652a65d?w=800&q=80",
+      "image_url": "https://images.unsplash.com/photo-1627894483216-2138af692e32?w=800&q=80&fm=webp",
       "gallery_images": [
         "https://images.unsplash.com/photo-1588714477688-cf28a50e94f7?w=800&q=80",
         "https://images.unsplash.com/photo-1616423640778-28d1b53229bd?w=800&q=80"
@@ -1150,15 +1266,27 @@ window.LUXURY_CATALOG = {
         "pkg-ladakh-sanctuary",
         "pkg-swiss-alps-express"
       ],
-      "is_published": true
+      "is_published": true,
+      "slug": "kashmir-paradise-valleys-gulmarg",
+      "price_breakdown": {
+        "pricing_basis": "Per person on twin-sharing basis (2 adults sharing 5★ suite/villa)",
+        "single_supplement": "Solo occupancy supplement of +55% on land package tariff applies",
+        "child_policy": "Child (2-11 yrs) sharing existing bedding: 50% tariff; with extra rollaway bed: 70%",
+        "tax_details": "Itemized with statutory 5% GST without input credit. Statutory TCS under Section 206C(1G) applies at 5% (up to ₹7,00,000 per financial year) / 20% (above ₹7L) and is fully creditable in Form 26AS/AIS against your income tax return.",
+        "assumptions": "Starting tariff assumes departure during regular shoulder season. Peak dates (Christmas/New Year, regional festivals) are subject to seasonal resort surcharges."
+      },
+      "luxury_tier": "5★ Heritage & Chalet"
     },
     {
       "id": "pkg-vietnam-charm",
       "aliases": [
-        "pkg-vietnam-halong"
+        "pkg-vietnam-halong",
+        "pkg-vietnam-charm",
+        "vietnam-charm-halong-bay-cruise",
+        "vietnam-charm"
       ],
-      "title": "Vietnam: Timeless Charm & Halong Bay Luxury Cruise 5★",
-      "price": 128000,
+      "title": "Vietnam: Halong Bay Heritage Cruise & Hanoi",
+      "price": 185000,
       "duration": "7 Days / 6 Nights",
       "category": "Adventure",
       "destination_id": "dest-vietnam",
@@ -1166,7 +1294,7 @@ window.LUXURY_CATALOG = {
         "name": "Vietnam",
         "country": "Vietnam"
       },
-      "image_url": "https://images.unsplash.com/photo-1528127269322-539801943592?w=800&q=80",
+      "image_url": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&q=80&fm=webp",
       "gallery_images": [
         "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=800&q=80",
         "https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?w=800&q=80"
@@ -1307,15 +1435,27 @@ window.LUXURY_CATALOG = {
         "pkg-bali-luxe-villas",
         "pkg-kashmir-paradise"
       ],
-      "is_published": true
+      "is_published": true,
+      "slug": "vietnam-charm-halong-bay-cruise",
+      "price_breakdown": {
+        "pricing_basis": "Per person on twin-sharing basis (2 adults sharing 5★ suite/villa)",
+        "single_supplement": "Solo occupancy supplement of +55% on land package tariff applies",
+        "child_policy": "Child (2-11 yrs) sharing existing bedding: 50% tariff; with extra rollaway bed: 70%",
+        "tax_details": "Itemized with statutory 5% GST without input credit. Statutory TCS under Section 206C(1G) applies at 5% (up to ₹7,00,000 per financial year) / 20% (above ₹7L) and is fully creditable in Form 26AS/AIS against your income tax return.",
+        "assumptions": "Starting tariff assumes departure during regular shoulder season. Peak dates (Christmas/New Year, regional festivals) are subject to seasonal resort surcharges."
+      },
+      "luxury_tier": "5★ Luxury Cruise"
     },
     {
       "id": "pkg-amalfi-romance",
       "aliases": [
         "pkg-amalfi-tuscany",
-        "pkg-amalfi-capri"
+        "pkg-amalfi-capri",
+        "pkg-amalfi-romance",
+        "amalfi-coast-capri-yacht-odyssey",
+        "amalfi-romance"
       ],
-      "title": "Amalfi Coast & Capri Private Yacht Odyssey 5★",
+      "title": "Amalfi Coast & Capri Private Yacht Odyssey",
       "price": 295000,
       "duration": "7 Days / 6 Nights",
       "category": "Honeymoon",
@@ -1324,7 +1464,7 @@ window.LUXURY_CATALOG = {
         "name": "Amalfi Coast",
         "country": "Italy"
       },
-      "image_url": "https://images.unsplash.com/photo-1533105079780-92b9be482077?w=800&q=80",
+      "image_url": "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=800&q=80&fm=webp",
       "gallery_images": [
         "https://images.unsplash.com/photo-1533105079780-92b9be482077?w=800&q=80",
         "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=800&q=80",
@@ -1468,14 +1608,26 @@ window.LUXURY_CATALOG = {
         "pkg-swiss-alps-express",
         "pkg-maldives-sanctuary"
       ],
-      "is_published": true
+      "is_published": true,
+      "slug": "amalfi-coast-capri-yacht-odyssey",
+      "price_breakdown": {
+        "pricing_basis": "Per person on twin-sharing basis (2 adults sharing 5★ suite/villa)",
+        "single_supplement": "Solo occupancy supplement of +55% on land package tariff applies",
+        "child_policy": "Child (2-11 yrs) sharing existing bedding: 50% tariff; with extra rollaway bed: 70%",
+        "tax_details": "Itemized with statutory 5% GST without input credit. Statutory TCS under Section 206C(1G) applies at 5% (up to ₹7,00,000 per financial year) / 20% (above ₹7L) and is fully creditable in Form 26AS/AIS against your income tax return.",
+        "assumptions": "Starting tariff assumes departure during regular shoulder season. Peak dates (Christmas/New Year, regional festivals) are subject to seasonal resort surcharges."
+      },
+      "luxury_tier": "5★ Private Yacht"
     },
     {
       "id": "pkg-rajasthan-royal",
       "aliases": [
-        "pkg-rajasthan-heritage"
+        "pkg-rajasthan-heritage",
+        "pkg-rajasthan-royal",
+        "royal-rajasthan-udaipur-jaipur-palaces",
+        "rajasthan-royal"
       ],
-      "title": "Royal Rajasthan: Udaipur Lake Palaces & Jaipur Heritage 5★",
+      "title": "Royal Rajasthan: Udaipur Lake Palace & Jaipur Haveli",
       "price": 92000,
       "duration": "6 Days / 5 Nights",
       "category": "Luxury",
@@ -1484,7 +1636,7 @@ window.LUXURY_CATALOG = {
         "name": "Rajasthan",
         "country": "India"
       },
-      "image_url": "https://images.unsplash.com/photo-1599661046289-e31897846e41?w=800&q=80",
+      "image_url": "https://images.unsplash.com/photo-1582510003544-4d00b7f74220?w=800&q=80&fm=webp",
       "gallery_images": [
         "https://images.unsplash.com/photo-1599661046289-e31897846e41?w=800&q=80",
         "https://images.unsplash.com/photo-1582510003544-4d00b7f74220?w=800&q=80",
@@ -1619,14 +1771,26 @@ window.LUXURY_CATALOG = {
         "pkg-kashmir-paradise",
         "pkg-kerala-backwaters"
       ],
-      "is_published": true
+      "is_published": true,
+      "slug": "royal-rajasthan-udaipur-jaipur-palaces",
+      "price_breakdown": {
+        "pricing_basis": "Per person on twin-sharing basis (2 adults sharing 5★ suite/villa)",
+        "single_supplement": "Solo occupancy supplement of +55% on land package tariff applies",
+        "child_policy": "Child (2-11 yrs) sharing existing bedding: 50% tariff; with extra rollaway bed: 70%",
+        "tax_details": "Itemized with statutory 5% GST without input credit. Statutory TCS under Section 206C(1G) applies at 5% (up to ₹7,00,000 per financial year) / 20% (above ₹7L) and is fully creditable in Form 26AS/AIS against your income tax return.",
+        "assumptions": "Starting tariff assumes departure during regular shoulder season. Peak dates (Christmas/New Year, regional festivals) are subject to seasonal resort surcharges."
+      },
+      "luxury_tier": "5★ Heritage Palace"
     },
     {
       "id": "pkg-kerala-backwaters",
       "aliases": [
-        "pkg-kerala-ayurveda"
+        "pkg-kerala-ayurveda",
+        "pkg-kerala-backwaters",
+        "kerala-tranquility-kumarakom-houseboat",
+        "kerala-backwaters"
       ],
-      "title": "Kerala Tranquility: Kumarakom Houseboat & Private Pool Villa 5★",
+      "title": "Kerala Tranquility: Kumarakom Houseboat & Pool Villa",
       "price": 68000,
       "duration": "5 Days / 4 Nights",
       "category": "Honeymoon",
@@ -1635,7 +1799,7 @@ window.LUXURY_CATALOG = {
         "name": "Kerala",
         "country": "India"
       },
-      "image_url": "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?w=800&q=80",
+      "image_url": "https://images.unsplash.com/photo-1593693397690-362cb9666fc2?w=800&q=80&fm=webp",
       "gallery_images": [
         "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?w=800&q=80",
         "https://images.unsplash.com/photo-1593693397690-362cb9666fc2?w=800&q=80"
@@ -1762,14 +1926,26 @@ window.LUXURY_CATALOG = {
         "pkg-rajasthan-royal",
         "pkg-bali-luxe-villas"
       ],
-      "is_published": true
+      "is_published": true,
+      "slug": "kerala-tranquility-kumarakom-houseboat",
+      "price_breakdown": {
+        "pricing_basis": "Per person on twin-sharing basis (2 adults sharing 5★ suite/villa)",
+        "single_supplement": "Solo occupancy supplement of +55% on land package tariff applies",
+        "child_policy": "Child (2-11 yrs) sharing existing bedding: 50% tariff; with extra rollaway bed: 70%",
+        "tax_details": "Itemized with statutory 5% GST without input credit. Statutory TCS under Section 206C(1G) applies at 5% (up to ₹7,00,000 per financial year) / 20% (above ₹7L) and is fully creditable in Form 26AS/AIS against your income tax return.",
+        "assumptions": "Starting tariff assumes departure during regular shoulder season. Peak dates (Christmas/New Year, regional festivals) are subject to seasonal resort surcharges."
+      },
+      "luxury_tier": "5★ Backwater Sanctuary"
     },
     {
       "id": "pkg-ladakh-sanctuary",
       "aliases": [
-        "pkg-ladakh-luxury"
+        "pkg-ladakh-luxury",
+        "pkg-ladakh-sanctuary",
+        "ladakh-high-altitude-sanctuary-nubra-pangong",
+        "ladakh-sanctuary"
       ],
-      "title": "Ladakh High-Altitude Sanctuary: Glamping in Nubra & Pangong 5★",
+      "title": "Ladakh High-Altitude Sanctuary: Glamping in Nubra & Pangong",
       "price": 84000,
       "duration": "6 Days / 5 Nights",
       "category": "Adventure",
@@ -1778,7 +1954,7 @@ window.LUXURY_CATALOG = {
         "name": "Ladakh",
         "country": "India"
       },
-      "image_url": "https://images.unsplash.com/photo-1581793745862-99fde7fa73d2?w=800&q=80",
+      "image_url": "https://images.unsplash.com/photo-1506197603052-3cc9c3a201bd?w=800&q=80&fm=webp",
       "gallery_images": [
         "https://images.unsplash.com/photo-1581793745862-99fde7fa73d2?w=800&q=80",
         "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&q=80"
@@ -1912,13 +2088,22 @@ window.LUXURY_CATALOG = {
         "pkg-kashmir-paradise",
         "pkg-swiss-alps-express"
       ],
-      "is_published": true
+      "is_published": true,
+      "slug": "ladakh-high-altitude-sanctuary-nubra-pangong",
+      "price_breakdown": {
+        "pricing_basis": "Per person on twin-sharing basis (2 adults sharing 5★ suite/villa)",
+        "single_supplement": "Solo occupancy supplement of +55% on land package tariff applies",
+        "child_policy": "Child (2-11 yrs) sharing existing bedding: 50% tariff; with extra rollaway bed: 70%",
+        "tax_details": "Itemized with statutory 5% GST without input credit. Statutory TCS under Section 206C(1G) applies at 5% (up to ₹7,00,000 per financial year) / 20% (above ₹7L) and is fully creditable in Form 26AS/AIS against your income tax return.",
+        "assumptions": "Starting tariff assumes departure during regular shoulder season. Peak dates (Christmas/New Year, regional festivals) are subject to seasonal resort surcharges."
+      },
+      "luxury_tier": "5★ Luxury Glamping"
     }
   ],
   "services": [
     {
       "id": "srv-visa",
-      "title": "Global Visa Assistance & Document Vetting",
+      "title": "Visa Assistance & Global Consular Vetting",
       "icon": "fas fa-passport",
       "tag": "End-to-End Concierge",
       "description": "Seamless document preparation, biometric appointment scheduling, verified hotel vouchers, and consulate-ready cover letters for 80+ countries.",
@@ -1933,7 +2118,7 @@ window.LUXURY_CATALOG = {
     },
     {
       "id": "srv-flights",
-      "title": "Commercial Aviation & Private Air Charters",
+      "title": "Flights & Private Jet Air Charters",
       "icon": "fas fa-plane-departure",
       "tag": "First & Business Class",
       "description": "Premium cabin bookings, mileage seat upgrades, interline baggage transfers, and private executive jet and helicopter charter solutions.",
@@ -1948,7 +2133,7 @@ window.LUXURY_CATALOG = {
     },
     {
       "id": "srv-forex",
-      "title": "Foreign Exchange & Multi-Currency Travel Cards",
+      "title": "Forex & Multi-Currency Cards (RBI Compliant)",
       "icon": "fas fa-credit-card",
       "tag": "Doorstep Delivery",
       "description": "Zero-markup international multi-currency cards and physical currency delivery at institutional exchange rates with complete RBI compliance.",
@@ -1978,7 +2163,7 @@ window.LUXURY_CATALOG = {
     },
     {
       "id": "srv-mice",
-      "title": "Corporate MICE, Boardroom Retreats & Global Offsites",
+      "title": "Corporate MICE & Executive Leadership Retreats",
       "icon": "fas fa-briefcase",
       "tag": "Executive Leadership",
       "description": "Flawless end-to-end execution of CXO retreats, private island corporate buyouts, leadership masterminds, and bespoke incentive voyages.",
@@ -1989,6 +2174,21 @@ window.LUXURY_CATALOG = {
         "State-of-the-art audiovisual and board meeting infrastructure",
         "Exclusive gala dinners with celebrity chefs and local entertainment",
         "Dedicated on-site event directors and transport coordinators"
+      ]
+    },
+    {
+      "id": "srv-groups",
+      "title": "Curated Group Tours & Multi-Family Caravans",
+      "icon": "fas fa-users-rays",
+      "tag": "Small-Group Escapes",
+      "description": "Intimate, handcrafted group journeys (capped at 12 to 16 guests) for extended families, alumni networks, and photography expeditions.",
+      "destinations_covered": "Swiss Panoramic Rail, Rajasthan Royal Forts, Amalfi Coast Sailing, and Japan Cherry Blossom",
+      "turnaround": "Dedicated tour director and private luxury motorcoach for every group departure.",
+      "highlights": [
+        "Strictly capped at 12–16 discerning travelers for unhurried pacing",
+        "Exclusive private palace and vineyard after-hours access",
+        "Dedicated tour leader and local certified cultural guides",
+        "Curated group dining with vegetarian and Jain specialties"
       ]
     },
     {
@@ -2010,6 +2210,7 @@ window.LUXURY_CATALOG = {
   "experiences": [
     {
       "id": "exp-honeymoon",
+      "slug": "honeymoon",
       "type": "Honeymoon",
       "title": "Honeymoon & Romance",
       "tagline": "Private sanctuaries, starlit dining, and secluded couples retreats.",
@@ -2024,6 +2225,7 @@ window.LUXURY_CATALOG = {
     },
     {
       "id": "exp-family",
+      "slug": "family",
       "type": "Family",
       "title": "Family Sanctuaries & Multi-Gen Escapes",
       "tagline": "Comfort, space, relaxed pacing, and enriching multi-generational experiences.",
@@ -2037,6 +2239,7 @@ window.LUXURY_CATALOG = {
     },
     {
       "id": "exp-alpine",
+      "slug": "alpine",
       "type": "Adventure",
       "title": "Alpine & Expedition Journeys",
       "tagline": "First-class panoramic rail, glamping under starry skies, and glacier summits.",
@@ -2050,6 +2253,7 @@ window.LUXURY_CATALOG = {
     },
     {
       "id": "exp-heritage",
+      "slug": "heritage",
       "type": "Luxury",
       "title": "Royal Palaces & Cultural Heritage",
       "tagline": "Historic palace suites, royal hospitality, and private historian walks.",
@@ -2104,41 +2308,61 @@ window.LUXURY_CATALOG = {
     {
       "id": "blog-maldives-guide",
       "slug": "ultimate-maldives-luxury-guide",
-      "title": "The Ultimate Guide to Selecting Your Dream Maldives Resort",
-      "excerpt": "From private seaplane transfers to underwater restaurants, discover the key differences between atolls, overwater villas, and all-inclusive luxury.",
-      "image_url": "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=800&q=80",
-      "content": "<p>When planning a journey to the Maldives, one of the most common questions travelers ask is how to choose between the hundreds of private island resorts. Each atoll in this archipelago offers unique geographic and marine advantages.</p><h2>1. Seaplane vs. Speedboat Transfers</h2><p>Resorts within North and South Male Atolls are accessible via a 20-45 minute luxury speedboat transfer, which operates 24/7. However, if you are seeking ultimate seclusion and pristine marine biodiversity, taking a 35-45 minute scenic seaplane flight to Baa Atoll or Raa Atoll offers unmatched bird's-eye views of turquoise coral rings.</p><h2>2. Overwater Villas vs. Beach Villas</h2><p>While overwater villas provide direct lagoon access and uninterrupted ocean sunsets, beach villas often feature larger private gardens and immediate soft white sand access. For trips of 5 nights or longer, we frequently recommend a split-stay experience (2 nights Beach Villa + 3 nights Overwater Pool Villa) for the best of both worlds.</p><h2>3. All-Inclusive Luxury Defined</h2><p>Not all all-inclusive plans are created equal. At Via Tours & Travels, we specifically partner with 5-star resorts that offer Premium All-Inclusive dining, including multi-course à la carte meals, premium cellar wines, complimentary spa sessions, and guided marine excursions.</p>",
-      "created_at": "2026-02-15T10:00:00Z",
+      "title": "The Connoisseur's Guide to Selecting Your Maldives Island Sanctuary",
+      "category": "Resort Selection",
+      "author": "Ananya Sharma",
+      "author_role": "Senior Maldives Specialist",
+      "read_time": "5 min read",
+      "published_date": "04 Oct 2026",
+      "created_at": "2026-10-04T09:00:00Z",
+      "excerpt": "From private seaplane transfers in Baa Atoll to sunrise reef villas at Soneva and St. Regis, understand the nuances of atoll geography and premium all-inclusive plans.",
+      "image_url": "https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=800&q=80&fm=webp",
+      "content": "<p>When planning a journey to the Maldives, one of the most critical decisions is matching your travel rhythm with the right atoll. Each marine preserve in this archipelago offers distinct advantages in seclusion, reef health, and transfer logistics.</p><h2>1. Seaplane vs. Speedboat Transfers</h2><p>Resorts within North and South Malé Atolls are reached via 20 to 45-minute private speedboats, operating 24 hours a day without flight daylight restrictions. However, for complete isolation and pristine UNESCO Biosphere reefs, a 35 to 45-minute scenic seaplane journey to Baa Atoll or Raa Atoll provides unmatched bird's-eye views of turquoise coral rings.</p><h2>2. Overwater Villas vs. Beach Sanctuaries</h2><p>While overwater pool villas offer direct lagoon ladders and uninterrupted horizons, beach pavilions often feature expansive private gardens, natural shade, and immediate soft sand access. For stays of 5 nights or longer, our advisors recommend a split-stay experience (2 nights beachfront + 3 nights overwater) to appreciate both perspectives.</p><h2>3. All-Inclusive Luxury Defined</h2><p>Not all all-inclusive plans are equal. At Via Tours & Travels, we partner with properties that provide true à la carte dining across multiple signature specialty restaurants, Sommelier-curated cellars, and complimentary marine excursions.</p>",
       "is_published": true
     },
     {
       "id": "blog-swiss-scenic-trains",
       "slug": "switzerland-scenic-train-routes",
-      "title": "Riding the Clouds: Switzerland's Most Breathtaking Rail Journeys",
-      "excerpt": "Why the Glacier Express, Bernina Express, and GoldenPass panoramic trains are best experienced with first-class Swiss travel passes.",
-      "image_url": "https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?w=800&q=80",
-      "content": "<p>Switzerland possesses the world's most sophisticated and breathtaking railway network. The experience of gazing through panoramic glass ceilings as alpine glaciers and pristine valleys glide by is unmatched.</p><h2>The Glacier Express: The World's Slowest Express Train</h2><p>Connecting Zermatt with St. Moritz in roughly 8 hours, the Glacier Express crosses 291 bridges and 91 tunnels. First Class Excellence class includes dedicated concierge service, a five-course gourmet meal, and guaranteed window seating.</p><h2>The GoldenPass Panoramic</h2><p>Running from Montreux on Lake Geneva to Interlaken and Lucerne, this route showcases historic Swiss vineyards, storybook wooden chalets, and shimmering turquoise lakes.</p>",
-      "created_at": "2026-01-28T14:30:00Z",
+      "title": "Riding the Clouds: Switzerland's Most Breathtaking Scenic Rail Routes",
+      "category": "Alpine Journeys",
+      "author": "Vikramaditya Rathore",
+      "author_role": "European Rail Architect",
+      "read_time": "6 min read",
+      "published_date": "26 Sep 2026",
+      "created_at": "2026-09-26T11:30:00Z",
+      "excerpt": "Why the Glacier Express Excellence Class and Bernina Express panoramic rails are best experienced with private baggage transfers and guaranteed window suites.",
+      "image_url": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80&fm=webp",
+      "content": "<p>Switzerland possesses the world's most sophisticated and scenic railway network. The experience of gazing through panoramic glass dome ceilings as alpine glaciers and pristine valleys glide by remains unrivaled.</p><h2>The Glacier Express: Excellence Class</h2><p>Connecting Zermatt with St. Moritz over roughly 8 hours, the Glacier Express crosses 291 bridges and 91 tunnels. Excellence Class features guaranteed single window seating on both sides, a dedicated concierge, and a five-course regional tasting menu paired with Swiss wines.</p><h2>The GoldenPass Express</h2><p>Running between Montreux on Lake Geneva and Interlaken, this engineering marvel changes gauge dynamically to connect the French and German-speaking regions through picturesque wooden chalets and vineyards.</p>",
       "is_published": true
     },
     {
       "id": "blog-bali-culture-villas",
       "slug": "bali-hidden-gems-luxury-retreat",
-      "title": "Beyond the Crowds: Curating a Private Sanctuary in Bali",
-      "excerpt": "How to experience Bali with private waterfall tours, cliffside infinity pools, and authentic temple water blessings.",
-      "image_url": "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800&q=80",
-      "content": "<p>While Bali is celebrated globally, experiencing the island with tranquility requires thoughtful itinerary curation and private chauffeured access.</p><h2>The Magic of Ubud's River Valleys</h2><p>Staying in Ubud allows you to immerse yourself in the sound of rushing rivers and lush jungle canopies. Morning yoga sessions, private cooking classes with master chefs, and quiet temple visits before public hours reveal Bali's true soul.</p>",
-      "created_at": "2026-01-10T09:15:00Z",
+      "title": "Beyond the Crowds: Handcrafting a Private Villa Sanctuary in Bali",
+      "category": "Private Retreats",
+      "author": "Kavita Nair",
+      "author_role": "Luxury Island Concierge",
+      "read_time": "5 min read",
+      "published_date": "18 Sep 2026",
+      "created_at": "2026-09-18T14:15:00Z",
+      "excerpt": "How to experience Bali with private chauffeured access, sacred water temple cleansings before public hours, and secluded rainforest pool estates.",
+      "image_url": "https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=800&q=80&fm=webp",
+      "content": "<p>While Bali is celebrated globally, experiencing the island with profound tranquility requires thoughtful pacing and private access.</p><h2>The Magic of Ubud's River Valleys</h2><p>Staying along the Ayung River in Ubud allows you to immerse yourself in the soothing acoustics of rushing water and jungle canopies. Early-morning private yoga sessions, masterclasses with local culinary chefs, and private temple blessings before dawn reveal Bali's authentic spiritual rhythm.</p><h2>Cliffside Uluwatu Sunsets</h2><p>Conclude your journey on the limestone cliffs of Uluwatu, where private pool villas perch 150 meters above the Indian Ocean, offering front-row sunset views without the beach club bustle.</p>",
       "is_published": true
     },
     {
       "id": "blog-packing-checklist",
       "slug": "luxury-international-travel-packing-checklist",
-      "title": "Essential International Travel & Packing Checklist for Luxury Voyagers",
-      "excerpt": "From passport validity and multi-currency prep to private seaplane luggage allowances, review our essential pre-departure checklist.",
-      "image_url": "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&q=80",
-      "content": "<p>Preparing for a seamless luxury holiday requires thoughtful preparation. Here is our senior travel concierge-recommended pre-departure checklist to ensure effortless, stress-free journeys worldwide.</p><h2>1. Travel Documentation & Visa Clearance</h2><p>Always verify that your passport has at least 6 months validity from your scheduled date of return and at least 3 blank pages. Keep digital PDF copies of your flight tickets, luxury resort vouchers, and travel insurance accessible on your smartphone offline.</p><h2>2. Currency & Multi-Currency Cards</h2><p>While international credit cards are widely accepted at 5-star resorts, carrying a modest reserve of local currency (for gratuities, traditional bazaars, and local artisans) is recommended. Ensure international roaming and bank transaction alerts are activated before departure.</p><h2>3. Luggage & Packing Strategy</h2><p>When traveling to island destinations via seaplane (such as the Maldives), keep in mind luggage weight guidelines (typically 20kg checked + 5kg hand luggage). For European alpine expeditions, pack high-quality breathable thermal layers and UV-polarized sunglasses.</p>",
-      "created_at": "2026-02-20T11:00:00Z",
+      "title": "Essential Pre-Departure Checklist for Luxury International Voyagers",
+      "category": "Travel Intelligence",
+      "author": "Rohan Varma",
+      "author_role": "Head of Consular & Travel Operations",
+      "read_time": "4 min read",
+      "published_date": "05 Sep 2026",
+      "created_at": "2026-09-05T10:00:00Z",
+      "excerpt": "From passport validity and multi-currency card locking to seaplane baggage rules and travel insurance, review our essential pre-departure checklist.",
+      "image_url": "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&q=80&fm=webp",
+      "content": "<p>Preparing for a seamless luxury holiday requires methodical preparation. Here is our senior travel concierge-recommended pre-departure checklist to ensure effortless, stress-free journeys worldwide.</p><h2>1. Travel Documentation & Visa Clearance</h2><p>Always verify that your passport has at least 6 months validity from your scheduled date of return and at least 3 blank pages. Keep digital PDF copies of your flight tickets, luxury resort vouchers, and travel insurance accessible on your smartphone offline.</p><h2>2. Currency & Multi-Currency Cards</h2><p>While international credit cards are widely accepted at 5-star resorts, carrying a modest reserve of local currency (for gratuities, traditional bazaars, and local artisans) is recommended. Ensure international roaming and bank transaction alerts are activated before departure.</p><h2>3. Luggage & Packing Strategy</h2><p>When traveling to island destinations via seaplane (such as the Maldives), keep in mind luggage weight guidelines (typically 20kg checked + 5kg hand luggage). For European alpine expeditions, pack high-quality breathable thermal layers and UV-polarized sunglasses.</p>",
       "is_published": true
     }
   ],
@@ -2149,8 +2373,10 @@ window.LUXURY_CATALOG = {
       "rating": 5,
       "date": "October 2025",
       "source": "Google Reviews",
+      "source_url": "https://www.google.com/search?q=Via+Tours+and+Travels+reviews",
       "message": "Our Maldives honeymoon planned by Via Tours & Travels exceeded every expectation. The overwater pool villa was breathtaking, and our private seaplane and champagne yacht cruise went off without a hitch. Truly 5-star service!",
-      "image_url": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&q=80",
+      "initials": "AK",
+      "verified": true,
       "id": "test-1",
       "is_published": true
     },
@@ -2160,8 +2386,10 @@ window.LUXURY_CATALOG = {
       "rating": 5,
       "date": "June 2025",
       "source": "Google Reviews",
+      "source_url": "https://www.google.com/search?q=Via+Tours+and+Travels+reviews",
       "message": "Traveling with elderly parents and kids can be challenging, but Via Tours & Travels orchestrated every private transfer and Swiss rail ticket flawlessly. The Glacier Express was the highlight of our year!",
-      "image_url": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&q=80",
+      "initials": "SS",
+      "verified": true,
       "id": "test-2",
       "is_published": true
     },
@@ -2171,8 +2399,10 @@ window.LUXURY_CATALOG = {
       "rating": 5,
       "date": "December 2025",
       "source": "Google Reviews",
+      "source_url": "https://www.google.com/search?q=Via+Tours+and+Travels+reviews",
       "message": "From the private superyacht around Palm Jumeirah to the desert glamping villa, the VIP treatment was top tier. The 24/7 WhatsApp concierge answered all our requests in seconds.",
-      "image_url": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&q=80",
+      "initials": "KS",
+      "verified": true,
       "id": "test-3",
       "is_published": true
     },
@@ -2182,8 +2412,10 @@ window.LUXURY_CATALOG = {
       "rating": 5,
       "date": "September 2025",
       "source": "Google Reviews",
+      "source_url": "https://www.google.com/search?q=Via+Tours+and+Travels+reviews",
       "message": "The private jungle pool villa in Ubud and cliffside dinner in Uluwatu arranged by Via Tours & Travels were out of a fairy tale. Everything was curated with impeccable perfection and care.",
-      "image_url": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&q=80",
+      "initials": "PM",
+      "verified": true,
       "id": "test-4",
       "is_published": true
     }

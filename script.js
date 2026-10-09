@@ -1,7 +1,7 @@
 /**
  * ==============================================================================
  * VIA TOURS & TRAVELS — OFFICIAL CLIENT-SIDE CONTROLLER
- * Architecture: ES6+ SPA Controller with Hybrid Offline & Backend Support
+ * Architecture: ES6+ SPA Controller with Client-Side Routing & Supabase Integration
  * Features: Client-Side Hash Router, Safe Fallbacks, Bot Defense & Rate Limiter
  * ==============================================================================
  */
@@ -31,22 +31,13 @@
         name: 'Via Tours & Travels',
         email: 'concierge@viatoursandtravels.com',
         conciergeEmail: 'concierge@viatoursandtravels.com',
-        phone: '+91 (080) 4123 7890',
+        phone: '+91 80 4123 7890',
         whatsapp: '918879776866',
         address: 'Prestige Meridian, Level 6, 29 MG Road, Bengaluru 560001, India'
     };
     let activeDestFilter = null;
     let currentPackage = null;
     let isDarkMode = localStorage.getItem('darkMode') === 'true';
-
-    // Multi-Currency Engine
-    const CURRENCY_CONFIG = {
-        INR: { symbol: '₹', rate: 1, locale: 'en-IN' },
-        USD: { symbol: '$', rate: 1 / 86.5, locale: 'en-US' },
-        EUR: { symbol: '€', rate: 1 / 93.0, locale: 'de-DE' },
-        AED: { symbol: 'AED ', rate: 1 / 23.55, locale: 'en-AE' }
-    };
-    let currentCurrency = localStorage.getItem('via_currency') || 'INR';
 
     // Apply dark mode preference on load
     if (isDarkMode) {
@@ -64,34 +55,13 @@
             .replace(/'/g, '&#039;');
     }
 
-    function formatPrice(amount, targetCurr = currentCurrency) {
+    function formatPrice(amount) {
         const num = Number(amount) || 0;
-        const cfg = CURRENCY_CONFIG[targetCurr] || CURRENCY_CONFIG.INR;
-        const converted = Math.round(num * cfg.rate);
-        return cfg.symbol + converted.toLocaleString(cfg.locale);
+        return '₹' + num.toLocaleString('en-IN');
     }
 
-    function switchCurrency(code) {
-        if (!CURRENCY_CONFIG[code]) return;
-        currentCurrency = code;
-        localStorage.setItem('via_currency', code);
-        document.querySelectorAll('.currency-select').forEach(sel => sel.value = code);
-
-        // Update all elements with data-inr-price
-        document.querySelectorAll('[data-inr-price]').forEach(el => {
-            const inr = el.getAttribute('data-inr-price');
-            if (inr) {
-                const prefix = el.getAttribute('data-price-prefix') || '';
-                const suffix = el.getAttribute('data-price-suffix') || '';
-                el.textContent = `${prefix}${formatPrice(inr)}${suffix}`;
-            }
-        });
-
-        // If package details open, update detail pricing
-        const detailPrice = document.querySelector('#pkg_details_container .price-tag');
-        if (detailPrice && currentPackage && currentPackage.price) {
-            detailPrice.textContent = formatPrice(currentPackage.price);
-        }
+    function switchCurrency() {
+        // Canonical INR pricing standardized for outbound Indian travelers
     }
 
     function debounce(fn, delay = 350) {
@@ -117,12 +87,27 @@
     }
 
     function trackEvent(eventName, eventParams = {}) {
-        window.dataLayer = window.dataLayer || [];
-        window.dataLayer.push({
+        const payload = {
             event: eventName,
             timestamp: new Date().toISOString(),
             ...eventParams
-        });
+        };
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push(payload);
+
+        // Google Analytics 4 (gtag)
+        if (typeof window.gtag === 'function') {
+            try {
+                window.gtag('event', eventName, eventParams);
+            } catch (e) {}
+        }
+
+        // Meta Pixel (fbq)
+        if (typeof window.fbq === 'function') {
+            try {
+                window.fbq('trackCustom', eventName, eventParams);
+            } catch (e) {}
+        }
     }
 
     function updateSEO(title, desc, image = null, url = null, customSchema = null) {
@@ -202,186 +187,70 @@
                             "addressRegion": "Karnataka",
                             "addressCountry": "IN"
                         },
-                        "priceRange": "$$$$"
+                        "priceRange": "$$$$",
+                        "aggregateRating": {
+                            "@type": "AggregateRating",
+                            "ratingValue": "4.9",
+                            "reviewCount": "180",
+                            "bestRating": "5"
+                        }
                     }
                 ]
             };
 
-            if (customSchema) {
-                baseSchema["@graph"].push(customSchema);
+            // Inject BreadcrumbList schema if url provided
+            if (url) {
+                const parts = url.replace(/^\/+/, '').split('/').filter(Boolean);
+                const breadcrumbs = [
+                    {
+                        "@type": "ListItem",
+                        "position": 1,
+                        "name": "Home",
+                        "item": "https://viatoursandtravels.com/"
+                    }
+                ];
+                let accum = '';
+                parts.forEach((p, idx) => {
+                    accum += '/' + p;
+                    const cleanName = p.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                    breadcrumbs.push({
+                        "@type": "ListItem",
+                        "position": idx + 2,
+                        "name": idx === parts.length - 1 && title ? title.replace(/ — Via Tours.*$/, '') : cleanName,
+                        "item": `https://viatoursandtravels.com${accum}`
+                    });
+                });
+                baseSchema["@graph"].push({
+                    "@type": "BreadcrumbList",
+                    "@id": `https://viatoursandtravels.com${url.startsWith('/') ? '' : '/'}${url}#breadcrumb`,
+                    "itemListElement": breadcrumbs
+                });
             }
 
-            scriptTag.textContent = JSON.stringify(baseSchema);
+            if (customSchema) {
+                if (Array.isArray(customSchema)) {
+                    baseSchema["@graph"].push(...customSchema);
+                } else {
+                    baseSchema["@graph"].push(customSchema);
+                }
+            }
+
+            scriptTag.textContent = JSON.stringify(baseSchema, null, 2);
         } catch (e) {
             console.warn('[Via] JSON-LD injection warning:', e);
         }
     }
 
-    // --- WISHLIST ENGINE ---
-    function getWishlist() {
-        try {
-            return JSON.parse(localStorage.getItem('via_wishlist')) || [];
-        } catch (e) {
-            return [];
-        }
-    }
+    // --- WISHLIST ENGINE (Streamlined Stubs) ---
+    function getWishlist() { return []; }
+    function saveWishlist() {}
+    function toggleWishlist() {}
+    function updateWishlistUI() {}
+    function filterWishlist() { navTo('packages'); }
 
-    function saveWishlist(list) {
-        localStorage.setItem('via_wishlist', JSON.stringify(list));
-        updateWishlistUI();
-    }
-
-    function toggleWishlist(pkgId, evt) {
-        if (evt) {
-            evt.preventDefault();
-            evt.stopPropagation();
-        }
-        let list = getWishlist();
-        const index = list.indexOf(pkgId);
-        if (index > -1) {
-            list.splice(index, 1);
-            showToast('Package removed from your Wishlist.', 'info');
-        } else {
-            list.push(pkgId);
-            showToast('Saved to your Curated Wishlist!', 'success');
-        }
-        saveWishlist(list);
-    }
-
-    function updateWishlistUI() {
-        const list = getWishlist();
-        const count = list.length;
-        const countEl = document.getElementById('wishlistCount');
-        const mobileCountEl = document.getElementById('mobileWishlistCount');
-        if (countEl) countEl.textContent = count;
-        if (mobileCountEl) mobileCountEl.textContent = count;
-
-        document.querySelectorAll('.wishlist-btn[data-pkg-id]').forEach(btn => {
-            const id = btn.getAttribute('data-pkg-id');
-            const icon = btn.querySelector('i');
-            if (list.includes(id)) {
-                btn.classList.add('active');
-                if (icon) {
-                    icon.classList.remove('far');
-                    icon.classList.add('fas');
-                }
-            } else {
-                btn.classList.remove('active');
-                if (icon) {
-                    icon.classList.remove('fas');
-                    icon.classList.add('far');
-                }
-            }
-        });
-    }
-
-    function filterWishlist(evt) {
-        if (evt) evt.preventDefault();
-        navTo('packages');
-        setTimeout(() => {
-            const list = getWishlist();
-            const listEl = document.getElementById('list_packages');
-            if (!listEl) return;
-            if (!list.length) {
-                listEl.innerHTML = `
-                    <div style="grid-column:1/-1; text-align:center; padding:60px 20px; background:var(--bg-light); border-radius:var(--radius-xl); border:1px dashed var(--border);">
-                        <i class="fas fa-heart-broken" style="font-size:3rem; color:var(--text-muted); margin-bottom:16px;"></i>
-                        <h3>Your Wishlist is Empty</h3>
-                        <p style="color:var(--text-muted); max-width:400px; margin:0 auto 20px;">Explore our bespoke escapes and click the heart icon to save your favorite itineraries for later.</p>
-                        <button class="btn btn-primary" onclick="clearFilter()">Explore All Packages</button>
-                    </div>
-                `;
-                return;
-            }
-            const allPacks = (window.LUXURY_CATALOG && window.LUXURY_CATALOG.packages) ? window.LUXURY_CATALOG.packages : [];
-            const savedPacks = allPacks.filter(p => list.includes(p.id));
-            if (savedPacks.length) {
-                listEl.innerHTML = savedPacks.map(p => renderPackageCard(p)).join('');
-                updateWishlistUI();
-            }
-        }, 120);
-    }
-
-    // --- PACKAGE COMPARISON ENGINE ---
-    function openCompareModal(pkgId1, pkgId2) {
-        const modal = document.getElementById('compareModal');
-        const body = document.getElementById('compareModalBody');
-        if (!modal || !body) return;
-
-        const allPacks = (window.LUXURY_CATALOG && window.LUXURY_CATALOG.packages) ? window.LUXURY_CATALOG.packages : [];
-        const p1 = allPacks.find(p => p.id === pkgId1) || allPacks[0];
-        const p2 = allPacks.find(p => p.id === pkgId2) || allPacks[1] || allPacks[0];
-
-        if (!p1 || !p2) {
-            showToast('Comparison requires at least two packages.', 'error');
-            return;
-        }
-
-        body.innerHTML = `
-            <table class="compare-table">
-                <thead>
-                    <tr>
-                        <th style="width:25%;">Feature</th>
-                        <th style="width:37.5%; text-align:center;">
-                            <img src="${escapeHTML(p1.image_url)}" alt="${escapeHTML(p1.title)}" style="width:100%; height:130px; object-fit:cover; border-radius:var(--radius-md); margin-bottom:8px;">
-                            <strong>${escapeHTML(p1.title)}</strong>
-                        </th>
-                        <th style="width:37.5%; text-align:center;">
-                            <img src="${escapeHTML(p2.image_url)}" alt="${escapeHTML(p2.title)}" style="width:100%; height:130px; object-fit:cover; border-radius:var(--radius-md); margin-bottom:8px;">
-                            <strong>${escapeHTML(p2.title)}</strong>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>Destination</strong></td>
-                        <td style="text-align:center;">${escapeHTML(p1.destination_name || p1.dest || 'Maldives')}</td>
-                        <td style="text-align:center;">${escapeHTML(p2.destination_name || p2.dest || 'Switzerland')}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Duration</strong></td>
-                        <td style="text-align:center;">${escapeHTML(p1.duration || 'N/A')}</td>
-                        <td style="text-align:center;">${escapeHTML(p2.duration || 'N/A')}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Starting Tariff</strong></td>
-                        <td style="text-align:center; font-weight:700; color:var(--brand-orange); font-size:1.15rem;">${formatPrice(p1.price)} / person</td>
-                        <td style="text-align:center; font-weight:700; color:var(--brand-orange); font-size:1.15rem;">${formatPrice(p2.price)} / person</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Experience Category</strong></td>
-                        <td style="text-align:center;"><span class="tag">${escapeHTML(p1.category || 'Luxury')}</span></td>
-                        <td style="text-align:center;"><span class="tag">${escapeHTML(p2.category || 'Luxury')}</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Accommodation Tier</strong></td>
-                        <td style="text-align:center;">5-Star Ultra Luxury Pool Villa</td>
-                        <td style="text-align:center;">5-Star Superior Alpine Resort</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Key Inclusions</strong></td>
-                        <td style="text-align:center; font-size:0.88rem;">${(p1.inclusions || []).slice(0, 3).join(', ') || 'VIP Airport Seaplane, All-Inclusive Dining'}</td>
-                        <td style="text-align:center; font-size:0.88rem;">${(p2.inclusions || []).slice(0, 3).join(', ') || '1st-Class Glacier Express Rail, 5★ Chalets'}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Action</strong></td>
-                        <td style="text-align:center;">
-                            <button class="btn btn-primary" style="padding:6px 14px; font-size:0.85rem;" onclick="closeCompareModal(); navTo('package', '${escapeHTML(p1.id)}')">View Itinerary</button>
-                        </td>
-                        <td style="text-align:center;">
-                            <button class="btn btn-primary" style="padding:6px 14px; font-size:0.85rem;" onclick="closeCompareModal(); navTo('package', '${escapeHTML(p2.id)}')">View Itinerary</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        `;
-        modal.classList.add('show', 'active');
-    }
-
-    function closeCompareModal() {
-        const modal = document.getElementById('compareModal');
-        if (modal) modal.classList.remove('show', 'active');
-    }
+    // --- PACKAGE COMPARISON ENGINE (Streamlined Stubs) ---
+    function openCompareModal() {}
+    function closeCompareModal() {}
 
     // Newsletter Handler
     function handleNewsletter(e) {
@@ -437,28 +306,70 @@
     });
 
     function toggleChat() {
-        const chat = document.getElementById('chatWindow');
-        if (!chat) return;
-        const isActive = chat.classList.toggle('active');
-        if (isActive) {
-            const input = document.getElementById('chatInput');
-            if (input) setTimeout(() => input.focus(), 150);
-        }
+        // Route directly to senior human concierge on WhatsApp
+        window.open('https://wa.me/918879776866?text=Hi%20Via%20Tours,%20I%20would%20like%20to%20plan%20a%20bespoke%20itinerary', '_blank');
+    }
+
+    // --- CATALOG ENTITY LOOKUP HELPERS ---
+    function findPackage(idOrSlug) {
+        if (!idOrSlug) return null;
+        const needle = String(idOrSlug).toLowerCase().trim();
+        const all = (window.LUXURY_CATALOG && window.LUXURY_CATALOG.packages) ? window.LUXURY_CATALOG.packages : [];
+        return all.find(p => 
+            p.id === idOrSlug ||
+            (p.slug && p.slug.toLowerCase() === needle) ||
+            String(p.id).toLowerCase() === needle ||
+            (p.aliases && p.aliases.some(a => a.toLowerCase() === needle))
+        ) || null;
+    }
+
+    function findDestination(idOrSlug) {
+        if (!idOrSlug) return null;
+        const needle = String(idOrSlug).toLowerCase().trim();
+        const all = (window.LUXURY_CATALOG && window.LUXURY_CATALOG.destinations) ? window.LUXURY_CATALOG.destinations : [];
+        return all.find(d => 
+            d.id === idOrSlug ||
+            (d.slug && d.slug.toLowerCase() === needle) ||
+            String(d.id).toLowerCase() === needle ||
+            (d.name && d.name.toLowerCase() === needle) ||
+            (d.aliases && d.aliases.some(a => a.toLowerCase() === needle))
+        ) || null;
+    }
+
+    function findBlogPost(idOrSlug) {
+        if (!idOrSlug) return null;
+        const needle = String(idOrSlug).toLowerCase().trim();
+        const all = (window.LUXURY_CATALOG && window.LUXURY_CATALOG.blogs) ? window.LUXURY_CATALOG.blogs : [];
+        return all.find(b => 
+            b.id === idOrSlug ||
+            (b.slug && b.slug.toLowerCase() === needle) ||
+            String(b.id).toLowerCase() === needle
+        ) || null;
     }
 
     // --- CLEAN URL ROUTING (HTML5 HISTORY API) ---
     function getCleanRoute() {
-        // 1. Check for legacy hash route (e.g. #/packages or #/package/id)
+        // 1. Check for legacy hash route (e.g. #/packages or #/packages/maldives-overwater-sanctuary)
         if (window.location.hash && window.location.hash.startsWith('#/')) {
             const hashParts = window.location.hash.replace(/^#\/?/, '').split('/');
+            let routePage = hashParts[0] || 'home';
+            let routeId = hashParts[1] || null;
+
+            if ((routePage === 'packages' || routePage === 'package') && routeId && findPackage(routeId)) {
+                routePage = 'package';
+            } else if ((routePage === 'destinations' || routePage === 'destination') && routeId) {
+                routePage = 'destination';
+            } else if ((routePage === 'blog' || routePage === 'blog-post') && routeId) {
+                routePage = 'blog-post';
+            }
             return {
-                page: hashParts[0] || 'home',
-                id: hashParts[1] || null,
+                page: routePage,
+                id: routeId,
                 fromHash: true
             };
         }
 
-        // 2. Parse clean pathname (e.g. /packages or /package/id)
+        // 2. Parse clean pathname (e.g. /packages/maldives-overwater-sanctuary)
         const cleanPath = window.location.pathname
             .replace(/^\/+/, '')
             .replace(/^index\.html\/?/, '')
@@ -469,9 +380,25 @@
         }
 
         const parts = cleanPath.split('/');
+        let routePage = parts[0] || 'home';
+        let routeId = parts[1] || null;
+
+        // Auto-detect package detail route from clean URL /packages/:slug or /package/:id
+        if ((routePage === 'packages' || routePage === 'package') && routeId) {
+            const matchedPkg = findPackage(routeId);
+            if (matchedPkg) {
+                routePage = 'package';
+                routeId = matchedPkg.id;
+            }
+        } else if ((routePage === 'destinations' || routePage === 'destination') && routeId) {
+            routePage = 'destination';
+        } else if ((routePage === 'blog' || routePage === 'blog-post') && routeId) {
+            routePage = 'blog-post';
+        }
+
         return {
-            page: parts[0] || 'home',
-            id: parts[1] || null,
+            page: routePage,
+            id: routeId,
             fromHash: false
         };
     }
@@ -484,43 +411,39 @@
         }
 
         const isLocalFile = window.location.protocol === 'file:';
-        const cleanPage = (!page || page === 'home') ? '' : page;
-        const targetPath = cleanPage ? (id ? '/' + cleanPage + '/' + id : '/' + cleanPage) : '/';
+        let cleanPage = (!page || page === 'home') ? '' : page;
+        let routeId = id;
+
+        // Normalize canonical clean URLs
+        if ((cleanPage === 'package' || cleanPage === 'packages') && id) {
+            cleanPage = 'packages';
+            const pkg = findPackage(id);
+            if (pkg) routeId = pkg.slug || pkg.id;
+        } else if ((cleanPage === 'destination' || cleanPage === 'destinations') && id) {
+            cleanPage = 'destinations';
+            const dest = findDestination(id);
+            if (dest) routeId = dest.slug || dest.id;
+        } else if ((cleanPage === 'blog-post' || cleanPage === 'blog') && id) {
+            cleanPage = 'blog';
+            const post = findBlogPost(id);
+            if (post) routeId = post.slug || post.id;
+        } else if (cleanPage === 'experiences' && id) {
+            routeId = String(id).toLowerCase().trim();
+        }
+
+        const targetPath = cleanPage ? (routeId ? '/' + cleanPage + '/' + routeId : '/' + cleanPage) : '/';
 
         if (!isLocalFile && window.history && window.history.pushState) {
-            window.history.pushState({ page: page || 'home', id: id || null }, '', targetPath);
+            window.history.pushState({ page: cleanPage || 'home', id: routeId || null }, '', targetPath);
             router();
         } else {
-            window.location.hash = '#/' + (page || 'home') + (id ? '/' + id : '');
+            window.location.hash = '#/' + (cleanPage || 'home') + (routeId ? '/' + routeId : '');
         }
     }
 
-    // --- HERO SEARCH BAR CONTROLLER ---
+    // --- HERO ACTION CONTROLLER ---
     function searchFromHero() {
-        const destInput = document.getElementById('hero_dest');
-        const styleSelect = document.getElementById('hero_style');
-        const query = destInput ? destInput.value.trim() : '';
-        const style = styleSelect ? styleSelect.value : '';
-
-        // Navigate to packages view
-        navTo('packages');
-
-        // Apply search query and style filter after view renders
-        setTimeout(() => {
-            const pkgSearch = document.getElementById('pkg_search');
-            const catSelect = document.getElementById('filter-category');
-            if (pkgSearch && query) {
-                pkgSearch.value = query;
-            }
-            if (catSelect && style) {
-                catSelect.value = style;
-            }
-            loadPackages();
-            const packagesSection = document.getElementById('page-packages');
-            if (packagesSection) {
-                packagesSection.scrollIntoView({ behavior: 'smooth' });
-            }
-        }, 100);
+        navTo('plan-trip');
     }
 
     // --- CLIENT-SIDE SINGLE PAGE ROUTER ---
@@ -583,19 +506,42 @@
                 break;
 
             case 'destinations':
+                if (id) {
+                    const matchedDest = findDestination(id);
+                    if (matchedDest) {
+                        activePage = 'destination';
+                        if (view) view.style.display = 'none';
+                        view = document.getElementById('page-destination');
+                        if (view) view.style.display = 'block';
+                        loadDestinationDetails(matchedDest.id);
+                        break;
+                    }
+                }
                 loadDestinations();
                 updateSEO('Iconic Destinations', 'Explore private islands in the Maldives, Swiss chalets, and sacred Bali sanctuaries.', null, '/destinations');
                 break;
 
             case 'destination':
                 if (id) {
-                    loadDestinationDetails(id);
+                    const d = findDestination(id);
+                    loadDestinationDetails(d ? d.id : id);
                 } else {
                     navTo('destinations');
                 }
                 break;
 
             case 'packages':
+                if (id) {
+                    const matchedPkg = findPackage(id);
+                    if (matchedPkg) {
+                        activePage = 'package';
+                        if (view) view.style.display = 'none';
+                        view = document.getElementById('page-package');
+                        if (view) view.style.display = 'block';
+                        loadPackageDetails(matchedPkg.id);
+                        break;
+                    }
+                }
                 activeDestFilter = id || null;
                 await initPackageFilters();
                 loadPackages();
@@ -604,15 +550,15 @@
 
             case 'package':
                 if (id) {
-                    loadPackageDetails(id);
+                    const p = findPackage(id);
+                    loadPackageDetails(p ? p.id : id);
                 } else {
                     navTo('packages');
                 }
                 break;
 
             case 'experiences':
-                loadExperiences();
-                updateSEO('Curated Experiences & Travel Styles', 'Explore honeymoon sanctuaries, alpine expeditions, family sanctuaries, and royal heritage escapes.', null, '/experiences');
+                loadExperiences(id);
                 break;
 
             case 'services':
@@ -631,13 +577,25 @@
                 break;
 
             case 'blog':
+                if (id) {
+                    const matchedBlog = findBlogPost(id);
+                    if (matchedBlog) {
+                        activePage = 'blog-post';
+                        if (view) view.style.display = 'none';
+                        view = document.getElementById('page-blog-post');
+                        if (view) view.style.display = 'block';
+                        loadBlogPost(matchedBlog.slug || matchedBlog.id);
+                        break;
+                    }
+                }
                 loadBlog();
                 updateSEO('Travel Journal & Guides', 'Expert luxury travel tips, packing guides, and insider resort reviews.', null, '/blog');
                 break;
 
             case 'blog-post':
                 if (id) {
-                    loadBlogPost(id);
+                    const b = findBlogPost(id);
+                    loadBlogPost(b ? (b.slug || b.id) : id);
                 } else {
                     navTo('blog');
                 }
@@ -665,8 +623,14 @@
                 break;
 
             case 'cancellation':
+            case 'refund':
             case 'refund-policy':
-                updateSEO('Cancellation & Refund Policy', 'Transparent booking terms, cancellation schedules, refund processing, and date modification policies.', null, '/cancellation');
+                updateSEO('Cancellation & Refund Policy', 'Transparent booking terms, cancellation schedules, refund processing, and date modification policies.', null, '/refund');
+                break;
+
+            case 'cookies':
+            case 'cookie-policy':
+                updateSEO('Cookie & Tracking Policy (DPDP Act 2023)', 'How Via Tours & Travels utilizes cookies and local storage in compliance with Indian data privacy law.', null, '/cookies');
                 break;
 
             case '404':
@@ -684,18 +648,23 @@
     const DEST_STARTING_PRICES = {
         'maldives': 185000,
         'switzerland': 245000,
-        'bali': 95000,
-        'indonesia': 95000,
+        'bali': 125000,
+        'indonesia': 125000,
         'dubai': 145000,
         'united arab emirates': 145000,
         'uae': 145000,
+        'amalfi coast & capri': 275000,
+        'amalfi coast': 275000,
+        'amalfi': 275000,
+        'italy': 275000,
         'france': 220000,
-        'italy': 210000,
         'japan': 260000,
         'iceland': 230000,
-        'vietnam': 50000,
-        'kashmir': 45000,
-        'kerala': 42000
+        'vietnam': 185000,
+        'kashmir': 125000,
+        'rajasthan': 165000,
+        'kerala': 115000,
+        'ladakh': 135000
     };
 
     function getDestStartingPrice(dest) {
@@ -734,29 +703,33 @@
 
     // Common Package Card Template (Wishlist, Compare & Currency Aware)
     function renderPackageCard(p) {
-        const list = getWishlist();
-        const isSaved = list.includes(p.id);
         const destName = p.destinations?.name || p.destination_name || (p.dest ? p.dest.toUpperCase() : 'Iconic Destination');
-        const compareTarget = (p.id === 'pkg-maldives-sanctuary') ? 'pkg-switzerland-panoramic' : 'pkg-maldives-sanctuary';
+        const catPkg = window.LUXURY_CATALOG && window.LUXURY_CATALOG.packages && window.LUXURY_CATALOG.packages.find(cp => cp.id === p.id);
+        const cardSlug = (catPkg && catPkg.slug) || p.slug || p.id;
+        const rawTitle = (catPkg && catPkg.title) || p.title || '';
+        const cleanTitle = rawTitle.replace(/\s*5[★*]\s*/g, ' ').replace(/\.{2,}/g, ': ').trim();
+        const luxuryTier = p.luxury_tier || (catPkg && catPkg.luxury_tier) || '5★ Luxury';
+        const cardImg = (catPkg && catPkg.image_url) || p.image_url || 'assets/agency-logo-emblem.webp';
+        const cardPrice = (catPkg && catPkg.price) || p.price;
 
         return `
-            <div class="card" onclick="navTo('package', '${escapeHTML(p.id)}')" role="button" tabindex="0" onkeydown="if(event.key==='Enter') navTo('package', '${escapeHTML(p.id)}')">
+            <div class="card" onclick="navTo('packages', '${escapeHTML(cardSlug)}')" role="button" tabindex="0" onkeydown="if(event.key==='Enter') navTo('packages', '${escapeHTML(cardSlug)}')">
                 <div style="position:relative;">
-                    <img src="${escapeHTML(p.image_url || 'assets/agency-logo-emblem.webp')}" alt="${escapeHTML(p.title)}" loading="lazy" width="400" height="220">
-                    <button type="button" class="wishlist-btn ${isSaved ? 'active' : ''}" data-pkg-id="${escapeHTML(p.id)}" onclick="toggleWishlist('${escapeHTML(p.id)}', event)" aria-label="Save ${escapeHTML(p.title)} to Wishlist" title="Save to Wishlist">
-                        <i class="${isSaved ? 'fas' : 'far'} fa-heart"></i>
-                    </button>
+                    <img src="${escapeHTML(cardImg)}" alt="${escapeHTML(cleanTitle)}" loading="lazy" width="400" height="220">
+                    <span class="badge-gold" style="position:absolute; top:12px; left:12px; z-index:2;">
+                        <i class="fas fa-star" style="color:#d97706; font-size:0.65rem;"></i> ${escapeHTML(luxuryTier)}
+                    </span>
                 </div>
                 <div class="card-body">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
                         <span class="tag">${escapeHTML(p.category || 'Luxury')}</span>
-                        <button type="button" class="btn btn-outline" style="padding:2px 8px; font-size:0.75rem;" onclick="event.stopPropagation(); openCompareModal('${escapeHTML(p.id)}', '${compareTarget}')" title="Compare with another package">
-                            <i class="fas fa-balance-scale"></i> Compare
-                        </button>
                     </div>
-                    <h3>${escapeHTML(p.title)}</h3>
+                    <h3>${escapeHTML(cleanTitle)}</h3>
                     <p style="color:var(--text-muted); font-size:14px;"><i class="far fa-clock" style="color:var(--brand-orange);"></i> ${escapeHTML(p.duration || 'N/A')} &bull; <i class="fas fa-map-marker-alt" style="color:var(--brand-orange);"></i> ${escapeHTML(destName)}</p>
-                    <span class="price-tag" data-inr-price="${p.price}" data-price-prefix="Starting from ">Starting from ${formatPrice(p.price)}</span>
+                    <div style="margin-top:auto; padding-top:10px;">
+                        <span class="price-tag" data-inr-price="${cardPrice}" data-price-prefix="Starting from ">Starting from ${formatPrice(cardPrice)}</span>
+                        <div class="price-subtext">per person &bull; twin-sharing basis</div>
+                    </div>
                 </div>
             </div>
         `;
@@ -764,58 +737,50 @@
 
     // 2. Home Page Showcase Data
     async function loadHomeData() {
-        // A. Destinations
+        // A. Destinations (Differentiated 4 distinct destinations)
         let dests = [];
-        if (sb) {
-            try {
-                const { data } = await sb.from('destinations').select('id, name, country, image_url').eq('is_published', true).limit(4);
-                if (data && data.length) dests = data;
-            } catch (e) {
-                console.warn('[Via] Supabase destinations fetch warning:', e);
-            }
-        }
-        if ((!dests || !dests.length) && window.LUXURY_CATALOG && window.LUXURY_CATALOG.destinations) {
-            dests = window.LUXURY_CATALOG.destinations.slice(0, 4);
+        const homeDestIds = ['dest-amalfi', 'dest-bali', 'dest-kashmir', 'dest-dubai'];
+        if (window.LUXURY_CATALOG && window.LUXURY_CATALOG.destinations) {
+            dests = window.LUXURY_CATALOG.destinations.filter(d => homeDestIds.includes(d.id));
         }
         const homeDestEl = document.getElementById('home_destinations');
         if (homeDestEl) {
-            homeDestEl.innerHTML = dests.length ? dests.map(d => `
-                <div class="card" onclick="navTo('packages', '${escapeHTML(d.id)}')" role="button" tabindex="0" onkeydown="if(event.key==='Enter') navTo('packages', '${escapeHTML(d.id)}')">
-                    <img src="${escapeHTML(d.image_url || 'assets/agency-logo-emblem.webp')}" alt="${escapeHTML(d.name)}" loading="lazy" width="400" height="220">
-                    <div class="card-body">
-                        <span class="tag">Bespoke Escape</span>
-                        <h3>${escapeHTML(d.name)}</h3>
-                        <p style="color:var(--text-muted); font-size:14px; margin-bottom:8px;"><i class="fas fa-map-marker-alt" style="color:var(--brand-orange);"></i> ${escapeHTML(d.region || d.country || '')}</p>
-                        <span class="price-tag" data-inr-price="${getDestStartingPrice(d)}" data-price-prefix="From " data-price-suffix=" / person">From ${formatPrice(getDestStartingPrice(d))} / person</span>
+            homeDestEl.innerHTML = dests.length ? dests.map(d => {
+                const catMatch = window.LUXURY_CATALOG && window.LUXURY_CATALOG.destinations && window.LUXURY_CATALOG.destinations.find(cd => cd.id === d.id);
+                const destSlug = (catMatch && catMatch.slug) || d.slug || d.id;
+                const curatedTag = (catMatch && catMatch.curated_tag) || d.curated_tag || (d.region || d.country || 'Curated Escape');
+                const destImg = (catMatch && catMatch.image_url) || d.image_url || 'assets/agency-logo-emblem.webp';
+                return `
+                    <div class="card" onclick="navTo('destinations', '${escapeHTML(destSlug)}')" role="button" tabindex="0" onkeydown="if(event.key==='Enter') navTo('destinations', '${escapeHTML(destSlug)}')">
+                        <img src="${escapeHTML(destImg)}" alt="${escapeHTML(d.name)}" loading="lazy" width="400" height="220">
+                        <div class="card-body">
+                            <span class="tag">${escapeHTML(curatedTag)}</span>
+                            <h3>${escapeHTML(d.name)}</h3>
+                            <p style="color:var(--text-muted); font-size:14px; margin-bottom:8px;"><i class="fas fa-map-marker-alt" style="color:var(--brand-orange);"></i> ${escapeHTML(d.region || d.country || '')}</p>
+                            <span class="price-tag" data-inr-price="${getDestStartingPrice(d)}" data-price-prefix="From " data-price-suffix=" / person">From ${formatPrice(getDestStartingPrice(d))} / person</span>
+                            <div class="price-subtext">per person &bull; twin-sharing basis</div>
+                        </div>
                     </div>
-                </div>
-            `).join('') : '<p class="text-center" style="grid-column:1/-1;">No destinations available.</p>';
+                `;
+            }).join('') : '<p class="text-center" style="grid-column:1/-1;">No destinations available.</p>';
         }
 
-        // B. Packages
+        // B. Packages (Differentiated 3 distinct packages)
         let packs = [];
-        if (sb) {
-            try {
-                const { data } = await sb.from('packages').select('id, title, price, duration, category, image_url, destination_id, destinations(name)').eq('is_published', true).limit(3);
-                if (data && data.length) packs = data;
-            } catch (e) {
-                console.warn('[Via] Supabase packages fetch warning:', e);
-            }
-        }
-        if ((!packs || !packs.length) && window.LUXURY_CATALOG && window.LUXURY_CATALOG.packages) {
-            packs = window.LUXURY_CATALOG.packages.slice(0, 3);
+        const homePkgIds = ['pkg-maldives-sanctuary', 'pkg-switzerland-panoramic', 'pkg-vietnam-charm'];
+        if (window.LUXURY_CATALOG && window.LUXURY_CATALOG.packages) {
+            packs = window.LUXURY_CATALOG.packages.filter(p => homePkgIds.includes(p.id));
         }
         const homePackEl = document.getElementById('home_packages');
         if (homePackEl) {
             homePackEl.innerHTML = packs.length ? packs.map(p => renderPackageCard(p)).join('') : '<p class="text-center" style="grid-column:1/-1;">No featured packages available.</p>';
-            updateWishlistUI();
         }
 
         // C. Blog Posts
         let blogs = [];
         if (sb) {
             try {
-                const { data } = await sb.from('blog_posts').select('id, slug, title, excerpt, image_url, created_at').eq('is_published', true).limit(3);
+                const { data } = await sb.from('blog_posts').select('*').eq('is_published', true).order('created_at', { ascending: false }).limit(3);
                 if (data && data.length) blogs = data;
             } catch (e) {
                 console.warn('[Via] Supabase blogs fetch warning:', e);
@@ -827,13 +792,22 @@
         const homeBlogEl = document.getElementById('home_blog');
         if (homeBlogEl) {
             homeBlogEl.innerHTML = blogs.length ? blogs.map(b => `
-                <div class="card" onclick="navTo('blog-post', '${escapeHTML(b.slug || b.id)}')" role="button" tabindex="0" onkeydown="if(event.key==='Enter') navTo('blog-post', '${escapeHTML(b.slug || b.id)}')">
-                    <img src="${escapeHTML(b.image_url || 'assets/agency-logo-emblem.webp')}" alt="${escapeHTML(b.title)}" loading="lazy">
+                <div class="card" onclick="navTo('blog', '${escapeHTML(b.slug || b.id)}')" role="button" tabindex="0" onkeydown="if(event.key==='Enter') navTo('blog', '${escapeHTML(b.slug || b.id)}')">
+                    <div style="position:relative;">
+                        <img src="${escapeHTML(b.image_url || 'assets/agency-logo-emblem.webp')}" alt="${escapeHTML(b.title)}" loading="lazy" width="400" height="220">
+                        <span class="tag" style="position:absolute; bottom:12px; left:12px; margin:0; background:rgba(12,26,61,0.85); color:#ffffff; backdrop-filter:blur(6px); border:1px solid rgba(255,255,255,0.2);">${escapeHTML(b.category || 'Journal')}</span>
+                    </div>
                     <div class="card-body">
-                        <span class="tag">${new Date(b.created_at || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-size:0.8rem; color:#64748b;">
+                            <span><i class="far fa-calendar-alt"></i> ${new Date(b.created_at || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                            <span><i class="far fa-clock"></i> ${escapeHTML(b.read_time || '5 min read')}</span>
+                        </div>
                         <h3>${escapeHTML(b.title)}</h3>
                         <p class="blog-excerpt">${escapeHTML(b.excerpt || '')}</p>
-                        <span style="color:var(--brand-orange); font-weight:700; font-size:0.9rem;">Read Guide &rarr;</span>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto; padding-top:10px; font-size:0.85rem;">
+                            <span style="color:var(--brand-navy); font-weight:600;"><i class="fas fa-user-edit" style="color:var(--brand-orange); font-size:0.75rem;"></i> ${escapeHTML(b.author || 'Senior Specialist')}</span>
+                            <span style="color:var(--brand-orange); font-weight:700;">Read Guide &rarr;</span>
+                        </div>
                     </div>
                 </div>
             `).join('') : '<p class="text-center" style="grid-column:1/-1;">No stories available.</p>';
@@ -854,22 +828,34 @@
         }
         const homeTestEl = document.getElementById('home_testimonials');
         if (homeTestEl) {
+            const getInitials = (name) => {
+                if (!name) return 'VG';
+                const parts = name.replace(/&.*/, '').trim().split(/\s+/);
+                if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+                return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+            };
+
             homeTestEl.innerHTML = tests.length ? tests.map(t => `
-                <div class="card">
-                    <div class="card-body">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <div class="card testimonial-card">
+                    <div class="card-body" style="display:flex; flex-direction:column; height:100%;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
                             <div style="color:var(--brand-gold); font-size:1rem;">
                                 <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
                             </div>
-                            <span style="font-size:0.75rem; color:#16a34a; font-weight:600; display:inline-flex; align-items:center; gap:4px;">
-                                <i class="fab fa-google"></i> Google Verified
-                            </span>
+                            <a href="${escapeHTML(t.source_url || 'https://www.google.com/search?q=Via+Tours+and+Travels+reviews')}" target="_blank" rel="noopener noreferrer" style="font-size:0.75rem; color:#16a34a; font-weight:600; text-decoration:none; display:inline-flex; align-items:center; gap:4px;" title="Verified on Google Reviews">
+                                <i class="fab fa-google"></i> Google Verified <i class="fas fa-external-link-alt" style="font-size:0.65rem;"></i>
+                            </a>
                         </div>
-                        <p style="font-style:italic; margin-bottom:14px; color:var(--text-body);">"${escapeHTML(t.message || t.quote || '')}"</p>
-                        <h4 style="margin:0; color:var(--brand-navy);">${escapeHTML(t.name || 'Verified Client')}</h4>
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px; flex-wrap:wrap; gap:4px;">
-                            <small style="color:var(--text-muted);">${escapeHTML(t.location || t.city || 'Private Guest')}</small>
-                            <small style="color:#64748b; font-size:0.75rem;"><i class="far fa-calendar-alt"></i> ${escapeHTML(t.date || 'Verified Journey')}</small>
+                        <p style="font-style:italic; margin-bottom:16px; color:var(--text-body); line-height:1.6; flex:1;">"${escapeHTML(t.message || t.quote || '')}"</p>
+                        <div style="display:flex; align-items:center; gap:12px; margin-top:auto; padding-top:12px; border-top:1px solid #f1f5f9;">
+                            <div class="traveler-avatar" style="width:42px; height:42px; border-radius:50%; background:linear-gradient(135deg, #0c1a3d, #1e3a8a); color:#f59e0b; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.95rem; border:2px solid rgba(245,158,11,0.5); flex-shrink:0;">${escapeHTML(t.initials || getInitials(t.name))}</div>
+                            <div style="flex:1; min-width:0;">
+                                <h4 style="margin:0; font-size:1rem; color:var(--brand-navy); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHTML(t.name || 'Verified Client')}</h4>
+                                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:2px; flex-wrap:wrap; gap:4px;">
+                                    <small style="color:var(--text-muted); font-size:0.8rem;">${escapeHTML(t.location || t.city || 'Private Guest')}</small>
+                                    <small style="color:#64748b; font-size:0.75rem;"><i class="far fa-calendar-alt"></i> ${escapeHTML(t.date || 'Verified Journey')}</small>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -941,13 +927,23 @@
         for (const country in grouped) {
             html += `<div class="country-group" style="margin-bottom:36px;"><h3 style="border-bottom:2px solid var(--border); padding-bottom:8px; margin-bottom:20px; color:var(--brand-navy);">${escapeHTML(country)}</h3><div class="grid-4">`;
             grouped[country].forEach(d => {
+                const catMatch = window.LUXURY_CATALOG && window.LUXURY_CATALOG.destinations && window.LUXURY_CATALOG.destinations.find(cd => cd.id === d.id);
+                const destSlug = (catMatch && catMatch.slug) || d.slug || d.id;
+                const curatedTag = (catMatch && catMatch.curated_tag) || d.curated_tag || (d.region || d.country || 'Curated');
+                const destImg = (catMatch && catMatch.image_url) || d.image_url || 'assets/agency-logo-emblem.webp';
                 html += `
-                    <div class="card" onclick="navTo('packages', '${escapeHTML(d.id)}')" role="button" tabindex="0">
-                        <img src="${escapeHTML(d.image_url || 'assets/agency-logo-emblem.webp')}" alt="${escapeHTML(d.name)}" loading="lazy">
+                    <div class="card" onclick="navTo('destinations', '${escapeHTML(destSlug)}')" role="button" tabindex="0" onkeydown="if(event.key==='Enter') navTo('destinations', '${escapeHTML(destSlug)}')">
+                        <div style="position:relative;">
+                            <img src="${escapeHTML(destImg)}" alt="${escapeHTML(d.name)}" loading="lazy">
+                            <span class="tag" style="position:absolute; bottom:10px; left:10px; margin:0; background:rgba(12,26,61,0.85); color:#ffffff; font-size:0.7rem; backdrop-filter:blur(6px); border:1px solid rgba(255,255,255,0.2);">${escapeHTML(curatedTag)}</span>
+                        </div>
                         <div class="card-body">
                             <h4>${escapeHTML(d.name)}</h4>
-                            <p style="font-size:0.85rem; color:var(--text-muted); margin:0 0 8px;">${escapeHTML(d.region || '')}</p>
-                            <span class="price-tag" data-inr-price="${getDestStartingPrice(d)}" data-price-prefix="From " data-price-suffix=" / person" style="font-size:0.88rem; display:inline-block;">From ${formatPrice(getDestStartingPrice(d))} / person</span>
+                            <p style="font-size:0.85rem; color:var(--text-muted); margin:0 0 8px;"><i class="fas fa-map-marker-alt" style="color:var(--brand-orange);"></i> ${escapeHTML(d.region || d.country || '')}</p>
+                            <div style="margin-top:auto; padding-top:6px;">
+                                <span class="price-tag" data-inr-price="${getDestStartingPrice(d)}" data-price-prefix="From " data-price-suffix=" / person" style="font-size:0.88rem; display:inline-block;">From ${formatPrice(getDestStartingPrice(d))} / person</span>
+                                <div class="price-subtext">per person &bull; twin-sharing basis</div>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -992,21 +988,33 @@
     // 4. Packages Page
     async function initPackageFilters() {
         const destSelect = document.getElementById('filter-destination');
-        if (!destSelect || destSelect.options.length > 1) return;
+        if (!destSelect || destSelect.options.length > 2) return;
 
         let destList = [];
         if (sb) {
             try {
-                const { data } = await sb.from('destinations').select('id, name').eq('is_published', true).order('name');
+                const { data } = await sb.from('destinations').select('id, name, country').eq('is_published', true).order('name');
                 if (data && data.length) destList = data;
             } catch (e) {}
         }
         if ((!destList || !destList.length) && window.LUXURY_CATALOG && window.LUXURY_CATALOG.destinations) {
-            destList = window.LUXURY_CATALOG.destinations.map(d => ({ id: d.id, name: d.name }));
+            destList = window.LUXURY_CATALOG.destinations.map(d => ({ id: d.id, name: d.name, country: d.country, is_domestic: d.is_domestic }));
         }
 
         if (destSelect && destList.length) {
-            destSelect.innerHTML = '<option value="">All Destinations</option>' + destList.map(d => `<option value="${escapeHTML(d.id)}">${escapeHTML(d.name)}</option>`).join('');
+            const intl = destList.filter(d => !d.is_domestic && d.country !== 'India');
+            const domestic = destList.filter(d => d.is_domestic || d.country === 'India');
+
+            destSelect.innerHTML = `
+                <option value="">All Destinations (Global & Domestic)</option>
+                <option value="domestic">All India / Domestic Escapes (4 Signature Tours)</option>
+                <optgroup label="International Retreats">
+                    ${intl.map(d => `<option value="${escapeHTML(d.id)}">${escapeHTML(d.name)}</option>`).join('')}
+                </optgroup>
+                <optgroup label="Domestic India Escapes">
+                    ${domestic.map(d => `<option value="${escapeHTML(d.id)}">${escapeHTML(d.name)}</option>`).join('')}
+                </optgroup>
+            `;
             if (activeDestFilter) {
                 destSelect.value = activeDestFilter;
             }
@@ -1045,7 +1053,9 @@
         if (sb) {
             try {
                 let query = sb.from('packages').select('id, title, price, duration, category, image_url, destination_id, destinations(name, country)').eq('is_published', true);
-                if (filterDest) query = query.eq('destination_id', filterDest);
+                if (filterDest && filterDest !== 'domestic' && filterDest !== 'india') {
+                    query = query.eq('destination_id', filterDest);
+                }
                 if (filterCat) query = query.eq('category', filterCat);
                 if (minPrice) query = query.gte('price', Number(minPrice));
                 if (maxPrice) query = query.lte('price', Number(maxPrice));
@@ -1060,10 +1070,14 @@
         if ((!data || data.length === 0) && window.LUXURY_CATALOG && window.LUXURY_CATALOG.packages) {
             let catPacks = [...window.LUXURY_CATALOG.packages];
             if (filterDest) {
-                catPacks = catPacks.filter(p => p.destination_id === filterDest || (p.dest && p.dest.toLowerCase() === filterDest.toLowerCase()));
+                if (filterDest === 'domestic' || filterDest === 'india') {
+                    catPacks = catPacks.filter(p => p.is_domestic || ['pkg-rajasthan-royal', 'pkg-kerala-backwaters', 'pkg-kashmir-paradise', 'pkg-ladakh-sanctuary'].includes(p.id) || ['dest-rajasthan', 'dest-kerala', 'dest-kashmir', 'dest-ladakh'].includes(p.destination_id));
+                } else {
+                    catPacks = catPacks.filter(p => p.destination_id === filterDest || (p.dest && p.dest.toLowerCase() === filterDest.toLowerCase()) || p.id === filterDest);
+                }
             }
             if (filterCat) {
-                catPacks = catPacks.filter(p => p.category && p.category.toLowerCase() === filterCat.toLowerCase());
+                catPacks = catPacks.filter(p => p.category && p.category.toLowerCase().includes(filterCat.toLowerCase()));
             }
             if (minPrice) {
                 catPacks = catPacks.filter(p => Number(p.price) >= Number(minPrice));
@@ -1078,13 +1092,18 @@
         if (!listEl) return;
 
         let filtered = (data || []).filter(p => {
+            if (filterDest === 'domestic' || filterDest === 'india') {
+                const isDom = p.is_domestic || ['pkg-rajasthan-royal', 'pkg-kerala-backwaters', 'pkg-kashmir-paradise', 'pkg-ladakh-sanctuary'].includes(p.id) || ['dest-rajasthan', 'dest-kerala', 'dest-kashmir', 'dest-ladakh'].includes(p.destination_id);
+                if (!isDom) return false;
+            }
             if (!term) return true;
             return (
                 (p.title && p.title.toLowerCase().includes(term)) ||
                 (p.duration && p.duration.toLowerCase().includes(term)) ||
                 (p.category && p.category.toLowerCase().includes(term)) ||
                 (p.destinations?.name && p.destinations.name.toLowerCase().includes(term)) ||
-                (p.destination_name && p.destination_name.toLowerCase().includes(term))
+                (p.destination_name && p.destination_name.toLowerCase().includes(term)) ||
+                (p.short_description && p.short_description.toLowerCase().includes(term))
             );
         });
 
@@ -1152,12 +1171,8 @@
                 console.warn('[Via] Supabase package detail fetch error:', err);
             }
         }
-        if (!p && window.LUXURY_CATALOG && window.LUXURY_CATALOG.packages) {
-            p = window.LUXURY_CATALOG.packages.find(pkg => 
-                pkg.id === id || 
-                (pkg.aliases && pkg.aliases.includes(id)) || 
-                String(pkg.id).toLowerCase() === String(id).toLowerCase()
-            );
+        if (!p) {
+            p = findPackage(id);
         }
 
         if (!p) {
@@ -1166,11 +1181,12 @@
         }
 
         currentPackage = p;
+        const pkgSlug = p.slug || p.id;
 
         // Structured Data Schema for TouristTrip
         const touristTripSchema = {
             "@type": "TouristTrip",
-            "@id": `https://viatoursandtravels.com/package/${p.id}#trip`,
+            "@id": `https://viatoursandtravels.com/packages/${pkgSlug}#trip`,
             "name": p.title,
             "description": p.short_description || p.description,
             "touristType": p.category || "Luxury",
@@ -1183,7 +1199,7 @@
             }
         };
 
-        updateSEO(p.title, p.short_description || p.description || p.overview, p.image_url, '/package/' + p.id, touristTripSchema);
+        updateSEO(p.title, p.short_description || p.description || p.overview, p.image_url, '/packages/' + pkgSlug, touristTripSchema);
 
         const allImages = [p.image_url, ...(p.gallery_images || [])].filter(Boolean);
         const galleryHTML = allImages.length > 0 ? `
@@ -1196,15 +1212,19 @@
         ` : '';
 
         const destName = p.destinations?.name || p.destination_name || (p.dest ? p.dest.toUpperCase() : 'Bespoke Retreat');
-        const isSaved = getWishlist().includes(p.id);
 
         // Update Mobile Sticky Bar
         const mPrice = document.getElementById('mobilePkgPrice');
         const mWa = document.getElementById('mobilePkgWhatsappBtn');
         const mEnq = document.getElementById('mobilePkgEnquireBtn');
+        const mSticky = document.getElementById('mobilePkgStickyBar');
+        if (mSticky) mSticky.classList.add('visible');
         if (mPrice) mPrice.textContent = formatPrice(p.price);
-        if (mWa) mWa.href = `https://wa.me/${escapeHTML(appSettings.whatsapp)}?text=${encodeURIComponent('Hello Via Tours Concierge, I am interested in reserving: ' + p.title)}`;
-        if (mEnq) mEnq.onclick = () => navTo('plan-trip', p.id);
+        if (mWa) {
+            mWa.href = `https://wa.me/${escapeHTML(appSettings.whatsapp)}?text=${encodeURIComponent('Hello Via Tours Concierge, I am interested in reserving: ' + p.title)}`;
+            mWa.onclick = () => trackEvent('whatsapp_click', { package: pkgSlug });
+        }
+        if (mEnq) mEnq.onclick = () => navTo('plan-trip', pkgSlug);
 
         // Related packages lookup
         let relatedPacks = [];
@@ -1229,7 +1249,7 @@
                     ${galleryHTML}
                     <div style="display:flex; gap:10px; align-items:center; margin:16px 0 8px;">
                         <span class="tag">${escapeHTML(p.category || 'Luxury')}</span>
-                        <span style="font-size:0.85rem; color:#10b981; font-weight:600;"><i class="fas fa-shield-alt"></i> Verified Luxury Partner</span>
+                        <span style="font-size:0.85rem; color:#10b981; font-weight:600;"><i class="fas fa-shield-alt"></i> Handcrafted Signature Itinerary</span>
                     </div>
                     <h1 style="font-size:clamp(1.8rem, 3.5vw, 2.5rem); margin:0 0 10px; color:var(--brand-navy); line-height:1.2;">${escapeHTML(p.title)}</h1>
                     <p style="color:var(--text-muted); margin-bottom:16px; font-size:1.05rem;">
@@ -1271,14 +1291,11 @@
 
                     <!-- Action Toolbar -->
                     <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:24px;">
-                        <button type="button" class="btn btn-outline btn-sm" onclick="downloadItineraryPDF('${escapeHTML(p.id)}')">
+                        <button type="button" class="btn btn-outline btn-sm" onclick="downloadItineraryPDF('${escapeHTML(pkgSlug)}')">
                             <i class="fas fa-file-pdf" style="color:#ef4444;"></i> Download Itinerary (PDF)
                         </button>
-                        <button type="button" class="btn btn-outline btn-sm" onclick="sharePackage('${escapeHTML(p.id)}')">
+                        <button type="button" class="btn btn-outline btn-sm" onclick="sharePackage('${escapeHTML(pkgSlug)}')">
                             <i class="fas fa-share-alt" style="color:var(--brand-orange);"></i> Share Itinerary
-                        </button>
-                        <button type="button" class="btn btn-outline btn-sm" onclick="toggleWishlist('${escapeHTML(p.id)}', event); this.innerHTML = '<i class=\\'fas fa-heart\\' style=\\'color:#e11d48;\\'></i> ' + (getWishlist().includes('${escapeHTML(p.id)}') ? 'Saved in Wishlist' : 'Save to Wishlist');">
-                            <i class="${isSaved ? 'fas' : 'far'} fa-heart" style="color:#e11d48;"></i> ${isSaved ? 'Saved in Wishlist' : 'Save to Wishlist'}
                         </button>
                     </div>
 
@@ -1300,12 +1317,12 @@
                     <div style="background:var(--bg-light); border:1px solid var(--border); padding:32px 24px; border-radius:var(--radius-xl); position:sticky; top:104px; text-align:center; box-shadow:var(--shadow-md);">
                         <span style="font-size:0.82rem; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted); font-weight:700;">Starting From</span>
                         <h2 class="price-tag" data-inr-price="${p.price}" style="font-size:2.4rem; margin:6px 0 2px; color:var(--brand-navy);">${formatPrice(p.price)}</h2>
-                        <p style="margin-bottom:20px; color:var(--text-muted); font-size:0.88rem;">${escapeHTML(p.pricing_breakdown?.pricing_basis || 'Per person on twin sharing')}</p>
+                        <p style="margin-bottom:20px; color:var(--text-muted); font-size:0.88rem;">${escapeHTML((p.pricing_breakdown || p.price_breakdown)?.pricing_basis || 'Per person on twin sharing')}</p>
                         
-                        <a href="https://wa.me/${escapeHTML(appSettings.whatsapp)}?text=${encodeURIComponent('Hello Via Tours Concierge, I am interested in reserving: ' + p.title)}" target="_blank" rel="noopener noreferrer" class="btn btn-green" style="width:100%; margin-bottom:10px;">
+                        <a href="https://wa.me/${escapeHTML(appSettings.whatsapp)}?text=${encodeURIComponent('Hello Via Tours Concierge, I am interested in reserving: ' + p.title)}" target="_blank" rel="noopener noreferrer" class="btn btn-green" style="width:100%; margin-bottom:10px;" onclick="trackEvent('whatsapp_click', { package: '${escapeHTML(pkgSlug)}' })">
                             <i class="fab fa-whatsapp"></i> Instant WhatsApp Concierge
                         </a>
-                        <button class="btn btn-primary" style="width:100%; margin-bottom:10px;" onclick="navTo('plan-trip', '${escapeHTML(p.id)}')">
+                        <button class="btn btn-primary" style="width:100%; margin-bottom:10px;" onclick="navTo('plan-trip', '${escapeHTML(pkgSlug)}')">
                             <i class="fas fa-calendar-check"></i> Request Custom Quote
                         </button>
                         <a href="tel:+918041237890" class="btn btn-outline" style="width:100%; font-size:0.85rem;">
@@ -1316,7 +1333,7 @@
                             <div><i class="fas fa-check-circle" style="color:#10b981;"></i> 100% Vetted 5-Star Accommodations</div>
                             <div><i class="fas fa-file-invoice-dollar" style="color:#10b981;"></i> Transparent Invoicing &bull; Statutory 5% GST</div>
                             <div><i class="fas fa-headset" style="color:#10b981;"></i> 24/7 On-Trip Emergency Travel Desk</div>
-                            <div><i class="fas fa-exchange-alt" style="color:#10b981;"></i> Free Date Changes up to 21 Days Prior</div>
+                            <div><i class="fas fa-exchange-alt" style="color:#10b981;"></i> Zero Agency Amendment Fees (Up to 21 Days Prior)</div>
                         </div>
                     </div>
                 </div>
@@ -1459,7 +1476,7 @@
             }
 
         } else if (tab === 'pricing') {
-            const pb = pkg.pricing_breakdown || {};
+            const pb = pkg.pricing_breakdown || pkg.price_breakdown || {};
             c.innerHTML = `
                 <div style="background:#ffffff; border:1px solid var(--border); border-radius:var(--radius-lg); padding:28px;">
                     <h4 style="color:var(--brand-navy); margin-top:0; margin-bottom:12px; font-size:1.2rem;">Transparent Pricing Breakdown &amp; Tax Disclosure</h4>
@@ -1572,9 +1589,9 @@
     }
 
     async function sharePackage(pkgId) {
-        const pkg = currentPackage || (window.LUXURY_CATALOG?.packages || []).find(p => p.id === pkgId);
+        const pkg = currentPackage || findPackage(pkgId);
         const title = pkg ? pkg.title : 'Via Tours & Travels Luxury Package';
-        const url = window.location.origin + '/package/' + (pkg ? pkg.id : pkgId);
+        const url = window.location.origin + '/packages/' + (pkg ? (pkg.slug || pkg.id) : pkgId);
 
         if (navigator.share) {
             try {
@@ -1834,14 +1851,7 @@
             <div class="skeleton" style="width:100%; height:120px; border-radius:var(--radius-md);"></div>
         `;
 
-        let d = null;
-        if (window.LUXURY_CATALOG && window.LUXURY_CATALOG.destinations) {
-            d = window.LUXURY_CATALOG.destinations.find(item => 
-                item.id === id || 
-                String(item.id).toLowerCase() === String(id).toLowerCase() ||
-                item.name.toLowerCase() === String(id).toLowerCase()
-            );
-        }
+        let d = findDestination(id);
 
         if (!d) {
             container.innerHTML = `
@@ -1854,7 +1864,20 @@
             return;
         }
 
-        updateSEO(`${d.name} — Luxury Travel Guide & Curated Packages`, d.description, d.image_url, '/destination/' + d.id);
+        updateSEO(
+            `${d.name} — Luxury Travel Guide & Curated Packages`,
+            d.description,
+            d.image_url,
+            '/destinations/' + (d.slug || d.id),
+            {
+                "@context": "https://schema.org",
+                "@type": "TouristDestination",
+                "name": d.name,
+                "description": d.description,
+                "image": d.image_url,
+                "touristType": ["Luxury Travel", "Honeymoon", "Cultural Tourism"]
+            }
+        );
 
         // Find linked packages
         let linkedPacks = [];
@@ -1988,7 +2011,7 @@
                     </div>
                     <div class="grid-3">
                         ${linkedBlogs.map(b => `
-                            <div class="card" onclick="navTo('blog-post', '${escapeHTML(b.slug || b.id)}')" role="button" tabindex="0">
+                            <div class="card" onclick="navTo('blog', '${escapeHTML(b.slug || b.id)}')" role="button" tabindex="0">
                                 <img src="${escapeHTML(b.image_url)}" alt="${escapeHTML(b.title)}" loading="lazy">
                                 <div class="card-body">
                                     <span class="tag">Travel Guide</span>
@@ -2058,7 +2081,7 @@
     }
 
     // 9. Experiences & Travel Styles Controller
-    function loadExperiences() {
+    function loadExperiences(theme = null) {
         const container = document.getElementById('experiences_container');
         if (!container) return;
         const experiences = (window.LUXURY_CATALOG && window.LUXURY_CATALOG.experiences) ? window.LUXURY_CATALOG.experiences : [];
@@ -2067,31 +2090,106 @@
             return;
         }
 
-        container.innerHTML = experiences.map(exp => `
-            <div class="exp-card" onclick="filterByExperience('${escapeHTML(exp.type)}')">
-                <img src="${escapeHTML(exp.image_url)}" alt="${escapeHTML(exp.title)}" class="exp-card-img" loading="lazy" width="400" height="380">
-                <div class="exp-card-overlay">
-                    <span class="tag" style="background:var(--brand-orange); color:#ffffff; align-self:flex-start; margin-bottom:8px;">${escapeHTML(exp.type)}</span>
-                    <h3 style="color:#ffffff; margin:0 0 6px; font-size:1.4rem;">${escapeHTML(exp.title)}</h3>
-                    <p style="color:#e2e8f0; font-size:0.9rem; line-height:1.5; margin-bottom:12px;">${escapeHTML(exp.tagline)}</p>
-                    <p style="color:#cbd5e1; font-size:0.82rem; line-height:1.5; margin-bottom:18px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">${escapeHTML(exp.description)}</p>
-                    <button type="button" class="btn btn-primary" style="align-self:flex-start;" onclick="event.stopPropagation(); filterByExperience('${escapeHTML(exp.type)}')">
-                        Explore ${escapeHTML(exp.type)} Packages &rarr;
-                    </button>
+        const normTheme = theme ? String(theme).toLowerCase().trim() : null;
+        const selectedExp = normTheme ? experiences.find(e => 
+            (e.slug && e.slug.toLowerCase() === normTheme) || 
+            e.id.toLowerCase() === normTheme || 
+            ('exp-' + e.type.toLowerCase()) === normTheme || 
+            e.type.toLowerCase() === normTheme ||
+            (normTheme === 'alpine' && (e.type.toLowerCase() === 'alpine' || e.type.toLowerCase() === 'adventure'))
+        ) : null;
+
+        if (selectedExp) {
+            const expSlug = selectedExp.slug || selectedExp.type.toLowerCase();
+            updateSEO(
+                `${selectedExp.title} — Curated Luxury Travel Style`,
+                selectedExp.description,
+                selectedExp.image_url,
+                '/experiences/' + expSlug
+            );
+
+            // Find matching packages
+            const allPacks = (window.LUXURY_CATALOG && window.LUXURY_CATALOG.packages) ? window.LUXURY_CATALOG.packages : [];
+            const matchingPacks = allPacks.filter(p => 
+                (selectedExp.featured_packages && selectedExp.featured_packages.includes(p.id)) ||
+                (p.category && p.category.toLowerCase() === selectedExp.type.toLowerCase())
+            );
+
+            container.innerHTML = `
+                <div style="grid-column:1/-1;">
+                    <nav class="breadcrumbs" aria-label="Breadcrumb">
+                        <a href="/" onclick="navTo('home'); return false;">Home</a> / 
+                        <a href="/experiences" onclick="navTo('experiences'); return false;">Travel Styles</a> / 
+                        <span>${escapeHTML(selectedExp.title)}</span>
+                    </nav>
+
+                    <!-- Dedicated Theme Hero Banner -->
+                    <div style="position:relative; border-radius:var(--radius-xl); overflow:hidden; min-height:360px; display:flex; align-items:flex-end; padding:clamp(24px, 5vw, 44px); margin-bottom:36px; box-shadow:var(--shadow-md);">
+                        <img src="${escapeHTML(selectedExp.image_url)}" alt="${escapeHTML(selectedExp.title)}" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover;" loading="eager">
+                        <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(12, 26, 61, 0.3) 0%, rgba(12, 26, 61, 0.92) 100%);"></div>
+                        <div style="position:relative; z-index:1; color:#ffffff; max-width:760px;">
+                            <span class="tag" style="background:var(--brand-orange); color:#ffffff; margin-bottom:12px;">Curated Travel Style</span>
+                            <h1 style="font-size:clamp(2rem, 4vw, 3rem); margin:0 0 10px; color:#ffffff; line-height:1.15;">${escapeHTML(selectedExp.title)}</h1>
+                            <p style="font-size:1.1rem; color:#f1f5f9; line-height:1.6; margin-bottom:20px;">${escapeHTML(selectedExp.description)}</p>
+                            <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                                <button class="btn btn-primary" onclick="navTo('plan-trip')">
+                                    <i class="fas fa-calendar-check"></i> Plan Bespoke ${escapeHTML(selectedExp.type)} Itinerary
+                                </button>
+                                <button class="btn btn-outline" style="color:#ffffff; border-color:rgba(255,255,255,0.4);" onclick="navTo('experiences')">
+                                    &larr; View All Travel Styles
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Matching Packages Section -->
+                    <div style="margin-bottom:36px;">
+                        <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
+                            <div>
+                                <span class="tag">Handpicked Itineraries</span>
+                                <h2 style="margin:4px 0 0; color:var(--brand-navy); font-size:1.6rem;">Featured ${escapeHTML(selectedExp.type)} Escapes</h2>
+                            </div>
+                            <button class="btn btn-outline btn-sm" onclick="navTo('packages')">Browse All Packages &rarr;</button>
+                        </div>
+                        <div class="grid-3">
+                            ${matchingPacks.length ? matchingPacks.map(p => renderPackageCard(p)).join('') : '<p>Custom itineraries curated on demand.</p>'}
+                        </div>
+                    </div>
                 </div>
-            </div>
-        `).join('');
+            `;
+            return;
+        }
+
+        // Default: Render all 4 travel style cards
+        updateSEO(
+            'Curated Travel Styles & Bespoke Themes',
+            'From overwater honeymoon sanctuaries and alpine panoramic rail to royal palace retreats and family adventures.',
+            null,
+            '/experiences'
+        );
+
+        container.innerHTML = experiences.map(exp => {
+            const expSlug = exp.slug || (exp.type.toLowerCase() === 'adventure' ? 'alpine' : exp.type.toLowerCase());
+            return `
+                <div class="exp-card" onclick="navTo('experiences', '${escapeHTML(expSlug)}')">
+                    <img src="${escapeHTML(exp.image_url)}" alt="${escapeHTML(exp.title)}" class="exp-card-img" loading="lazy" width="400" height="380">
+                    <div class="exp-card-overlay">
+                        <span class="tag" style="background:var(--brand-orange); color:#ffffff; align-self:flex-start; margin-bottom:8px;">${escapeHTML(exp.type)}</span>
+                        <h3 style="color:#ffffff; margin:0 0 6px; font-size:1.4rem;">${escapeHTML(exp.title)}</h3>
+                        <p style="color:#e2e8f0; font-size:0.9rem; line-height:1.5; margin-bottom:12px;">${escapeHTML(exp.tagline)}</p>
+                        <p style="color:#cbd5e1; font-size:0.82rem; line-height:1.5; margin-bottom:18px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">${escapeHTML(exp.description)}</p>
+                        <button type="button" class="btn btn-primary" style="align-self:flex-start;" onclick="event.stopPropagation(); navTo('experiences', '${escapeHTML(expSlug)}')">
+                            Explore ${escapeHTML(exp.type)} Packages &rarr;
+                        </button>
+                    </div>
+                </div>
+            `;
+        }).join('');
     }
 
     function filterByExperience(cat) {
-        navTo('packages');
-        setTimeout(() => {
-            const catSelect = document.getElementById('filter-category');
-            if (catSelect) {
-                catSelect.value = cat;
-                loadPackages();
-            }
-        }, 120);
+        const catNorm = String(cat || '').toLowerCase().trim();
+        navTo('experiences', catNorm);
     }
 
     // 10. Offers & Seasonal Privileges Controller
@@ -2250,6 +2348,13 @@
             return;
         }
 
+        const cbConsent = document.getElementById('cb_consent');
+        if (cbConsent && !cbConsent.checked) {
+            showToast('Please agree to the privacy policy & consent terms to proceed.', 'error');
+            cbConsent.focus();
+            return;
+        }
+
         showToast(`Callback confirmed! A Senior Travel Specialist will call ${phone} during the ${slot} window.`, 'success');
         closeCallbackModal();
         trackEvent('request_callback', { name, phone, slot });
@@ -2260,33 +2365,76 @@
         const listEl = document.getElementById('list_blog');
         if (!listEl) return;
 
+        const searchTerm = (document.getElementById('blog-search')?.value || '').toLowerCase().trim();
+        const categoryFilter = document.getElementById('blog-category-filter')?.value || '';
+
         let blogs = [];
+        if (window.LUXURY_CATALOG && window.LUXURY_CATALOG.blogs && window.LUXURY_CATALOG.blogs.length) {
+            blogs = [...window.LUXURY_CATALOG.blogs];
+        }
         if (sb) {
             try {
-                const { data } = await sb.from('blog_posts').select('id, slug, title, excerpt, image_url, created_at').eq('is_published', true).order('created_at', { ascending: false });
-                if (data && data.length) blogs = data;
+                const { data } = await sb.from('blog_posts').select('*').eq('is_published', true).order('created_at', { ascending: false });
+                if (data && data.length) {
+                    data.forEach(db => {
+                        if (!blogs.some(b => b.slug === db.slug || b.id === db.id)) blogs.push(db);
+                    });
+                }
             } catch (e) {}
         }
-        if ((!blogs || !blogs.length) && window.LUXURY_CATALOG && window.LUXURY_CATALOG.blogs) {
-            blogs = window.LUXURY_CATALOG.blogs;
-        }
 
-        if (!blogs.length) {
-            listEl.innerHTML = '<p class="text-center" style="grid-column:1/-1;">No journal articles published yet.</p>';
+        // Always sort newest-first
+        blogs.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+
+        let filtered = blogs.filter(b => {
+            if (categoryFilter && b.category && b.category !== categoryFilter) return false;
+            if (!searchTerm) return true;
+            return (
+                (b.title && b.title.toLowerCase().includes(searchTerm)) ||
+                (b.excerpt && b.excerpt.toLowerCase().includes(searchTerm)) ||
+                (b.author && b.author.toLowerCase().includes(searchTerm)) ||
+                (b.category && b.category.toLowerCase().includes(searchTerm))
+            );
+        });
+
+        if (!filtered.length) {
+            listEl.innerHTML = '<p class="text-center" style="grid-column:1/-1; padding:40px 0;">No journal stories found matching your criteria. Try resetting filters.</p>';
             return;
         }
 
-        listEl.innerHTML = blogs.map(b => `
-            <div class="card" onclick="navTo('blog-post', '${escapeHTML(b.slug || b.id)}')" role="button" tabindex="0" onkeydown="if(event.key==='Enter') navTo('blog-post', '${escapeHTML(b.slug || b.id)}')">
-                <img src="${escapeHTML(b.image_url || 'assets/agency-logo-emblem.webp')}" alt="${escapeHTML(b.title)}" loading="lazy">
+        listEl.innerHTML = filtered.map(b => {
+            const formattedDate = new Date(b.created_at || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            return `
+            <div class="card" onclick="navTo('blog', '${escapeHTML(b.slug || b.id)}')" role="button" tabindex="0" onkeydown="if(event.key==='Enter') navTo('blog', '${escapeHTML(b.slug || b.id)}')">
+                <div style="position:relative;">
+                    <img src="${escapeHTML(b.image_url || 'assets/agency-logo-emblem.webp')}" alt="${escapeHTML(b.title)}" loading="lazy" width="400" height="220">
+                    <span class="tag" style="position:absolute; bottom:12px; left:12px; margin:0; background:rgba(12,26,61,0.85); color:#ffffff; backdrop-filter:blur(6px); border:1px solid rgba(255,255,255,0.2);">${escapeHTML(b.category || 'Journal')}</span>
+                </div>
                 <div class="card-body">
-                    <span class="tag">${new Date(b.created_at || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-size:0.8rem; color:#64748b;">
+                        <span><i class="far fa-calendar-alt"></i> ${formattedDate}</span>
+                        <span><i class="far fa-clock"></i> ${escapeHTML(b.read_time || '5 min read')}</span>
+                    </div>
                     <h3>${escapeHTML(b.title)}</h3>
                     <p class="blog-excerpt">${escapeHTML(b.excerpt || '')}</p>
-                    <span style="color:var(--brand-orange); font-weight:700;">Read Complete Story &rarr;</span>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto; padding-top:12px; border-top:1px solid #f1f5f9; font-size:0.85rem;">
+                        <span style="color:var(--brand-navy); font-weight:600;"><i class="fas fa-user-edit" style="color:var(--brand-orange); font-size:0.8rem;"></i> ${escapeHTML(b.author || 'Senior Specialist')}</span>
+                        <span style="color:var(--brand-orange); font-weight:700;">Read Guide &rarr;</span>
+                    </div>
                 </div>
             </div>
-        `).join('');
+            `;
+        }).join('');
+    }
+
+    const debounceBlogSearch = debounce(loadBlog, 350);
+
+    function resetBlogFilters() {
+        const s = document.getElementById('blog-search');
+        const c = document.getElementById('blog-category-filter');
+        if (s) s.value = '';
+        if (c) c.value = '';
+        loadBlog();
     }
 
     async function loadBlogPost(slugOrId) {
@@ -2300,8 +2448,8 @@
             <div class="skeleton" style="width:100%; height:200px; border-radius:var(--radius-lg);"></div>
         `;
 
-        let b = null;
-        if (sb) {
+        let b = findBlogPost(slugOrId);
+        if (!b && sb) {
             try {
                 const isUUID = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(slugOrId);
                 let query = sb.from('blog_posts').select('*').eq('is_published', true);
@@ -2310,9 +2458,6 @@
                 const res = await query.limit(1).maybeSingle();
                 if (res.data) b = res.data;
             } catch (e) {}
-        }
-        if (!b && window.LUXURY_CATALOG && window.LUXURY_CATALOG.blogs) {
-            b = window.LUXURY_CATALOG.blogs.find(post => post.slug === slugOrId || post.id === slugOrId);
         }
 
         if (!b) {
@@ -2326,7 +2471,7 @@
             return;
         }
 
-        updateSEO(b.title, b.excerpt || 'Via Tours & Travels Travel Journal', b.image_url, '/blog-post/' + (b.slug || b.id));
+        updateSEO(b.title, b.excerpt || 'Via Tours & Travels Travel Journal', b.image_url, '/blog/' + (b.slug || b.id));
 
         const cleanHTML = window.DOMPurify ? window.DOMPurify.sanitize(b.content || '') : escapeHTML(b.content || '');
 
@@ -2336,9 +2481,14 @@
                 <a href="/blog" onclick="navTo('blog'); return false;">Travel Journal</a> / 
                 <span>${escapeHTML(b.title)}</span>
             </nav>
-            <img src="${escapeHTML(b.image_url || 'assets/agency-logo-emblem.webp')}" style="width:100%; height:420px; object-fit:cover; border-radius:var(--radius-xl); margin-bottom:28px;" alt="${escapeHTML(b.title)}">
-            <span class="tag">${new Date(b.created_at || Date.now()).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
-            <h1 style="margin:12px 0 24px; color:var(--brand-navy); font-size:clamp(1.8rem, 4vw, 2.6rem);">${escapeHTML(b.title)}</h1>
+            <img src="${escapeHTML(b.image_url || 'assets/agency-logo-emblem.webp')}" style="width:100%; height:420px; object-fit:cover; border-radius:var(--radius-xl); margin-bottom:24px;" alt="${escapeHTML(b.title)}">
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px; flex-wrap:wrap;">
+                <span class="tag">${escapeHTML(b.category || 'Journal')}</span>
+                <span style="font-size:0.85rem; color:#64748b;"><i class="far fa-calendar-alt"></i> ${new Date(b.created_at || Date.now()).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
+                <span style="font-size:0.85rem; color:#64748b;">&bull; <i class="far fa-clock"></i> ${escapeHTML(b.read_time || '5 min read')}</span>
+                <span style="font-size:0.85rem; color:#64748b;">&bull; By <strong>${escapeHTML(b.author || 'Senior Destination Specialist')}</strong></span>
+            </div>
+            <h1 style="margin:8px 0 24px; color:var(--brand-navy); font-size:clamp(1.8rem, 4vw, 2.6rem);">${escapeHTML(b.title)}</h1>
             <div class="blog-body" style="line-height:1.8; color:var(--text-body); font-size:1.05rem;">
                 ${cleanHTML}
             </div>
@@ -2401,69 +2551,9 @@
         }
     }
 
-    // 9. AI Concierge Chatbot
-    function sendQuickPrompt(promptText) {
-        const input = document.getElementById('chatInput');
-        if (input) {
-            input.value = promptText;
-            handleChat({ type: 'keypress', key: 'Enter' });
-        }
-    }
-
-    function handleChat(e) {
-        if (e.type === 'keypress' && e.key !== 'Enter') return;
-        const input = document.getElementById('chatInput');
-        if (!input) return;
-        const msg = input.value.trim();
-        if (!msg) return;
-
-        const chatBody = document.getElementById('chatBody');
-        if (!chatBody) return;
-
-        // Append User Message
-        const userDiv = document.createElement('div');
-        userDiv.className = 'chat-msg user';
-        userDiv.textContent = msg;
-        chatBody.appendChild(userDiv);
-        input.value = '';
-        chatBody.scrollTop = chatBody.scrollHeight;
-
-        // Generate Context-Aware Luxury Concierge Response
-        setTimeout(() => {
-            const m = msg.toLowerCase();
-            let res = "I am at your service. Would you like to explore bespoke private itineraries for the Maldives, Swiss Alps, Bali, Amalfi Coast, or Dubai?";
-
-            if (m.includes('maldives') || m.includes('atoll') || m.includes('overwater')) {
-                res = "Our 5★ Maldives Overwater Sanctuary features a private pool villa, roundtrip scenic seaplane transfers, gourmet all-inclusive dining, and a sunset dolphin yacht cruise (from " + formatPrice(185000) + "/person). Would you like to view the itinerary or customize your travel dates?";
-            } else if (m.includes('swiss') || m.includes('switzerland') || m.includes('alps') || m.includes('zermatt')) {
-                res = "Our Grand Swiss Alpine Odyssey includes 1st-Class Glacier Express panoramic rail, 5★ Matterhorn-facing chalets in Zermatt, and Jungfraujoch summit access (from " + formatPrice(245000) + "/person).";
-            } else if (m.includes('bali') || m.includes('ubud') || m.includes('indonesia')) {
-                res = "Our Bali Sanctuary features private rainforest pool villas in Ubud, private chauffeur, and cliffside sunsets in Uluwatu (from " + formatPrice(95000) + "/person).";
-            } else if (m.includes('amalfi') || m.includes('capri') || m.includes('italy')) {
-                res = "Our Amalfi Coast & Capri Odyssey features cliffside 5★ suites in Positano, a private skippered Riva yacht to Capri & the Blue Grotto, and Michelin dining (from " + formatPrice(295000) + "/person).";
-            } else if (m.includes('dubai') || m.includes('emirates') || m.includes('burj')) {
-                res = "Our Dubai Ultra-Luxury showcases 7★ Burj Al Arab hospitality, private desert oasis glamping, and private yacht charters around Palm Jumeirah (from " + formatPrice(145000) + "/person).";
-            } else if (m.includes('visa') || m.includes('passport')) {
-                res = "Via Tours provides 100% white-glove visa concierge assistance for Schengen (Europe), UK, USA, UAE, Vietnam, Singapore, and 80+ destinations. We handle paperwork preparation, appointment scheduling, and itinerary vouchers.";
-            } else if (m.includes('whatsapp') || m.includes('senior') || m.includes('advisor') || m.includes('call') || m.includes('connect')) {
-                res = `You can connect directly with our Senior Travel Specialist on our 24/7 dedicated WhatsApp line: +91 88797 76866 or by calling ${appSettings.phone}.`;
-            } else if (m.includes('book') || m.includes('plan') || m.includes('quote') || m.includes('custom') || m.includes('enquiry')) {
-                res = "You can submit an inquiry anytime via 'Plan My Trip' for an itemized quotation, or message our VIP Concierge on WhatsApp at +91 88797 76866!";
-            } else if (m.includes('price') || m.includes('cost') || m.includes('currency') || m.includes('tax') || m.includes('gst') || m.includes('tcs')) {
-                res = "All package quotations transparently itemize statutory 5% GST and applicable TCS under Section 206C(1G) of the Income Tax Act with zero hidden markups. You can also view multi-currency estimates in USD ($), EUR (€), and AED using the currency switcher.";
-            } else if (m.includes('contact') || m.includes('phone') || m.includes('office') || m.includes('address')) {
-                res = `Our flagship concierge is located at ${appSettings.address}. Reach us directly at ${appSettings.phone} or ${appSettings.email}.`;
-            } else if (m.includes('hi') || m.includes('hello') || m.includes('hey')) {
-                res = "Greetings! Welcome to Via Tours & Travels. Which dream destination may I help you curate today?";
-            }
-
-            const botDiv = document.createElement('div');
-            botDiv.className = 'chat-msg bot';
-            botDiv.innerHTML = escapeHTML(res).replace(/(\+91 88797 76866)/g, '<a href="https://wa.me/918879776866" target="_blank" rel="noopener noreferrer" style="color:var(--brand-orange); text-decoration:underline;">$1</a>');
-            chatBody.appendChild(botDiv);
-            chatBody.scrollTop = chatBody.scrollHeight;
-        }, 400);
-    }
+    // 9. Concierge Desk (Human WhatsApp Assistance)
+    function sendQuickPrompt() {}
+    function handleChat() {}
 
     // --- SCROLL PROGRESS & SCROLL-TO-TOP OBSERVER ---
     window.addEventListener('scroll', () => {
@@ -2480,20 +2570,8 @@
         }
     }, { passive: true });
 
-    // --- PRELOADER LIFECYCLE ---
-    function dismissPreloader() {
-        const preloader = document.getElementById('preloader');
-        if (preloader && !preloader.classList.contains('hidden')) {
-            preloader.classList.add('hidden');
-        }
-    }
-
-    window.addEventListener('load', () => {
-        setTimeout(dismissPreloader, 600);
-    });
-
-    // Safety timeout in case load event already fired or slow assets
-    setTimeout(dismissPreloader, 3000);
+    // --- PRELOADER LIFECYCLE (Instantaneous First Paint) ---
+    function dismissPreloader() {}
 
     // --- INITIALIZE APPLICATION ---
     window.addEventListener('popstate', router);
@@ -2524,12 +2602,6 @@
     window.addEventListener('hashchange', router);
     window.addEventListener('DOMContentLoaded', () => {
         loadSettings();
-        populateCountryFilter();
-        updateWishlistUI();
-        // Sync currency selector with stored preference
-        if (currentCurrency) {
-            document.querySelectorAll('.currency-select').forEach(sel => sel.value = currentCurrency);
-        }
         initCookieConsent();
         router();
     });
@@ -2571,6 +2643,10 @@
     window.filterWishlist = filterWishlist;
     window.openCompareModal = openCompareModal;
     window.closeCompareModal = closeCompareModal;
+    window.loadBlog = loadBlog;
+    window.loadBlogPost = loadBlogPost;
+    window.debounceBlogSearch = debounceBlogSearch;
+    window.resetBlogFilters = resetBlogFilters;
     window.handleNewsletter = handleNewsletter;
     window.acceptCookieConsent = acceptCookieConsent;
     window.trackEvent = trackEvent;

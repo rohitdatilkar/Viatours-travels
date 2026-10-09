@@ -749,6 +749,40 @@ button, input, select, textarea {
     color: var(--brand-navy);
 }
 
+.price-subtext {
+    font-size: 0.76rem;
+    color: #64748b;
+    margin-top: 3px;
+    font-weight: 500;
+    letter-spacing: 0.2px;
+}
+
+.badge-gold {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    color: #92400e;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: var(--radius-full);
+    border: 1px solid #fcd34d;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+body.dark-mode .price-subtext {
+    color: #94a3b8;
+}
+
+body.dark-mode .badge-gold {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(217, 119, 6, 0.25));
+    color: #fde68a;
+    border-color: rgba(245, 158, 11, 0.4);
+}
+
 /* --- DESTINATIONS & BLOG GRIDS --- */
 #home_destinations .card img, #list_destinations .card img {
     height: 200px;
@@ -1641,19 +1675,10 @@ footer a:hover {
         min-height: 44px;
     }
 
-    /* Chat */
+    /* Chat (WhatsApp is directly in mobile bottom bar; hide floating widget to prevent overlap) */
+    .chat-bubble,
     .chat-window {
-        right: 12px;
-        left: 12px;
-        width: auto;
-        bottom: calc(88px + var(--safe-bottom));
-        height: calc(100svh - 160px);
-        max-height: 580px;
-    }
-
-    .chat-bubble {
-        right: 18px;
-        bottom: calc(18px + var(--safe-bottom));
+        display: none !important;
     }
 
     .scroll-top {
@@ -2371,12 +2396,9 @@ footer a:hover {
         bottom: calc(80px + var(--safe-bottom)) !important;
     }
 
-    .chat-bubble {
-        bottom: calc(80px + var(--safe-bottom)) !important;
-    }
-
+    .chat-bubble,
     .chat-window {
-        bottom: calc(140px + var(--safe-bottom)) !important;
+        display: none !important;
     }
 }
 
