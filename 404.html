@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#0c1a3d">
+    <title>404 — Page Not Found | Via Tours &amp; Travels</title>
+    <meta name="description" content="The page you are looking for does not exist. Explore bespoke luxury travel packages with Via Tours & Travels.">
+
+    <base href="/">
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
+
+    <!-- Google Fonts & Font Awesome -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="/style.css">
+
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+            color: #0c1a3d;
+            font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);
+        }
+        .error-hero {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: clamp(40px, 8vw, 80px) 24px;
+            text-align: center;
+        }
+        .error-card {
+            background: #ffffff;
+            border: 1px solid var(--border, #e2e8f0);
+            border-radius: var(--radius-xl, 20px);
+            padding: clamp(32px, 6vw, 60px) clamp(20px, 5vw, 48px);
+            box-shadow: 0 20px 50px rgba(12, 26, 61, 0.08);
+            max-width: 620px;
+            width: 100%;
+            margin: auto;
+        }
+        .error-badge {
+            font-size: clamp(4rem, 12vw, 6.5rem);
+            font-weight: 800;
+            font-family: var(--font-heading, 'Outfit', sans-serif);
+            background: linear-gradient(135deg, var(--brand-navy, #0c1a3d) 30%, var(--brand-orange, #e87722) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1;
+            margin-bottom: 8px;
+            letter-spacing: -2px;
+        }
+        .error-icon {
+            font-size: 2.8rem;
+            color: var(--brand-orange, #e87722);
+            margin-bottom: 16px;
+            animation: compassSpin 6s linear infinite;
+            display: inline-block;
+        }
+        @keyframes compassSpin {
+            0% { transform: rotate(0deg); }
+            50% { transform: rotate(20deg); }
+            100% { transform: rotate(0deg); }
+        }
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 28px;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="container header-in">
+            <a href="/" class="logo-wrap" title="Via Tours &amp; Travels">
+                <div class="brand-logo-badge">
+                    <picture>
+                        <source type="image/svg+xml" srcset="/logo.svg">
+                        <img src="/apple-touch-icon.png" alt="Via Tours Logo" width="48" height="48" style="height:48px; width:auto;">
+                    </picture>
+                </div>
+                <div class="logo-txt">
+                    <strong>Via</strong>
+                    <span>Tours &amp; Travels</span>
+                </div>
+            </a>
+            <a href="https://wa.me/918879776866" target="_blank" rel="noopener noreferrer" class="btn btn-green btn-sm">
+                <i class="fab fa-whatsapp"></i> Concierge
+            </a>
+        </div>
+    </header>
+
+    <main class="error-hero">
+        <div class="error-card">
+            <div class="error-icon" aria-hidden="true">
+                <i class="fas fa-compass"></i>
+            </div>
+            <div class="error-badge">404</div>
+            <h1 style="font-size:clamp(1.5rem, 3.5vw, 2rem); margin-bottom:12px; color:var(--brand-navy);">Coordinates Not Found</h1>
+            <p style="color:var(--text-muted, #64748b); font-size:1.05rem; line-height:1.6; margin:0 auto; max-width:480px;">
+                It appears the luxury coordinates you're seeking have drifted off the map, or this journey has concluded.
+            </p>
+            <div class="btn-group">
+                <a href="/" class="btn btn-primary">
+                    <i class="fas fa-home"></i> Return to Homepage
+                </a>
+                <a href="/packages" class="btn btn-outline">
+                    <i class="fas fa-map-marked-alt"></i> Browse Packages
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <footer style="background:#0c1a3d; color:#ffffff; padding:24px 0; text-align:center; font-size:0.85rem;">
+        <div class="container">
+            <p style="color:#94a3b8; margin:0;">&copy; 2026 Via Tours &amp; Travels. Bespoke Luxury Escapes &bull; 24/7 VIP Concierge.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
