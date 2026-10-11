@@ -272,7 +272,12 @@
         const btn = document.getElementById('mobileToggle');
         if (!nav) return;
         const isActive = nav.classList.toggle('active');
-        if (btn) btn.setAttribute('aria-expanded', String(isActive));
+        if (btn) {
+            btn.setAttribute('aria-expanded', String(isActive));
+            const icon = btn.querySelector('i');
+            if (icon) icon.className = isActive ? 'fas fa-times' : 'fas fa-bars';
+        }
+        document.body.style.overflow = isActive ? 'hidden' : '';
     }
 
     function closeMenu() {
@@ -280,7 +285,12 @@
         const btn = document.getElementById('mobileToggle');
         if (nav && nav.classList.contains('active')) {
             nav.classList.remove('active');
-            if (btn) btn.setAttribute('aria-expanded', 'false');
+            document.body.style.overflow = '';
+            if (btn) {
+                btn.setAttribute('aria-expanded', 'false');
+                const icon = btn.querySelector('i');
+                if (icon) icon.className = 'fas fa-bars';
+            }
         }
     }
 
@@ -443,7 +453,30 @@
 
     // --- HERO ACTION CONTROLLER ---
     function searchFromHero() {
-        navTo('plan-trip');
+        const destSelect = document.getElementById('hero_dest');
+        const styleSelect = document.getElementById('hero_style');
+        const selectedDest = destSelect ? destSelect.value : '';
+        const selectedStyle = styleSelect ? styleSelect.value : '';
+
+        if (selectedDest) {
+            const destObj = findDestination(selectedDest);
+            if (destObj) {
+                navTo('destinations', destObj.slug || destObj.id);
+                return;
+            }
+        }
+        if (selectedStyle) {
+            navTo('packages');
+            setTimeout(() => {
+                const catEl = document.getElementById('filter-category');
+                if (catEl) {
+                    catEl.value = selectedStyle;
+                    loadPackages();
+                }
+            }, 120);
+            return;
+        }
+        navTo('packages');
     }
 
     // --- CLIENT-SIDE SINGLE PAGE ROUTER ---
@@ -704,13 +737,21 @@
     // Common Package Card Template (Wishlist, Compare & Currency Aware)
     function renderPackageCard(p) {
         const destName = p.destinations?.name || p.destination_name || (p.dest ? p.dest.toUpperCase() : 'Iconic Destination');
-        const catPkg = window.LUXURY_CATALOG && window.LUXURY_CATALOG.packages && window.LUXURY_CATALOG.packages.find(cp => cp.id === p.id);
+        const catPkg = window.LUXURY_CATALOG && window.LUXURY_CATALOG.packages && window.LUXURY_CATALOG.packages.find(cp => cp.id === p.id || (cp.aliases && cp.aliases.includes(p.id)));
         const cardSlug = (catPkg && catPkg.slug) || p.slug || p.id;
         const rawTitle = (catPkg && catPkg.title) || p.title || '';
         const cleanTitle = rawTitle.replace(/\s*5[★*]\s*/g, ' ').replace(/\.{2,}/g, ': ').trim();
-        const luxuryTier = p.luxury_tier || (catPkg && catPkg.luxury_tier) || '5★ Luxury';
+        const luxuryTier = p.luxury_tier || (catPkg && catPkg.luxury_tier) || '5★ Curated';
         const cardImg = (catPkg && catPkg.image_url) || p.image_url || 'assets/agency-logo-emblem.webp';
         const cardPrice = (catPkg && catPkg.price) || p.price;
+        let cleanCategory = 'Luxury';
+        if (typeof p.category === 'string' && !p.category.toUpperCase().includes('DETAIL') && !p.category.toUpperCase().includes('PRICING') && !p.category.toUpperCase().includes('INR')) {
+            cleanCategory = p.category;
+        } else if (catPkg && catPkg.category) {
+            cleanCategory = catPkg.category;
+        } else {
+            cleanCategory = 'Adventure';
+        }
 
         return `
             <div class="card" onclick="navTo('packages', '${escapeHTML(cardSlug)}')" role="button" tabindex="0" onkeydown="if(event.key==='Enter') navTo('packages', '${escapeHTML(cardSlug)}')">
@@ -722,7 +763,7 @@
                 </div>
                 <div class="card-body">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                        <span class="tag">${escapeHTML(p.category || 'Luxury')}</span>
+                        <span class="tag">${escapeHTML(cleanCategory || 'Luxury')}</span>
                     </div>
                     <h3>${escapeHTML(cleanTitle)}</h3>
                     <p style="color:var(--text-muted); font-size:14px;"><i class="far fa-clock" style="color:var(--brand-orange);"></i> ${escapeHTML(p.duration || 'N/A')} &bull; <i class="fas fa-map-marker-alt" style="color:var(--brand-orange);"></i> ${escapeHTML(destName)}</p>
@@ -767,9 +808,9 @@
 
         // B. Packages (Differentiated 3 distinct packages)
         let packs = [];
-        const homePkgIds = ['pkg-maldives-sanctuary', 'pkg-switzerland-panoramic', 'pkg-vietnam-charm'];
+        const homePkgIds = ['pkg-maldives-sanctuary', 'pkg-swiss-alps-express', 'pkg-vietnam-charm'];
         if (window.LUXURY_CATALOG && window.LUXURY_CATALOG.packages) {
-            packs = window.LUXURY_CATALOG.packages.filter(p => homePkgIds.includes(p.id));
+            packs = homePkgIds.map(id => findPackage(id)).filter(Boolean);
         }
         const homePackEl = document.getElementById('home_packages');
         if (homePackEl) {

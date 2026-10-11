@@ -38,8 +38,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <!-- Luxury Design System Stylesheets -->
-    <link rel="stylesheet" href="/style.css?v=2026.4">
-    <link rel="stylesheet" href="/premium.css?v=2026.4">
+    <link rel="stylesheet" href="/style.css?v=2026.7">
+    <link rel="stylesheet" href="/premium.css?v=2026.9">
 
     <!-- JSON-LD SEO Structured Data (TravelAgency & FAQ) -->
     <script type="application/ld+json">
@@ -124,7 +124,7 @@
                 <div class="brand-logo-badge">
                     <picture>
                         <source type="image/svg+xml" srcset="/logo.svg">
-                        <img src="/apple-touch-icon.png" onerror="this.onerror=null; this.src='/logo.svg';" alt="Via Tours Logo" width="52" height="52">
+                        <img src="/apple-touch-icon.png" onerror="this.onerror=null; this.src='/logo.svg';" alt="Via Tours Logo" width="46" height="46">
                     </picture>
                 </div>
                 <div class="logo-txt">
@@ -138,11 +138,29 @@
             <nav class="nav-menu" id="navMenu" role="navigation" aria-label="Main Navigation">
                 <a href="/destinations" onclick="navTo('destinations'); return false;">Destinations</a>
                 <a href="/packages" onclick="navTo('packages'); return false;">Packages</a>
-                <a href="/blog" onclick="navTo('blog'); return false;">Blog</a>
+                <a href="/experiences" onclick="navTo('experiences'); return false;">Experiences</a>
+                <a href="/services" onclick="navTo('services'); return false;">Services</a>
+                <a href="/offers" onclick="navTo('offers'); return false;">Offers</a>
+                <a href="/gallery" onclick="navTo('gallery'); return false;">Gallery</a>
+                <a href="/blog" onclick="navTo('blog'); return false;">Journal</a>
                 <a href="/about" onclick="navTo('about'); return false;">About</a>
                 <a href="/contact" onclick="navTo('contact'); return false;">Contact</a>
-                <a href="/plan-trip" onclick="navTo('plan-trip'); return false;" class="btn btn-primary" style="padding:8px 20px;">Plan My Trip</a>
+                <div class="nav-mobile-actions">
+                    <a href="https://wa.me/918879776866?text=Hi%20Via%20Tours%20Concierge,%20I'd%20like%20to%20plan%20a%20luxury%20holiday" target="_blank" rel="noopener noreferrer" class="btn btn-green" style="display:flex; align-items:center; justify-content:center; gap:8px;">
+                        <i class="fab fa-whatsapp"></i> Chat with Concierge
+                    </a>
+                    <a href="/plan-trip" onclick="navTo('plan-trip'); return false;" class="btn btn-primary" style="display:flex; align-items:center; justify-content:center;">
+                        Plan My Trip
+                    </a>
+                </div>
             </nav>
+            <div class="header-desktop-actions">
+                <a href="https://wa.me/918879776866?text=Hi%20Via%20Tours%20Concierge,%20I'd%20like%20to%20plan%20a%20luxury%20holiday" target="_blank" rel="noopener noreferrer" class="nav-wa-pill" title="Direct 24/7 WhatsApp Concierge Desk" aria-label="WhatsApp Concierge Desk">
+                    <i class="fab fa-whatsapp" style="color:#25D366;"></i>
+                    <span>24/7 Desk</span>
+                </a>
+                <a href="/plan-trip" onclick="navTo('plan-trip'); return false;" class="btn btn-primary nav-plan-btn">Plan My Trip</a>
+            </div>
         </div>
     </header>
 
@@ -155,17 +173,77 @@
                     <img src="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=1920&q=85" alt="Curating Your World - Luxury Travel with Via Tours and Travels" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover;" fetchpriority="high">
                 </picture>
                 <div class="hero-overlay"></div>
-                <div class="container">
-                    <h1>Curating Your World</h1>
-                    <p>Discover hand-crafted travel itineraries with dedicated destination specialists and 24/7 concierge support.</p>
-                    <div style="display:flex; justify-content:center; gap:16px; margin:0 auto 20px auto; flex-wrap:wrap;">
-                        <a href="/packages" onclick="navTo('packages'); return false;" class="btn btn-primary" style="padding:12px 28px; font-size:1rem;">Explore Packages</a>
-                        <a href="/plan-trip" onclick="navTo('plan-trip'); return false;" class="btn btn-outline" style="border-color:#ffffff; color:#ffffff; padding:12px 28px; font-size:1rem;">Plan My Trip</a>
-                    </div>
-                    <a href="https://www.google.com/search?q=Via+Tours+and+Travels+reviews" target="_blank" rel="noopener noreferrer" class="google-review-badge" style="margin: 0 auto 24px auto; display: inline-flex; text-decoration: none;" title="Verified Google Reviews">
+                <div class="container text-center">
+                    <a href="https://www.google.com/search?q=Via+Tours+and+Travels+reviews" target="_blank" rel="noopener noreferrer" class="google-review-badge" title="Verified Google Reviews">
                         <span class="stars" style="color:#f59e0b;">★★★★★</span>
-                        <span>Rated 4.9 / 5.0 based on 180+ Google Reviews</span>
+                        <span>Rated 4.9 / 5.0 based on 180+ Google Reviews &bull; Est. 2009</span>
                     </a>
+                    <h1>Curating Your World</h1>
+                    <p class="hero-lead">Discover hand-crafted travel itineraries with dedicated destination specialists and 24/7 concierge support.</p>
+                    
+                    <!-- Integrated Luxury Search Bar -->
+                    <div class="search-box" id="heroSearchBox" role="search" aria-label="Curate Luxury Escapes">
+                        <div class="form-sec">
+                            <label for="hero_dest"><i class="fas fa-map-marker-alt" style="color:var(--brand-orange);"></i> Destination</label>
+                            <select id="hero_dest" aria-label="Destination">
+                                <option value="" selected>Where to wander?</option>
+                                <option value="dest-maldives">Maldives (Atolls &amp; Villas)</option>
+                                <option value="dest-switzerland">Switzerland (Alps &amp; Rail)</option>
+                                <option value="dest-bali">Bali (Rainforest &amp; Ocean)</option>
+                                <option value="dest-dubai">Dubai (Desert &amp; Penthouse)</option>
+                                <option value="dest-kashmir">Kashmir (Himalayan Valleys)</option>
+                                <option value="dest-vietnam">Vietnam (Heritage &amp; Cruise)</option>
+                                <option value="dest-amalfi">Amalfi Coast &amp; Capri</option>
+                                <option value="dest-rajasthan">Rajasthan (Royal Palaces)</option>
+                                <option value="dest-kerala">Kerala (Backwaters &amp; Ayurveda)</option>
+                                <option value="dest-ladakh">Ladakh (High-Altitude)</option>
+                            </select>
+                        </div>
+                        <div class="form-sec">
+                            <label for="hero_style"><i class="fas fa-compass" style="color:var(--brand-orange);"></i> Experience</label>
+                            <select id="hero_style" aria-label="Experience Theme">
+                                <option value="" selected>All Styles</option>
+                                <option value="Honeymoon">Honeymoon &amp; Romance</option>
+                                <option value="Family">Family &amp; Multi-Gen</option>
+                                <option value="Adventure">Alpine &amp; Scenic Rail</option>
+                                <option value="Luxury">Royal Palaces &amp; Villas</option>
+                            </select>
+                        </div>
+                        <div class="form-sec">
+                            <label for="hero_month"><i class="far fa-calendar-alt" style="color:var(--brand-orange);"></i> Timing</label>
+                            <select id="hero_month" aria-label="Travel Timing">
+                                <option value="" selected>Flexible Dates</option>
+                                <option value="2026-10">October 2026</option>
+                                <option value="2026-11">November 2026</option>
+                                <option value="2026-12">December (Festive)</option>
+                                <option value="2027-01">Jan – Mar 2027</option>
+                                <option value="2027-summer">Summer 2027</option>
+                            </select>
+                        </div>
+                        <div class="form-sec">
+                            <label for="hero_guests"><i class="fas fa-users" style="color:var(--brand-orange);"></i> Travelers</label>
+                            <select id="hero_guests" aria-label="Number of Travelers">
+                                <option value="couple" selected>2 Adults (Couple)</option>
+                                <option value="family">Small Family (3–4)</option>
+                                <option value="group">Private Party (5+)</option>
+                                <option value="solo">Solo Luxury</option>
+                            </select>
+                        </div>
+                        <div class="btn-search-wrap">
+                            <button type="button" class="btn btn-primary" onclick="searchFromHero()">
+                                <i class="fas fa-search"></i> Curate Escapes
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Quick Discovery Pills -->
+                    <div class="hero-quick-pills">
+                        <span class="pills-label">Trending:</span>
+                        <a href="/packages" onclick="navTo('packages', 'pkg-maldives-sanctuary'); return false;">Maldives Overwater</a>
+                        <a href="/packages" onclick="navTo('packages', 'pkg-swiss-alps-express'); return false;">Swiss Glacier Express</a>
+                        <a href="/packages" onclick="navTo('packages', 'pkg-bali-luxe-villas'); return false;">Bali Pool Villas</a>
+                        <a href="/packages" onclick="navTo('packages', 'pkg-vietnam-charm'); return false;">Halong Heritage Cruise</a>
+                    </div>
                 </div>
             </div>
 
@@ -613,10 +691,19 @@
 
         <!-- Destinations Explorer View -->
         <div id="page-destinations" class="page-view container">
-            <h2>Explore Destinations</h2>
-            <p style="color:var(--text-muted); margin-bottom:20px;">Select a retreat below to discover handpicked luxury itineraries.</p>
-            <div class="filter-bar" style="max-width:480px; margin-bottom:24px;">
-                <input type="text" id="dest-search" placeholder="Search destinations (e.g. Amalfi, Bali, Switzerland)..." oninput="debounceDestSearch()">
+            <nav class="breadcrumbs" aria-label="Breadcrumb">
+                <a href="/" onclick="navTo('home'); return false;">Home</a> / <span>Destinations</span>
+            </nav>
+            <div class="text-center" style="margin-bottom:36px;">
+                <span class="tag">Iconic Escapes</span>
+                <h2>Explore Iconic Destinations</h2>
+                <p style="color:var(--text-muted); max-width:680px; margin:0 auto 24px auto;">Select an evocative retreat below to discover hand-crafted private itineraries, curated 5-star properties, and visa advisory.</p>
+                <div class="filter-bar" style="max-width:540px; margin:0 auto;">
+                    <div style="position:relative; width:100%;">
+                        <i class="fas fa-search" style="position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--text-muted); font-size:0.9rem;"></i>
+                        <input type="text" id="dest-search" placeholder="Search destinations (e.g. Amalfi, Bali, Switzerland)..." oninput="debounceDestSearch()" style="width:100%; padding-left:38px;">
+                    </div>
+                </div>
             </div>
             <div id="list_destinations" style="margin-top:30px;">
                 <div class="country-group" style="margin-bottom:36px;">
@@ -713,30 +800,34 @@
 
         <!-- Packages Explorer View -->
         <div id="page-packages" class="page-view container">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:15px;">
-                <div>
-                    <h2>Curated Packages</h2>
-                    <p style="color:var(--text-muted); margin:0;">Filter by destination, theme, and price tier.</p>
+            <nav class="breadcrumbs" aria-label="Breadcrumb">
+                <a href="/" onclick="navTo('home'); return false;">Home</a> / <span>Curated Packages</span>
+            </nav>
+            <div class="text-center" style="margin-bottom:36px;">
+                <span class="tag">Tailored Journeys</span>
+                <h2>Curated Luxury Packages</h2>
+                <p style="color:var(--text-muted); max-width:680px; margin:0 auto 24px auto;">Explore private departures featuring confirmed 5-star luxury resorts, chauffeured transfers, and 24/7 dedicated concierge care.</p>
+                <div class="filter-bar" style="max-width:960px; margin:0 auto; display:flex; flex-wrap:wrap; gap:10px; justify-content:center; align-items:center;">
+                    <div style="position:relative; flex:1.4; min-width:200px;">
+                        <i class="fas fa-search" style="position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--text-muted); font-size:0.9rem;"></i>
+                        <input type="text" id="pkg_search" placeholder="Search packages or keywords..." oninput="debounceSearch()" style="width:100%; padding-left:38px;">
+                    </div>
+                    <select id="filter-destination" onchange="loadPackages()" style="flex:1; min-width:150px;"><option value="">All Destinations</option></select>
+                    <select id="filter-category" onchange="loadPackages()" style="flex:1; min-width:140px;">
+                        <option value="">All Categories</option>
+                        <option value="Luxury">Luxury</option>
+                        <option value="Honeymoon">Honeymoon</option>
+                        <option value="Family">Family</option>
+                        <option value="Adventure">Adventure</option>
+                        <option value="Scenic Rail">Scenic Rail</option>
+                    </select>
+                    <select id="pkg_sort" onchange="loadPackages()" style="flex:1; min-width:150px;">
+                        <option value="new">Featured First</option>
+                        <option value="price_asc">Price: Low to High</option>
+                        <option value="price_desc">Price: High to Low</option>
+                    </select>
+                    <button class="btn btn-outline" onclick="clearFilter()" style="padding:10px 18px; white-space:nowrap;">Reset</button>
                 </div>
-                <input type="text" id="pkg_search" placeholder="Search packages..." oninput="debounceSearch()" style="padding:10px; border:1px solid var(--border); border-radius:8px; width:300px; max-width:100%;">
-            </div>
-            <div class="filter-bar">
-                <select id="filter-destination" onchange="loadPackages()"><option value="">All Destinations</option></select>
-                <select id="filter-category" onchange="loadPackages()">
-                    <option value="">All Categories</option>
-                    <option value="Luxury">Luxury</option>
-                    <option value="Honeymoon">Honeymoon</option>
-                    <option value="Family">Family</option>
-                    <option value="Adventure">Adventure</option>
-                </select>
-                <input type="number" id="filter-min-price" placeholder="Min Price (₹)" oninput="debounceSearch()">
-                <input type="number" id="filter-max-price" placeholder="Max Price (₹)" oninput="debounceSearch()">
-                <select id="pkg_sort" onchange="loadPackages()">
-                    <option value="new">Featured First</option>
-                    <option value="price_asc">Price: Low to High</option>
-                    <option value="price_desc">Price: High to Low</option>
-                </select>
-                <button class="btn btn-outline" onclick="clearFilter()">Clear</button>
             </div>
             <div class="grid-3" id="list_packages">
                 <div class="card" onclick="navTo('package', 'pkg-maldives-sanctuary')" role="button" tabindex="0">
@@ -1052,15 +1143,15 @@
             <div class="form-progress">
                 <div class="step-indicator active">
                     <div class="step-circle">1</div>
-                    <span>1. Journey &amp; Dates</span>
+                    <div class="step-title">Journey &amp; Timing</div>
                 </div>
                 <div class="step-indicator active">
                     <div class="step-circle">2</div>
-                    <span>2. Party &amp; Style</span>
+                    <div class="step-title">Party &amp; Style</div>
                 </div>
                 <div class="step-indicator active">
                     <div class="step-circle">3</div>
-                    <span>3. Contact &amp; Proposal</span>
+                    <div class="step-title">Contact &amp; Proposal</div>
                 </div>
             </div>
 
@@ -1891,6 +1982,6 @@
 <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.5/dist/purify.min.js"></script>
 <script src="/config.js"></script>
 <script src="/catalog-data.js"></script>
-<script src="/script.js?v=2026.4"></script>
+<script src="/script.js?v=2026.9"></script>
 </body>
 </html>

@@ -974,7 +974,8 @@ body.dark-mode .badge-gold {
 .scroll-top {
     position: fixed;
     bottom: calc(28px + var(--safe-bottom));
-    left: 28px;
+    right: 28px;
+    left: auto;
     width: 48px;
     height: 48px;
     background: var(--brand-navy);
@@ -1682,8 +1683,7 @@ footer a:hover {
     }
 
     .scroll-top {
-        left: 18px;
-        bottom: calc(18px + var(--safe-bottom));
+        display: none !important;
     }
 
     /* Package gallery */
@@ -2344,7 +2344,7 @@ footer a:hover {
 @media (max-width: 767px) {
     .mobile-bottom-bar {
         display: grid;
-        grid-template-columns: repeat(5, 1fr);
+        grid-template-columns: repeat(4, 1fr);
         align-items: stretch;
         gap: 0;
     }
@@ -2393,7 +2393,7 @@ footer a:hover {
     }
 
     .scroll-top {
-        bottom: calc(80px + var(--safe-bottom)) !important;
+        display: none !important;
     }
 
     .chat-bubble,
